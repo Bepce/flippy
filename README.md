@@ -15,7 +15,7 @@ flipbook on your own website, with every product code linked to your shop.
 - **One script, no framework.** About 16 kB gzipped. A `<flip-book>` element,
   a small JavaScript API, light and dark themes, 8 interface languages.
 
-**[Live demo →](#)** *(GitHub Pages link once published)* · [Embedded in a page](examples/embed.html)
+**[Live demo →](https://bepce.github.io/flippy/)** · [Embedded in a page](https://bepce.github.io/flippy/examples/embed.html)
 
 ## Quick start
 
