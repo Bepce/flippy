@@ -4,14 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>flippy demo</title>
-  <link rel="stylesheet" href="viewer/viewer.css?v=1">
-  <style>html, body { height: 100%; margin: 0; }</style>
+  <link rel="stylesheet" href="dist/flippy.min.css?v=0.1.0">
+  <style>html, body { height: 100%; margin: 0; background: #1f2228; }</style>
 </head>
 <body>
-  <!-- The demo catalogue. Point data-src at your own catalogue folder (made with tools/build.py).
-       Options are listed at the end of viewer/viewer.js and in README.md.
-       Raise ?v= on the two viewer files when you update them, so browsers don't keep old copies. -->
+  <!-- A full-page catalogue. ?c=NAME opens catalogues/NAME/ instead of the demo.
+       For a catalogue inside a normal page, see examples/embed.html. -->
   <div class="flippy" data-src="catalogues/hollowbrook/" style="height: 100%"></div>
-  <script src="viewer/viewer.js?v=1"></script>
+  <script src="dist/flippy.min.js?v=0.1.0"></script>
 </body>
 </html>

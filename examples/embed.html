@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>flippy: embedded in a page</title>
+  <style>
+    /* an ordinary page; flippy's styles don't touch any of this */
+    body { margin: 0; font: 17px/1.6 Georgia, serif; color: #2b2a27; background: #fbf8f2; }
+    main { max-width: 980px; margin: 0 auto; padding: 32px 16px 64px; }
+    h1 { font-size: 34px; margin: 0 0 8px; }
+    p { max-width: 62ch; }
+    flip-book { height: 640px; margin: 24px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.12);
+                --fb-accent: #3f5b45; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; font: 14px system-ui, sans-serif; }
+    .controls button { padding: 8px 14px; border: 1px solid #c9c2b4; border-radius: 6px; background: #fff; cursor: pointer; font: inherit; }
+    #log { font: 13px/1.5 ui-monospace, Consolas, monospace; background: #f1ece2; padding: 12px; border-radius: 8px; min-height: 5em; white-space: pre-wrap; }
+    @media (max-width: 600px) { flip-book { height: 78vh; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>The autumn catalogue</h1>
+  <p>This is a regular page with a catalogue in the middle of it. It uses the
+     <code>&lt;flip-book&gt;</code> element with the light theme and the shop's own accent colour.
+     Page turns don't change the address bar (<code>hash="false"</code>), because the page has
+     its own address.</p>
+
+  <flip-book src="../catalogues/hollowbrook/" theme="light" hash="false" link-color="blue"></flip-book>
+
+  <div class="controls">
+    <button onclick="book.prev()">◀ Previous</button>
+    <button onclick="book.next()">Next ▶</button>
+    <button onclick="book.go(11)">Go to page 11</button>
+    <button onclick="book.setAttribute('theme', book.getAttribute('theme') === 'light' ? 'dark' : 'light')">Light / dark</button>
+  </div>
+  <p>Events from the catalogue:</p>
+  <div id="log"></div>
+</main>
+<script src="../dist/flippy.min.js?v=0.1.0"></script>
+<script>
+  var book = document.querySelector('flip-book');
+  var log = document.getElementById('log');
+  function write(line) { log.textContent = (line + '\n' + log.textContent).split('\n').slice(0, 8).join('\n'); }
+  book.addEventListener('flippy:ready', function (e) { write('ready: ' + e.detail.pageCount + ' pages'); });
+  book.addEventListener('flippy:page', function (e) { write('page: ' + e.detail.pages.join('–')); });
+  book.addEventListener('flippy:link', function (e) { write('link: ' + e.detail.url + ' (page ' + e.detail.page + ')'); });
+</script>
+</body>
+</html>

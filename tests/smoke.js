@@ -41,6 +41,44 @@ function check(ok, msg) { if (!ok) throw new Error(msg); console.log('  ok  ' + 
     await m.waitForTimeout(1500);
     check(/p=4/.test(await m.evaluate(() => location.hash)), 'swipe turns the page');
 
+    // <flip-book> inside an ordinary page: element, API, events, theme, no style leaks
+    const e = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    e.on('pageerror', err => errors.push('embed: ' + err.message));
+    await e.goto(URL + 'examples/embed.html');
+    await e.waitForSelector('flip-book .fb-slot.right img');
+    const host = await e.evaluate(() => ({ margin: getComputedStyle(document.body).marginTop, bg: getComputedStyle(document.body).backgroundColor,
+      sizing: getComputedStyle(document.querySelector('main')).boxSizing }));
+    check(host.margin === '0px' && host.bg === 'rgb(251, 248, 242)' && host.sizing === 'content-box', 'host page styles untouched');
+    check(await e.$eval('flip-book', b => b.dataset.theme === 'light' && Math.round(b.getBoundingClientRect().height) === 640), 'element uses its theme and its own height');
+    check(await e.evaluate(() => { const l = document.querySelectorAll('link[rel="stylesheet"][href*="flippy"]'); return l.length === 1 && /dist\/flippy\.min\.css/.test(l[0].href); }),
+      'stylesheet added automatically, once, from next to the script');
+    await e.click('text=Next ▶'); await e.waitForTimeout(1500);
+    check((await e.$eval('#log', l => l.textContent)).includes('page: 2–3'), 'element.next() turns the page and fires flippy:page');
+    check(await e.evaluate(() => location.hash) === '', 'hash="false" leaves the address alone');
+    await e.click('text=Go to page 11'); await e.waitForTimeout(2600);
+    check((await e.$eval('#log', l => l.textContent)).includes('page: 10–11'), 'element.go(11) jumps');
+    await e.evaluate(() => { const b = document.querySelector('flip-book'); b.addEventListener('flippy:link', ev => { ev.stopPropagation(); }); });
+    const linkUrl = await e.evaluate(() => new Promise(res => {
+      document.querySelector('flip-book').addEventListener('flippy:link', ev => res(ev.detail.url), { once: true });
+      const a = document.querySelector('flip-book .fb-slot .fb-hot.swatch'); a.addEventListener('click', ev => ev.preventDefault(), { once: true }); a.click();
+    }));
+    check(/hollowbrook\/.+utm_campaign=autumn-2026/.test(linkUrl), 'flippy:link reports the product URL');
+    await e.evaluate(() => { const b = document.querySelector('flip-book'); b.setAttribute('lang', 'de'); });
+    await e.waitForSelector('flip-book .fb-btn[aria-label="Weiter"]');
+    check(true, 'changing lang re-renders in German');
+    const left = await e.evaluate(() => { const b = document.querySelector('flip-book'); b.remove(); return document.querySelectorAll('.fb-curl, .fb-toast').length; });
+    check(left === 0, 'removing the element cleans up');
+
+    // JS API: Flippy.mount on any element, custom language
+    const api = await e.evaluate(() => new Promise(res => {
+      Flippy.addLanguage('sv', { next: 'Nästa', prev: 'Föregående' });
+      const d = document.createElement('div'); d.style.height = '500px'; document.querySelector('main').appendChild(d);
+      d.addEventListener('flippy:ready', ev => res({ pages: ev.detail.pageCount, next: d.querySelector('.fb-btn[aria-label="Nästa"]') !== null,
+        grid: d.querySelector('.fb-btn[aria-label="All pages"]') !== null, version: Flippy.version }));
+      Flippy.mount(d, { src: '../catalogues/hollowbrook/', lang: 'sv', hash: false, sound: false });
+    }));
+    check(api.pages === 12 && api.next && api.grid, 'Flippy.mount + addLanguage (missing texts fall back to English)');
+
     check(errors.length === 0, 'no script errors' + (errors.length ? ': ' + errors.join('; ') : ''));
     console.log('\nall checks passed');
   } catch (e) {

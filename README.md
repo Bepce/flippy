@@ -12,20 +12,38 @@ flipbook on your own website, with every product code linked to your shop.
   your shop in a frame from *their* domain, where browsers drop your shop's
   cookies, so the cart and login break. Served from your site (or a subdomain),
   flippy can open products in a popup that keeps them.
-- **Plain JavaScript, no framework, no build step.** Two files, about 20 kB gzipped.
+- **One script, no framework.** About 16 kB gzipped. A `<flip-book>` element,
+  a small JavaScript API, light and dark themes, 8 interface languages.
 
-**[Live demo →](#)** *(GitHub Pages link once published)* — or run it locally, below.
+**[Live demo →](#)** *(GitHub Pages link once published)* · [Embedded in a page](examples/embed.html)
 
-## Try it
+## Quick start
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.1.0/dist/flippy.min.js"></script>
+
+<flip-book src="/catalogues/spring-2026/"></flip-book>
+```
+
+The script loads its stylesheet and sounds from the same place. `src` is a catalogue
+folder made with the tools below. Size it like any block element:
+`flip-book { height: 700px }` (default: 80% of the window height).
+
+Or install from npm and serve `node_modules/@bepce/flippy/dist/` yourself:
+
+```sh
+npm install @bepce/flippy
+```
+
+To try the demo locally:
 
 ```sh
 git clone https://github.com/Bepce/flippy
 cd flippy
-python -m http.server 8080
+python -m http.server 8080        # then open http://localhost:8080
 ```
 
-Open http://localhost:8080. The demo catalogue, *Hollowbrook Goods*, is an invented
-shop made for this project.
+The demo catalogue, *Hollowbrook Goods*, is an invented shop made for this project.
 
 ## Make your own catalogue
 
@@ -64,7 +82,7 @@ pip install -r tools/requirements.txt
    python tools/build.py catalogues/spring-2026/catalogue.pdf --title "Spring Collection 2026"
    ```
 
-4. **Show it:** `index.html?c=spring-2026`, or on your own page (next section).
+4. **Upload the folder** and point `src` at it.
 
 How the link boxes are placed:
 
@@ -75,63 +93,108 @@ How the link boxes are placed:
 | Code mentioned in a sentence | skipped if the same code has a swatch on the page, otherwise the code itself |
 
 Links that are already in your PDF, such as a clickable table of contents, are kept.
+The folder format is described in [docs/catalogue-format.md](docs/catalogue-format.md).
 
-## Put it on your website
+## Options
 
-Upload `viewer/` and your catalogue folder, then:
+As attributes on `<flip-book>` (or `data-` attributes on `<div class="flippy">`):
 
-```html
-<link rel="stylesheet" href="/flippy/viewer/viewer.css?v=1">
-<div class="flippy" data-src="/flippy/catalogues/spring-2026/" style="height: 85vh"></div>
-<script src="/flippy/viewer/viewer.js?v=1"></script>
-```
+| Attribute | Values | Default | |
+|---|---|---|---|
+| `src` | folder URL | | the catalogue folder (required) |
+| `lang` | `en` `bg` `de` `es` `fr` `it` `nl` `pl` | the page's `<html lang>` | interface language |
+| `theme` | `dark`, `light` | `dark` | colour scheme of the viewer |
+| `link-color` | `grey`, `red`, `blue`, `white` | `grey` | link highlight; visitors can change it in the toolbar |
+| `popup` | `true` | `false` | open products in a popup over the catalogue (see below) |
+| `hash` | `false` | `true` | keep the page number in the address (`#p=12`) for sharing |
+| `page` | number | `1` | page to open on |
+| `pdf` | `false` | `true` | show the PDF download button |
+| `sound` | `false` | `true` | page-flip sound on by default (visitors can switch it) |
+| `set-title` | `true` | `false`* | set the page title to the catalogue title |
+| `title-suffix` | text | | added after the catalogue title |
 
-Options, as data attributes on the `.flippy` element:
-
-| Attribute | Values | |
-|---|---|---|
-| `data-src` | folder URL | the catalogue folder (required) |
-| `data-lang` | `en`, `bg` | interface language; defaults to the page's `<html lang>` |
-| `data-link-color` | `grey`, `red`, `blue`, `white` | link highlight; visitors can change it in the toolbar |
-| `data-popup` | `true` | open products in a popup over the catalogue (see below) |
-| `data-pdf` | `false` | hide the PDF download button |
-| `data-set-title` | `false` | don't change the page title |
-| `data-title-suffix` | text | added after the catalogue title in the page title |
-
-The page URL can also set `?lang=`, `?links=`, `?popup=1`, and `#p=12` opens a page.
+\* `true` for `<div class="flippy">`, which is meant for a page that is only the catalogue.
+The page URL can also set `?lang=`, `?links=`, `?popup=1` and `?hint=1` (show the swipe
+hint again).
 
 **Popup or new tab.** Products open in a popup when the shop is on the same site as
 the viewer, so the visitor's cart and login keep working. Otherwise they open in a new
 tab, because browsers block a shop's cookies inside a frame from another site.
 
-**Theme.** Override the CSS variables at the top of `viewer/viewer.css` on `.fb`,
-for example `.fb { --fb-accent: #0a7; --fb-hot-line: #0a7; }`.
+## JavaScript
 
-**Clicks.** Every link click fires a `flippy:link` event on `window` (with the URL,
-page and catalogue), and a Google Analytics `catalogue_link` event if `gtag` is on the page.
+```js
+// any element
+const viewer = Flippy.mount(document.querySelector('#catalogue'), {
+  src: '/catalogues/spring-2026/', lang: 'de', theme: 'light', hash: false
+});
+viewer.next(); viewer.prev(); viewer.go(12); viewer.destroy();
 
-**Rewriting links.** Set `window.flippyLinkFilter = function (url) { ... return url; }`
-to adjust product URLs at runtime, for example to switch language paths.
+// the element has the same methods
+document.querySelector('flip-book').go(12);
 
-**Updates.** Raise `?v=` on the viewer files when you update them. The viewer passes
-the same version to the catalogue data, so returning visitors get the new files.
+// your own language (anything missing falls back to English)
+Flippy.addLanguage('sv', { prev: 'Föregående', next: 'Nästa', pages: 'Alla sidor' /* ... */ });
+
+// adjust product links on the fly, e.g. for a language path
+window.flippyLinkFilter = url => url.replace('/en/', '/de/');
+```
+
+Events, dispatched on the viewer element (they bubble):
+
+| Event | `event.detail` |
+|---|---|
+| `flippy:ready` | `{ pageCount, title }` |
+| `flippy:page` | `{ page, pages }`: first visible page and all visible pages |
+| `flippy:link` | `{ url, page, kind, catalogue, src }` when a product link is clicked (also on `window`) |
+| `flippy:error` | `{ error }` if the catalogue can't be loaded |
+
+If Google Analytics (`gtag`) is on the page, link clicks are also sent as
+`catalogue_link` events.
+
+## Themes
+
+Every colour is a CSS variable you can set on the element:
+
+```css
+flip-book {
+  --fb-accent: #0a7;            /* switched-on buttons, focus rings */
+  --fb-bg: #f4f1ea;             /* around the book */
+  --fb-bg-2: #e8e2d6;
+  --fb-bar: #fff;               /* toolbar */
+  --fb-text: #222;
+  --fb-hot: rgba(0,170,119,.15);      /* link highlight */
+  --fb-hot-line: #0a7;
+  --fb-font: "Inter", sans-serif;
+}
+```
+
+The full list is at the top of [`src/flippy.css`](src/flippy.css). The viewer's styles
+are scoped to the viewer and don't affect the rest of your page.
+
+## Updating
+
+Pin a version in the CDN URL (`@v0.1.0`). When you update your own copy, also raise the
+`?v=` on the files: the viewer passes it on to the catalogue data, so returning visitors
+get the new files. See [CHANGELOG.md](CHANGELOG.md).
 
 ## Repository layout
 
 ```
-index.html                    demo page
-viewer/                       the viewer: viewer.js, viewer.css, sounds/
-tools/add_links.py            finds product codes in a PDF and adds links
-tools/build.py                renders pages and writes catalogue.json
-catalogues/hollowbrook/       the built demo catalogue
-examples/hollowbrook/         how the demo catalogue was made (source PDF, links.csv, make.js)
-docs/catalogue-format.md      the catalogue.json format
-tests/smoke.js                browser test of the demo
+src/                    viewer source: flippy.js, flippy.css, sounds/
+dist/                   built files (npm run dist): readable and .min versions
+index.html              full-page demo
+examples/embed.html     the viewer inside an ordinary page, with the API and events
+examples/hollowbrook/   how the demo catalogue was made (source PDF, links.csv, make.js)
+catalogues/hollowbrook/ the built demo catalogue
+tools/                  add_links.py, build.py (Python), build-dist.js (release build)
+docs/                   catalogue format
+tests/smoke.js          browser tests (desktop, phone, embedded, API)
 ```
 
 ## Roadmap
 
-1. **Package the viewer**: npm and CDN release, `<flip-book>` element, more languages.
+1. ~~Package the viewer~~ (0.1): CDN and npm, `<flip-book>`, API, themes, languages.
 2. **Builder in the browser**: upload a PDF, auto-link, edit link boxes by hand,
    export. No Python needed.
 3. **Optional server**: catalogue library, logins, publishing, click statistics
@@ -141,8 +204,8 @@ tests/smoke.js                browser test of the demo
 ## Contributing
 
 Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
-Translations are an easy place to start: copy the `en` block at the top of
-`viewer/viewer.js`.
+New languages are an easy place to start: copy the `en` block at the top of
+`src/flippy.js`.
 
 ## Credits and licence
 

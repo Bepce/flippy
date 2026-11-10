@@ -18,6 +18,54 @@
       linkColor: 'Link colour', colors: { grey: 'Grey', red: 'Red', blue: 'Blue', white: 'White' },
       openProduct: 'Open product', goTo: 'Go to page', error: 'The catalogue could not be loaded.'
     },
+    de: {
+      prev: 'Zurück', next: 'Weiter', pages: 'Alle Seiten', links: 'Links anzeigen', zoom: 'Vergrößern',
+      pdf: 'PDF herunterladen', full: 'Vollbild', close: 'Schließen', product: 'Produkt', newTab: 'In neuem Tab öffnen',
+      hint: 'Tippen Sie auf ein Produkt, um es zu öffnen', page: 'Seite', of: 'von',
+      swipe: 'Wischen zum Umblättern', click: 'Seitenrand anklicken oder ← → verwenden', sound: 'Ton',
+      linkColor: 'Linkfarbe', colors: { grey: 'Grau', red: 'Rot', blue: 'Blau', white: 'Weiß' },
+      openProduct: 'Produkt öffnen', goTo: 'Zu Seite', error: 'Der Katalog konnte nicht geladen werden.'
+    },
+    fr: {
+      prev: 'Précédente', next: 'Suivante', pages: 'Toutes les pages', links: 'Afficher les liens', zoom: 'Zoom',
+      pdf: 'Télécharger le PDF', full: 'Plein écran', close: 'Fermer', product: 'Produit', newTab: 'Ouvrir dans un nouvel onglet',
+      hint: 'Touchez un produit pour l’ouvrir', page: 'Page', of: 'sur',
+      swipe: 'Balayez pour tourner la page', click: 'Cliquez sur le bord de la page ou utilisez ← →', sound: 'Son',
+      linkColor: 'Couleur des liens', colors: { grey: 'Gris', red: 'Rouge', blue: 'Bleu', white: 'Blanc' },
+      openProduct: 'Ouvrir le produit', goTo: 'Aller à la page', error: 'Le catalogue n’a pas pu être chargé.'
+    },
+    es: {
+      prev: 'Anterior', next: 'Siguiente', pages: 'Todas las páginas', links: 'Mostrar enlaces', zoom: 'Ampliar',
+      pdf: 'Descargar PDF', full: 'Pantalla completa', close: 'Cerrar', product: 'Producto', newTab: 'Abrir en una pestaña nueva',
+      hint: 'Toca un producto para abrirlo', page: 'Página', of: 'de',
+      swipe: 'Desliza para pasar la página', click: 'Haz clic en el borde de la página o usa ← →', sound: 'Sonido',
+      linkColor: 'Color de los enlaces', colors: { grey: 'Gris', red: 'Rojo', blue: 'Azul', white: 'Blanco' },
+      openProduct: 'Abrir producto', goTo: 'Ir a la página', error: 'No se pudo cargar el catálogo.'
+    },
+    it: {
+      prev: 'Precedente', next: 'Successiva', pages: 'Tutte le pagine', links: 'Mostra i link', zoom: 'Ingrandisci',
+      pdf: 'Scarica il PDF', full: 'Schermo intero', close: 'Chiudi', product: 'Prodotto', newTab: 'Apri in una nuova scheda',
+      hint: 'Tocca un prodotto per aprirlo', page: 'Pagina', of: 'di',
+      swipe: 'Scorri per sfogliare', click: 'Fai clic sul bordo della pagina o usa ← →', sound: 'Audio',
+      linkColor: 'Colore dei link', colors: { grey: 'Grigio', red: 'Rosso', blue: 'Blu', white: 'Bianco' },
+      openProduct: 'Apri il prodotto', goTo: 'Vai a pagina', error: 'Impossibile caricare il catalogo.'
+    },
+    nl: {
+      prev: 'Vorige', next: 'Volgende', pages: 'Alle pagina’s', links: 'Links tonen', zoom: 'Inzoomen',
+      pdf: 'PDF downloaden', full: 'Volledig scherm', close: 'Sluiten', product: 'Product', newTab: 'Openen in nieuw tabblad',
+      hint: 'Tik op een product om het te openen', page: 'Pagina', of: 'van',
+      swipe: 'Veeg om de pagina om te slaan', click: 'Klik op de rand van de pagina of gebruik ← →', sound: 'Geluid',
+      linkColor: 'Kleur van links', colors: { grey: 'Grijs', red: 'Rood', blue: 'Blauw', white: 'Wit' },
+      openProduct: 'Product openen', goTo: 'Naar pagina', error: 'De catalogus kon niet worden geladen.'
+    },
+    pl: {
+      prev: 'Poprzednia', next: 'Następna', pages: 'Wszystkie strony', links: 'Pokaż linki', zoom: 'Powiększ',
+      pdf: 'Pobierz PDF', full: 'Pełny ekran', close: 'Zamknij', product: 'Produkt', newTab: 'Otwórz w nowej karcie',
+      hint: 'Dotknij produktu, aby go otworzyć', page: 'Strona', of: 'z',
+      swipe: 'Przesuń, aby przewrócić stronę', click: 'Kliknij krawędź strony lub użyj ← →', sound: 'Dźwięk',
+      linkColor: 'Kolor linków', colors: { grey: 'Szary', red: 'Czerwony', blue: 'Niebieski', white: 'Biały' },
+      openProduct: 'Otwórz produkt', goTo: 'Przejdź do strony', error: 'Nie udało się wczytać katalogu.'
+    },
     bg: {
       prev: 'Предишна', next: 'Следваща', pages: 'Всички страници', links: 'Покажи връзките', zoom: 'Увеличи',
       pdf: 'Изтегли PDF', full: 'Цял екран', close: 'Затвори', product: 'Продукт', newTab: 'Отвори в нов прозорец',
@@ -51,16 +99,14 @@
     return e;
   }
   function svg(name) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[name] + '</svg>'; }
-  // ?v=… on viewer.js is passed on to the catalogue data, so an update is never hidden by the browser cache
+  // ?v=… on flippy.js is passed on to the catalogue data, so an update is never hidden by the browser cache
   var VERSION = (function () {
     var src = (document.currentScript && document.currentScript.src) || '';
     var m = /[?&]v=([^&#]+)/.exec(src);
     return m ? m[1] : '';
   })();
-  var SCRIPT_DIR = (function () {
-    var src = (document.currentScript && document.currentScript.src) || '';
-    return src ? src.replace(/[?#].*$/, '').replace(/[^/]*$/, '') : 'viewer/';
-  })();
+  var SCRIPT_URL = (document.currentScript && document.currentScript.src) || '';
+  var SCRIPT_DIR = SCRIPT_URL ? SCRIPT_URL.replace(/[?#].*$/, '').replace(/[^/]*$/, '') : '';
   function bust(u) { return VERSION ? u + (u.indexOf('?') < 0 ? '?' : '&') + 'v=' + VERSION : u; }
   function pad3(n) { return ('00' + n).slice(-3); }
   // per-visitor preferences; storage can be blocked (private mode), so never let it throw
@@ -71,13 +117,15 @@
   function Flipbook(root, opts) {
     this.root = root;
     this.opts = opts;
-    this.t = TEXT[opts.lang] || TEXT.en;
+    this.t = text(opts.lang);
+    this._off = [];
     this.page = 1;
     this.single = false;
     this.busy = false;
     this.queued = null;
     this.flashed = false;
-    this.sound = new FlipSound(store('flippy-sound') !== '0', SCRIPT_DIR + 'sounds/');
+    var savedSound = store('flippy-sound');
+    this.sound = new FlipSound(savedSound ? savedSound !== '0' : opts.sound !== false, SCRIPT_DIR + 'sounds/');
     this.learned = store('flippy-flipped') === '1' && !opts.hint;
   }
 
@@ -95,19 +143,43 @@
         if (data.title && self.opts.setTitle) document.title = data.title + (self.opts.titleSuffix || '');
         self.build();
         self.root.flippy = self;                       // the viewer instance, for scripting
-        var m = /p=(\d+)/.exec(location.hash);
-        self.page = self.clamp(m ? +m[1] : 1);
+        var m = self.opts.hash ? /p=(\d+)/.exec(location.hash) : null;
+        self.page = self.clamp(m ? +m[1] : (self.opts.page || 1));
         self.layout(true);
-        window.addEventListener('resize', function () { self.layout(); });
-        window.addEventListener('hashchange', function () {
+        self.on(window, 'resize', function () { self.layout(); });
+        if (self.opts.hash) self.on(window, 'hashchange', function () {
           var h = /p=(\d+)/.exec(location.hash);
           if (h && !self.isVisible(+h[1])) self.go(+h[1]);
         });
+        self.emit('ready', { pageCount: self.N, title: data.title });
+        self.emit('page', { page: self.visible()[0], pages: self.visible() });
       })
       .catch(function (e) {
         self.root.innerHTML = '<p class="fb-error">' + self.t.error + '</p>';
-        console.error('[flipbook]', e);
+        console.error('[flippy]', e);
+        self.emit('error', { error: e });
       });
+  };
+
+  // listeners on window/document are tracked so destroy() can remove them
+  Flipbook.prototype.on = function (target, type, fn, cap) {
+    target.addEventListener(type, fn, cap);
+    this._off.push(function () { target.removeEventListener(type, fn, cap); });
+  };
+  // events on the viewer element: flippy:ready, flippy:page, flippy:link, flippy:error
+  Flipbook.prototype.emit = function (name, detail) {
+    try { this.root.dispatchEvent(new CustomEvent('flippy:' + name, { detail: detail, bubbles: true })); } catch (e) { /* old browsers */ }
+  };
+  // remove the viewer and everything it attached to the page
+  Flipbook.prototype.destroy = function () {
+    this.destroyed = true;
+    this._off.forEach(function (f) { f(); });
+    this._off = [];
+    clearTimeout(this._toast);
+    instances.splice(instances.indexOf(this), 1);
+    this.root.innerHTML = '';
+    this.root.classList.remove('fb');
+    delete this.root.flippy;
   };
 
   // catalogue.json over http(s); catalogue.js when opened from disk, where browsers block fetch()
@@ -133,6 +205,7 @@
   Flipbook.prototype.build = function () {
     var t = this.t, self = this;
     this.root.innerHTML = '';
+    if (this.opts.theme) this.root.dataset.theme = this.opts.theme;
 
     this.stage = el('div', 'fb-stage');
     this.book = el('div', 'fb-book');
@@ -179,7 +252,7 @@
       self.menu.append(it);
     });
     var btnColor = this.button('palette', t.linkColor, function (e) { e.stopPropagation(); self.menu.classList.toggle('open'); });
-    document.addEventListener('click', function (e) { if (!self.menu.contains(e.target)) self.menu.classList.remove('open'); });
+    this.on(document, 'click', function (e) { if (!self.menu.contains(e.target)) self.menu.classList.remove('open'); });
     var btnGrid = this.button('grid', t.pages, function () { self.openGrid(); });
     this.btnSound = this.button(this.sound.on ? 'sound' : 'mute', t.sound, function () { self.toggleSound(); });
     var btnZoom = this.button('zoom', t.zoom, function () { self.openZoom(); });
@@ -213,8 +286,9 @@
     this.sound.fetchAll();                 // download the sounds now; decoding waits for the first tap
     var unlock = function () { self.sound.unlock(); };
     this.root.addEventListener('pointerdown', unlock, true);
-    document.addEventListener('keydown', unlock, true);
-    if (!this.learned) setTimeout(function () { if (!self.learned) self.showHint(); }, 900);
+    this.root.addEventListener('pointerdown', function () { lastUsed = self; }, true);
+    this.on(document, 'keydown', unlock, true);
+    if (!this.learned) setTimeout(function () { if (!self.learned && !self.destroyed) self.showHint(); }, 900);
   };
 
   Flipbook.prototype.button = function (icon, label, fn) {
@@ -557,7 +631,8 @@
   Flipbook.prototype.setPage = function (n) {
     this.page = n;
     this.updateUi();
-    if (history.replaceState) history.replaceState(null, '', '#p=' + this.visible()[0]);
+    if (this.opts.hash && history.replaceState) history.replaceState(null, '', '#p=' + this.visible()[0]);
+    this.emit('page', { page: this.visible()[0], pages: this.visible() });
     this.preload();
   };
 
@@ -771,7 +846,9 @@
     var url = this.productUrl(link.url);
     var u = new URL(url, location.href);
     try {
-      window.dispatchEvent(new CustomEvent('flippy:link', { detail: { url: url, page: fromPage, kind: link.kind, catalogue: this.data.title, src: this.base } }));
+      var detail = { url: url, page: fromPage, kind: link.kind, catalogue: this.data.title, src: this.base };
+      this.emit('link', detail);                              // on the viewer element (bubbles)
+      window.dispatchEvent(new CustomEvent('flippy:link', { detail: detail }));   // and on window, for site-wide analytics
       if (typeof window.gtag === 'function') window.gtag('event', 'catalogue_link', { link_url: url, page_number: fromPage, link_kind: link.kind });
     } catch (e) { /* analytics must never break navigation */ }
 
@@ -875,8 +952,10 @@
 
   Flipbook.prototype.bindKeys = function () {
     var self = this;
-    document.addEventListener('keydown', function (e) {
-      if (e.target && e.target.tagName === 'INPUT') return;
+    this.on(document, 'keydown', function (e) {
+      if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
+      // with several viewers on a page, the keys go to the one last clicked (or the only one)
+      if (instances.length > 1 && lastUsed !== self && !self.root.contains(document.activeElement)) return;
       if (e.key === 'Escape') { self.closeModal(); self.grid.close(); self.zoom.close(); return; }
       if (self.modal.classList.contains('open')) return;
       if (e.key === 'ArrowRight' || e.key === 'PageDown') { self.next(); e.preventDefault(); }
@@ -886,38 +965,126 @@
     });
   };
 
-  /* ---------- boot ---------- */
+  /* ---------- public API, <flip-book> element, auto start ---------- */
 
-  // Every element with class "flippy" and a data-src becomes a viewer. Options
-  // (data attributes; the page URL can override the ones marked *):
-  //   data-src          catalogue folder, containing catalogue.json            (?c= a folder name under catalogues/)
-  //   data-lang         interface language: en, bg, ...                        (*?lang=)
-  //   data-link-color   link highlight: grey, red, blue, white                 (*?links=)
-  //   data-popup        "true": open links in an in-page popup (same site only, see README)  (*?popup=1)
-  //   data-pdf          "false": hide the PDF download button
-  //   data-set-title    "false": don't set document.title from the catalogue
-  //   data-title-suffix text added after the catalogue title in document.title
+  var instances = [], lastUsed = null;
+
+  function text(lang) {
+    var base = TEXT.en, t = TEXT[lang] || {}, out = {};
+    for (var k in base) out[k] = t[k] || base[k];
+    return out;
+  }
+
+  // load flippy.css from next to flippy.js, unless the page already has it
+  function ensureCss() {
+    if (!SCRIPT_URL || document.querySelector('link[data-flippy], link[rel="stylesheet"][href*="flippy"]')) return;
+    var l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = SCRIPT_URL.replace(/\.js(?=([?#]|$))/, '.css');
+    l.setAttribute('data-flippy', '');
+    document.head.appendChild(l);
+  }
+
+  function bool(v, def) { return v == null ? def : !(v === false || v === 'false' || v === '0'); }
+
+  // Flippy.mount(element, options) -> viewer instance
+  //   src (required), lang, theme ('dark'|'light'), linkColor, popup, pdf, sound, hint,
+  //   hash (sync #p=N with the address bar; default true), page (start page), setTitle, titleSuffix
+  function mount(root, o) {
+    o = o || {};
+    if (root.flippy) root.flippy.destroy();
+    var lang = (o.lang || document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
+    var fb = new Flipbook(root, {
+      src: o.src,
+      lang: lang,
+      theme: o.theme || null,
+      popup: bool(o.popup, false),
+      noPdf: !bool(o.pdf, true),
+      sound: bool(o.sound, true),
+      hint: bool(o.hint, false),
+      hash: bool(o.hash, true),
+      page: +o.page || 1,
+      linkColor: o.linkColor,
+      setTitle: bool(o.setTitle, false),
+      titleSuffix: o.titleSuffix || ''
+    });
+    root.classList.add('fb');
+    instances.push(fb);
+    ensureCss();
+    fb.init();
+    return fb;
+  }
+
+  function fromAttributes(get, q) {
+    return {
+      src: get('src'),
+      lang: q.get('lang') || get('lang'),
+      theme: get('theme'),
+      popup: q.get('popup') === '1' || get('popup'),
+      pdf: get('pdf'),
+      sound: get('sound'),
+      hint: q.get('hint') === '1' ? true : get('hint'),
+      hash: get('hash'),
+      page: get('page'),
+      linkColor: q.get('links') || get('link-color'),
+      setTitle: get('set-title'),
+      titleSuffix: get('title-suffix')
+    };
+  }
+
+  // <flip-book src="catalogues/spring/" lang="en" theme="light" link-color="blue"></flip-book>
+  if (window.customElements && !customElements.get('flip-book')) {
+    var FlipBookElement = function () { return Reflect.construct(HTMLElement, [], FlipBookElement); };
+    FlipBookElement.prototype = Object.create(HTMLElement.prototype);
+    FlipBookElement.prototype.constructor = FlipBookElement;
+    Object.setPrototypeOf(FlipBookElement, HTMLElement);
+    FlipBookElement.observedAttributes = ['src', 'lang', 'theme'];
+    FlipBookElement.prototype.connectedCallback = function () { this._mount(); };
+    FlipBookElement.prototype.disconnectedCallback = function () { if (this.flippy) this.flippy.destroy(); };
+    FlipBookElement.prototype.attributeChangedCallback = function (name, before, after) {
+      if (name === 'theme' && this.flippy) { if (after) this.dataset.theme = after; else delete this.dataset.theme; return; }
+      if (this.isConnected && before !== after && this._mounted) this._mount();
+    };
+    FlipBookElement.prototype._mount = function () {
+      var self = this;
+      if (!this.getAttribute('src')) return;
+      this._mounted = true;
+      mount(this, fromAttributes(function (k) { return self.getAttribute(k); }, new URLSearchParams(location.search)));
+    };
+    // Expose it for scripting: el.go(5), el.next(), el.prev()
+    ['go', 'next', 'prev'].forEach(function (m) {
+      FlipBookElement.prototype[m] = function (n) { if (this.flippy) this.flippy[m](n); };
+    });
+    customElements.define('flip-book', FlipBookElement);
+  }
+
+  // <div class="flippy" data-src="..."> also works (data-* versions of the same options).
+  // On a page that is only a viewer, ?c=NAME opens catalogues/NAME/.
   function boot() {
     var q = new URLSearchParams(location.search);
     document.querySelectorAll('.flippy').forEach(function (root) {
-      var src = root.dataset.src || (q.get('c') ? 'catalogues/' + q.get('c') + '/' : '');
-      if (!src) return;
-      var lang = q.get('lang') || root.dataset.lang || (document.documentElement.lang || 'en').slice(0, 2);
-      root.classList.add('fb');
-      new Flipbook(root, {
-        src: src,
-        lang: TEXT[lang] ? lang : 'en',
-        popup: q.get('popup') === '1' || root.dataset.popup === 'true',
-        noPdf: root.dataset.pdf === 'false',
-        hint: q.get('hint') === '1',
-        linkColor: q.get('links') || root.dataset.linkColor,
-        setTitle: root.dataset.setTitle !== 'false',
-        titleSuffix: root.dataset.titleSuffix || ''
-      }).init();
+      if (root.flippy) return;
+      var d = root.dataset;
+      var o = fromAttributes(function (k) {
+        var v = d[k.replace(/-(\w)/g, function (_, c) { return c.toUpperCase(); })];
+        return v === undefined ? null : v;
+      }, q);
+      o.src = o.src || (q.get('c') ? 'catalogues/' + q.get('c') + '/' : '');
+      if (o.setTitle == null) o.setTitle = true;     // a .flippy page is usually the catalogue's own page
+      if (o.src) mount(root, o);
     });
   }
 
-  window.Flippy = Flipbook;
+  var Flippy = {
+    version: '0.1.0',
+    mount: mount,
+    // Flippy.addLanguage('sv', { prev: 'Föregående', ... }) - missing texts fall back to English
+    addLanguage: function (code, strings) { TEXT[code] = strings; },
+    languages: function () { return Object.keys(TEXT); },
+    Viewer: Flipbook
+  };
+  window.Flippy = Flippy;
+  if (typeof module === 'object' && module.exports) module.exports = Flippy;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
