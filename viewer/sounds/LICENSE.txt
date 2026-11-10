@@ -1,0 +1,4 @@
+Page-flip sounds: "10 Book Page Flips" by StarNinjas
+https://opengameart.org/content/10-book-page-flips
+License: CC0 1.0 (public domain dedication) - no attribution required.
+Converted to mono MP3, leading silence trimmed, loudness evened out.
