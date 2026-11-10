@@ -30,10 +30,16 @@ python -m http.server 8080 &
 npm test
 ```
 
-Please run it before opening a pull request that touches the viewer.
+`tests/builder.js` runs the builder end to end with the demo catalogue: auto-linking,
+drawing, moving and resizing boxes, undo, preview, export, and reopening the zip
+(`npm run test:builder`).
+
+Please run them before opening a pull request.
 
 ## Guidelines
 
+- **The builder** (`builder/`) is plain ES modules with no build step. It loads pdf.js and
+  pdf-lib from jsDelivr at pinned versions; keep it working without a bundler.
 - **Keep the viewer dependency-free** and readable without a build step: plain
   ES5-style JavaScript that runs in current browsers.
 - **Test on a phone size**, not just desktop. Page turns, swipes and the toolbar must

@@ -1,4 +1,4 @@
-/*! flippy v0.1.0 | MIT licence | https://github.com/Bepce/flippy */
+/*! flippy v0.2.0 | MIT licence | https://github.com/Bepce/flippy */
 /* flippy — page-turning catalogue viewer. MIT licence.
    Everything is scoped to .fb (the viewer element), so it doesn't touch the rest of the page.
    Theme it by overriding these variables on .fb, flip-book or .flippy, e.g.

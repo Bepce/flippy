@@ -5,9 +5,12 @@ flipbook on your own website, with every product code linked to your shop.
 
 - **Paper-like page turns**, a soft page-flip sound, quick riffles when jumping
   pages, a folded corner to turn the page, swipe on phones.
-- **Links that live in the PDF.** `tools/add_links.py` finds the product codes
-  printed in your catalogue and writes real PDF links over them. The linked PDF
-  works in any PDF reader too.
+- **Make it in your browser.** The [builder](https://bepce.github.io/flippy/builder/)
+  finds the product codes printed in your PDF and links them to your shop. Fix
+  any box by hand, preview, and download a folder to upload. Nothing is uploaded
+  anywhere while you work.
+- **Links that live in the PDF.** The links are written into the PDF as well, so
+  the downloadable catalogue works in any PDF reader too.
 - **On your own domain, the cart keeps working.** Hosted flipbook services show
   your shop in a frame from *their* domain, where browsers drop your shop's
   cookies, so the cart and login break. Served from your site (or a subdomain),
@@ -15,12 +18,12 @@ flipbook on your own website, with every product code linked to your shop.
 - **One script, no framework.** About 16 kB gzipped. A `<flip-book>` element,
   a small JavaScript API, light and dark themes, 8 interface languages.
 
-**[Live demo →](https://bepce.github.io/flippy/)** · [Embedded in a page](https://bepce.github.io/flippy/examples/embed.html)
+**[Live demo →](https://bepce.github.io/flippy/)** · [Embedded in a page](https://bepce.github.io/flippy/examples/embed.html) · **[Builder →](https://bepce.github.io/flippy/builder/)**
 
 ## Quick start
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.1.0/dist/flippy.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.2.0/dist/flippy.min.js"></script>
 
 <flip-book src="/catalogues/spring-2026/"></flip-book>
 ```
@@ -47,7 +50,31 @@ The demo catalogue, *Hollowbrook Goods*, is an invented shop made for this proje
 
 ## Make your own catalogue
 
-You need Python 3 and [poppler](https://poppler.freedesktop.org/) (`pdftoppm`):
+### In the browser
+
+Open the **[builder](https://bepce.github.io/flippy/builder/)** (or `builder/` in your own copy):
+
+1. **Open your PDF.** The builder reads the pages and keeps any links already in it, such as a
+   clickable table of contents.
+2. **Link the product codes.** Say what a code looks like (`\d{6}` for six digits) and where codes
+   link to: a CSV of `code,url`, a product feed from your shop (Google Merchant XML works), or one
+   address pattern such as `https://your-shop.example/search?q={code}`. Press *Find and link codes*.
+   Codes without an address show as orange boxes and in the *Codes* list, where you can type one in.
+3. **Adjust by hand.** Drag on the page to draw a link, drag a box to move it, pull its handles to
+   resize, Delete to remove. A box can open an address or turn to a page. Ctrl+Z undoes.
+4. **Preview**, then **Export**. You get a zip with the catalogue folder. Upload it, and either link
+   to its `index.html` or embed it with `<flip-book src="/catalogues/your-folder/">`.
+
+Your work is saved in the browser as you go. To change a catalogue later, open its zip in the
+builder again.
+
+The builder needs a current browser (Chrome, Edge, Firefox or Safari). Safari can't save WebP
+images, so catalogues made there use JPEG pages, which the viewer handles the same way.
+
+### With the command line
+
+For automation, or catalogues with drawn swatch shapes the builder can't see, the Python tools do
+the same job. You need Python 3 and [poppler](https://poppler.freedesktop.org/) (`pdftoppm`):
 
 ```sh
 pip install -r tools/requirements.txt
@@ -136,6 +163,9 @@ document.querySelector('flip-book').go(12);
 // your own language (anything missing falls back to English)
 Flippy.addLanguage('sv', { prev: 'Föregående', next: 'Nästa', pages: 'Alla sidor' /* ... */ });
 
+// a catalogue you already have in memory (the builder's preview does this)
+Flippy.mount(el, { data: catalogueJson, resolve: path => myUrls[path] });
+
 // adjust product links on the fly, e.g. for a language path
 window.flippyLinkFilter = url => url.replace('/en/', '/de/');
 ```
@@ -174,7 +204,7 @@ are scoped to the viewer and don't affect the rest of your page.
 
 ## Updating
 
-Pin a version in the CDN URL (`@v0.1.0`). When you update your own copy, also raise the
+Pin a version in the CDN URL (`@v0.2.0`). When you update your own copy, also raise the
 `?v=` on the files: the viewer passes it on to the catalogue data, so returning visitors
 get the new files. See [CHANGELOG.md](CHANGELOG.md).
 
@@ -187,16 +217,17 @@ index.html              full-page demo
 examples/embed.html     the viewer inside an ordinary page, with the API and events
 examples/hollowbrook/   how the demo catalogue was made (source PDF, links.csv, make.js)
 catalogues/hollowbrook/ the built demo catalogue
+builder/                the builder (plain ES modules, no build step)
 tools/                  add_links.py, build.py (Python), build-dist.js (release build)
 docs/                   catalogue format
-tests/smoke.js          browser tests (desktop, phone, embedded, API)
+tests/                  browser tests: smoke.js (viewer), builder.js (builder end to end)
 ```
 
 ## Roadmap
 
 1. ~~Package the viewer~~ (0.1): CDN and npm, `<flip-book>`, API, themes, languages.
-2. **Builder in the browser**: upload a PDF, auto-link, edit link boxes by hand,
-   export. No Python needed.
+2. ~~Builder in the browser~~ (0.2): open a PDF, auto-link, edit link boxes by hand,
+   preview, export. No Python needed.
 3. **Optional server**: catalogue library, logins, publishing, click statistics
    (Docker).
 4. **Plugins**: WordPress first.

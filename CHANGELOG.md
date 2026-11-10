@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.0 (2026-11-10)
+
+The builder: make a catalogue in the browser, no Python needed.
+
+- **[Builder](https://bepce.github.io/flippy/builder/)**: open a PDF, link product codes from a CSV,
+  a shop product feed (Google Merchant XML) or an address pattern, adjust boxes by hand (draw, move,
+  resize, delete, undo), preview the flipbook, export the catalogue folder as a zip
+- Exports carry the links in the PDF too, an `index.html` that opens the catalogue on its own, and
+  a project file so the zip can be opened in the builder again
+- Projects are saved in the browser as you work; nothing is uploaded
+- Viewer: `Flippy.mount(el, { data, resolve })` shows a catalogue held in memory
+- Viewer: `images` in catalogue.json for JPEG page images (`"images": "jpg"`); WebP stays the default
+- Viewer: re-measures when its box changes size, not only when the window does (fixes a blank book
+  when the stylesheet loads late or the viewer starts hidden)
+
 ## 0.1.0 (2026-11-10)
 
 First release.

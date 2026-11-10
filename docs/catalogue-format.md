@@ -1,7 +1,7 @@
 # Catalogue format
 
-A catalogue is a folder the viewer loads with `data-src`. `tools/build.py` writes it
-from a PDF:
+A catalogue is a folder the viewer loads with `src`. The [builder](../builder/) or
+`tools/build.py` writes it from a PDF:
 
 ```
 catalogue.json      pages and links (the viewer reads this)
@@ -36,6 +36,7 @@ thumbs/001.webp ... one image per page, 300 px tall, for the page grid
 |---|---|
 | `title` | shown in the toolbar and, unless switched off, the page title |
 | `pdf` | file name of the PDF in the folder, for the download button |
+| `images` | `webp` (default) or `jpg`: the format of the page images |
 | `aspect` | page width ÷ height (all pages are shown at this ratio) |
 | `pageCount` | number of pages; `pages` has one entry per page, in order |
 | `pages[].n` | page number, starting at 1 |
@@ -50,8 +51,10 @@ corner, so it doesn't depend on image size:
 | `w`, `h` | width and height |
 | `url` | open this address (a product page), **or** |
 | `page` | turn to this page number |
-| `kind` | where the link came from: `swatch` (added by `add_links.py`) or `link` (already in the PDF). Informational only. |
+| `kind` | where the link came from: `swatch`, `row` or `text` (a product code that was linked), `box` (drawn by hand in the builder) or `link` (already in the PDF). Informational only. |
 
-The links are copied from the PDF's link annotations, so the PDF is the source of
-truth: to change links, change the PDF (or `links.csv`) and run `build.py` again,
-with `--skip-render` to keep the page images.
+With the Python tools, the links are copied from the PDF's link annotations, so the PDF
+is the source of truth: to change links, change the PDF (or `links.csv`) and run
+`build.py` again, with `--skip-render` to keep the page images. The builder writes the
+same links into catalogue.json and the PDF, and adds `flippy-project.json` (codes and
+settings) so it can open the folder's zip again. The viewer doesn't need that file.

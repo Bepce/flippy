@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>flippy builder</title>
+  <meta name="description" content="Turn a PDF catalogue into a flipbook with product links, in your browser.">
+  <link rel="stylesheet" href="../dist/flippy.min.css?v=0.2.0">
+  <link rel="stylesheet" href="builder.css?v=0.2.0">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./" title="All projects"><span class="mark" aria-hidden="true"></span>flippy <b>builder</b></a>
+    <div class="doc" hidden>
+      <input id="title" class="title" aria-label="Catalogue title" placeholder="Catalogue title" spellcheck="false">
+      <span id="saved" class="saved" aria-live="polite"></span>
+    </div>
+    <div class="actions" hidden>
+      <button id="undo" class="icon" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg viewBox="0 0 24 24"><path d="M9 7H4V2M4.5 7A8 8 0 1 1 4 13"/></svg></button>
+      <button id="redo" class="icon" title="Redo (Ctrl+Shift+Z)" aria-label="Redo" disabled><svg viewBox="0 0 24 24"><path d="M15 7h5V2M19.5 7A8 8 0 1 0 20 13"/></svg></button>
+      <button id="preview" class="ghost">Preview</button>
+      <button id="export" class="primary">Export</button>
+    </div>
+  </header>
+
+  <!-- start: open a PDF, a zip, or a saved project -->
+  <main id="start" class="start">
+    <section class="intro">
+      <h1>Turn a PDF catalogue into a flipbook with product links</h1>
+      <p>Drop in your catalogue. The builder finds the product codes printed on the pages and
+        links each one to your shop. Adjust the boxes by hand, preview the flipbook, and export
+        a folder to upload to your website.</p>
+      <p class="private">Everything happens in this browser tab. Your PDF isn't uploaded anywhere.</p>
+    </section>
+    <label id="drop" class="drop" tabindex="0">
+      <input id="file" type="file" accept=".pdf,.zip,application/pdf,application/zip" hidden>
+      <span class="drop-icon" aria-hidden="true"></span>
+      <strong>Drop a PDF here, or choose a file</strong>
+      <span>A catalogue PDF, or a zip exported from this builder to keep editing it</span>
+    </label>
+    <p class="demo-line">No catalogue at hand? <button id="demo" class="link">Try the demo catalogue</button></p>
+    <section id="recent" class="recent" hidden>
+      <h2>Your projects</h2>
+      <p class="muted">Saved in this browser.</p>
+      <ul id="projects"></ul>
+    </section>
+  </main>
+
+  <!-- editor -->
+  <main id="editor" class="editor" hidden>
+    <nav class="thumbs" id="thumbs" aria-label="Pages"></nav>
+
+    <section class="stage-wrap">
+      <div class="stage-bar">
+        <button id="prev" class="icon" aria-label="Previous page" title="Previous page (Page Up)"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span id="pageno" class="pageno"></span>
+        <button id="next" class="icon" aria-label="Next page" title="Next page (Page Down)"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+        <span class="sep"></span>
+        <div class="seg" role="group" aria-label="Zoom">
+          <button data-zoom="page" class="on">Fit</button><button data-zoom="width">Width</button><button data-zoom="2">200%</button>
+        </div>
+        <span class="tip">Drag on the page to draw a link · drag a box to move it · Delete removes it</span>
+      </div>
+      <div class="stage" id="stage"><div class="sheet" id="sheet"><img id="pageimg" alt=""></div></div>
+    </section>
+
+    <aside class="side">
+      <section class="panel" id="inspector">
+        <h2>Selected link</h2>
+        <p class="muted empty">Click a box to edit it, or drag on the page to draw a new one.</p>
+        <div class="fields" hidden>
+          <div class="seg wide" role="group" aria-label="Link goes to">
+            <button data-target="url" class="on">Web address</button><button data-target="page">Page</button>
+          </div>
+          <label class="f f-url">Address<input id="l-url" type="url" placeholder="https://your-shop.example/product" spellcheck="false"></label>
+          <label class="f f-page" hidden>Turn to page<input id="l-page" type="number" min="1" step="1"></label>
+          <label class="f">Code <span class="muted">(optional, for the list below)</span><input id="l-code" spellcheck="false"></label>
+          <div class="row">
+            <a id="l-open" class="btn ghost small" target="_blank" rel="noopener">Open</a>
+            <button id="l-dup" class="ghost small" title="Ctrl+D">Duplicate</button>
+            <button id="l-del" class="danger small" title="Delete">Delete</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="auto">
+        <h2>Link product codes</h2>
+        <label class="f">What a code looks like
+          <input id="pattern" value="\d{6}" spellcheck="false" aria-describedby="pattern-help">
+        </label>
+        <p id="pattern-help" class="help">A regular expression. <code>\d{6}</code> is six digits; <code>[A-Z]{2}-\d{4}</code> is AB-1234.</p>
+        <fieldset class="f">
+          <legend>Where codes link to</legend>
+          <label class="radio"><input type="radio" name="source" value="table" checked> A list of codes and addresses</label>
+          <div class="src src-table">
+            <div class="row">
+              <label class="btn ghost small">Choose file<input id="table-file" type="file" accept=".csv,.tsv,.txt,.xml,text/csv,text/xml" hidden></label>
+              <span id="table-name" class="muted small-text">CSV, or a Google Merchant / shop product feed</span>
+            </div>
+            <textarea id="table" rows="4" placeholder="code,url&#10;300101,https://your-shop.example/products/mug?colour=sage" spellcheck="false"></textarea>
+          </div>
+          <label class="radio"><input type="radio" name="source" value="template"> One address pattern for every code</label>
+          <div class="src src-template" hidden>
+            <input id="template" placeholder="https://your-shop.example/search?q={code}" spellcheck="false">
+            <p class="help"><code>{code}</code> is replaced by each code.</p>
+          </div>
+        </fieldset>
+        <label class="f">Campaign name for analytics <span class="muted">(optional)</span>
+          <input id="utm" placeholder="spring-2026" spellcheck="false">
+        </label>
+        <button id="run" class="primary wide">Find and link codes</button>
+        <p id="result" class="result" aria-live="polite"></p>
+      </section>
+
+      <section class="panel grow" id="codes" hidden>
+        <h2>Codes <span id="codes-count" class="count"></span></h2>
+        <div class="seg wide" role="group" aria-label="Show">
+          <button data-filter="missing" class="on">Need an address</button><button data-filter="all">All</button>
+        </div>
+        <ul id="code-list" class="codes"></ul>
+      </section>
+    </aside>
+  </main>
+
+  <!-- busy -->
+  <div id="busy" class="overlay" hidden>
+    <div class="card busy-card" role="status">
+      <strong id="busy-text">Reading the PDF</strong>
+      <div class="bar"><i id="busy-bar"></i></div>
+      <span id="busy-sub" class="muted"></span>
+    </div>
+  </div>
+
+  <!-- preview -->
+  <div id="pv" class="overlay pv" hidden>
+    <div class="pv-bar"><strong>Preview</strong><span class="muted">This is how visitors will see it.</span><button id="pv-close" class="ghost">Close</button></div>
+    <div id="pv-book" class="pv-book"></div>
+  </div>
+
+  <!-- export -->
+  <dialog id="ex" class="card ex">
+    <form method="dialog">
+      <h2>Export</h2>
+      <p id="ex-summary" class="muted"></p>
+      <p id="ex-warn" class="warn" hidden></p>
+      <label class="f">Folder name<input id="ex-folder" spellcheck="false" pattern="[a-z0-9\-]+"></label>
+      <div class="ex-buttons">
+        <button id="ex-zip" class="primary" value="zip" type="button">Download catalogue (.zip)</button>
+        <button id="ex-pdf" class="ghost" value="pdf" type="button">Linked PDF only</button>
+      </div>
+      <details class="how">
+        <summary>Putting it on your website</summary>
+        <ol>
+          <li>Unzip and upload the folder to your site, for example to <code>/catalogues/</code>.
+            It already has an <code>index.html</code> you can link to directly.</li>
+          <li>Or show it inside any page:
+            <pre id="ex-snippet"></pre>
+            <button id="ex-copy" class="ghost small" type="button">Copy</button></li>
+          <li>To make changes later, open the zip here again.</li>
+        </ol>
+      </details>
+      <div class="ex-close"><button value="close" class="ghost">Close</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="../dist/flippy.min.js?v=0.2.0"></script>
+  <script type="module" src="app.js?v=0.2.0"></script>
+</body>
+</html>

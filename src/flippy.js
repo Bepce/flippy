@@ -133,7 +133,7 @@
     var self = this;
     // relative to the page unless data-base is set (an empty base must stay relative, not become "/")
     // data-src: the catalogue folder (relative to the page or absolute)
-    this.base = this.opts.src.replace(/\/?$/, '/');
+    this.base = (this.opts.src || '').replace(/\/?$/, '/');
     return this.load()
       .then(function (data) {
         self.data = data;
@@ -147,6 +147,13 @@
         self.page = self.clamp(m ? +m[1] : (self.opts.page || 1));
         self.layout(true);
         self.on(window, 'resize', function () { self.layout(); });
+        // also when the box changes size without a window resize: the stylesheet arriving late,
+        // a container that was hidden, a sidebar opening next to it
+        if (window.ResizeObserver) {
+          var ro = new ResizeObserver(function () { if (!self.destroyed) self.layout(); });
+          ro.observe(self.stage);
+          self._off.push(function () { ro.disconnect(); });
+        }
         if (self.opts.hash) self.on(window, 'hashchange', function () {
           var h = /p=(\d+)/.exec(location.hash);
           if (h && !self.isVisible(+h[1])) self.go(+h[1]);
@@ -183,7 +190,17 @@
   };
 
   // catalogue.json over http(s); catalogue.js when opened from disk, where browsers block fetch()
+  // URLs of the catalogue's files. opts.resolve(path) can map them elsewhere (the builder's
+  // preview passes in-memory blob URLs); data.images says the page image format.
+  Flipbook.prototype.fileUrl = function (path) {
+    return this.opts.resolve ? this.opts.resolve(path) : this.base + path;
+  };
+  Flipbook.prototype.pageUrl = function (n, thumb) {
+    return this.fileUrl((thumb ? 'thumbs/' : 'pages/') + pad3(n) + '.' + ((this.data && this.data.images) || 'webp'));
+  };
+
   Flipbook.prototype.load = function () {
+    if (this.opts.data) return Promise.resolve(this.opts.data);       // catalogue passed in directly
     var self = this, slug = this.base.replace(/\/$/, '').split('/').pop();
     function viaScript() {
       return new Promise(function (resolve, reject) {
@@ -259,7 +276,7 @@
     btnZoom.classList.add('fb-hide-sm');     // phones pinch-zoom instead
     var pdf = el('a', 'fb-btn fb-hide-sm', svg('pdf'));
     if (this.opts.noPdf) pdf.hidden = true;
-    pdf.href = this.base + this.data.pdf; pdf.download = ''; pdf.title = t.pdf; pdf.setAttribute('aria-label', t.pdf);
+    pdf.href = this.fileUrl(this.data.pdf); if (!this.data.pdf) pdf.hidden = true; pdf.download = ''; pdf.title = t.pdf; pdf.setAttribute('aria-label', t.pdf);
     var btnFull = this.button('full', t.full, function () { self.toggleFullscreen(); });
     btnFull.classList.add('fb-hide-sm');
     if (!document.fullscreenEnabled) btnFull.hidden = true;
@@ -320,7 +337,7 @@
     img.decoding = 'async';
     img.draggable = false;
     img.onload = function () { shim.remove(); };
-    img.src = this.base + (opts && opts.thumb ? 'thumbs/' : 'pages/') + pad3(n) + '.webp';
+    img.src = this.pageUrl(n, opts && opts.thumb);
     if (img.complete) shim.remove();
     p.append(shim, img);
     if (!(opts && opts.noLinks)) {
@@ -406,7 +423,7 @@
     var self = this, urls = [], seen = {};
     function add(n, thumb) {
       if (!n || n < 1 || n > self.N) return;
-      var u = self.base + (thumb ? 'thumbs/' : 'pages/') + pad3(n) + '.webp';
+      var u = self.pageUrl(n, thumb);
       if (!seen[u]) { seen[u] = 1; urls.push(u); }
     }
     (this.single ? [target] : this.spread(target)).forEach(function (n) { add(n, false); });
@@ -655,9 +672,9 @@
     // the flap casts a soft shadow onto the page underneath, along the fold
     var shade = function (dir) { return 'linear-gradient(to ' + dir + ', transparent 45%, rgba(0,0,0,.28) 50%), '; };
     this.cornerNext.querySelector('.u').style.backgroundImage = nextPage && nextPage <= this.N
-      ? shade('top left') + 'url("' + this.base + 'pages/' + pad3(nextPage) + '.webp")' : '';
+      ? shade('top left') + 'url("' + this.pageUrl(nextPage) + '")' : '';
     this.cornerPrev.querySelector('.u').style.backgroundImage = prevPage && prevPage >= 1
-      ? shade('top right') + 'url("' + this.base + 'pages/' + pad3(prevPage) + '.webp")' : '';
+      ? shade('top right') + 'url("' + this.pageUrl(prevPage) + '")' : '';
     if (!this.single) {
       var s = this.spread(this.page);
       this.book.classList.toggle('is-cover', !s[0]);
@@ -679,7 +696,7 @@
     var v = this.visible(), self = this;
     for (var d = 1; d <= 3; d++) {
       [v[0] - d, v[v.length - 1] + d].forEach(function (n) {
-        if (n >= 1 && n <= self.N) { var i = new Image(); i.src = self.base + 'pages/' + pad3(n) + '.webp'; }
+        if (n >= 1 && n <= self.N) { var i = new Image(); i.src = self.pageUrl(n); }
       });
     }
   };
@@ -881,7 +898,7 @@
       var wrap = el('div', 'fb-grid');
       for (var n = 1; n <= this.N; n++) (function (n) {
         var b = el('button', 'fb-thumb');
-        var img = new Image(); img.loading = 'lazy'; img.alt = ''; img.src = self.base + 'thumbs/' + pad3(n) + '.webp';
+        var img = new Image(); img.loading = 'lazy'; img.alt = ''; img.src = self.pageUrl(n, true);
         b.append(img, document.createTextNode(String(n)));
         b.dataset.n = n;
         b.onclick = function () { g.close(); self.go(n); };
@@ -989,7 +1006,8 @@
 
   // Flippy.mount(element, options) -> viewer instance
   //   src (required), lang, theme ('dark'|'light'), linkColor, popup, pdf, sound, hint,
-  //   hash (sync #p=N with the address bar; default true), page (start page), setTitle, titleSuffix
+  //   hash (sync #p=N with the address bar; default true), page (start page), setTitle, titleSuffix,
+  //   data + resolve (show a catalogue held in memory, e.g. blob URLs)
   function mount(root, o) {
     o = o || {};
     if (root.flippy) root.flippy.destroy();
@@ -1006,7 +1024,9 @@
       page: +o.page || 1,
       linkColor: o.linkColor,
       setTitle: bool(o.setTitle, false),
-      titleSuffix: o.titleSuffix || ''
+      titleSuffix: o.titleSuffix || '',
+      data: o.data || null,          // a catalogue object instead of loading src/catalogue.json
+      resolve: o.resolve || null     // function (path) -> URL, for catalogues not on a server
     });
     root.classList.add('fb');
     instances.push(fb);
@@ -1076,7 +1096,7 @@
   }
 
   var Flippy = {
-    version: '0.1.0',
+    version: '0.2.0',
     mount: mount,
     // Flippy.addLanguage('sv', { prev: 'Föregående', ... }) - missing texts fall back to English
     addLanguage: function (code, strings) { TEXT[code] = strings; },
