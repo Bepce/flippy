@@ -239,7 +239,7 @@
     this.slotR = el('div', 'fb-slot right');
     this.book.append(this.slotL, this.slotR);
     // folded corners: bottom-right turns forward, bottom-left (left page) turns back
-    var peel = '<span class="fb-peel"><span class="u"></span><span class="f"></span></span>';
+    var peel = '<span class="fb-peel"><span class="u"></span><span class="f"><i hidden></i></span></span>';
     this.cornerNext = el('button', 'fb-corner next', peel);
     this.cornerPrev = el('button', 'fb-corner prev', peel);
     this.cornerNext.setAttribute('aria-label', t.next); this.cornerPrev.setAttribute('aria-label', t.prev);
@@ -743,19 +743,27 @@
     this.cornerNext.hidden = atEnd;
     // back corner sits on the left page; on phones (one page) the bottom-left of that page
     this.cornerPrev.hidden = atStart;
-    // what the lifted corners reveal: the page that will be on that side after turning
-    var nextPage, prevPage;
-    if (this.single) { nextPage = v[0] + 1; prevPage = v[0] - 1; }
+    // A lifted corner shows two pages: under the fold, the page that will be on that side after
+    // the turn; on the flap, the back of the sheet (the page landing on the other side).
+    //   forward: under = next spread's right page, flap = its left page
+    //   back:    under = previous spread's left page, flap = its right page
+    // On the first and last spread one of them is missing: there the book's background shows.
+    var under = {}, flap = {};
+    if (this.single) { under.next = v[0] + 1; under.prev = v[0] - 1; }
     else {
       var nx = this.spread(v[v.length - 1] + 1), pv = this.spread(v[0] - 1);
-      nextPage = nx[1] || nx[0]; prevPage = pv[0] || pv[1];
+      under.next = nx[1]; flap.next = nx[0];
+      under.prev = pv[0]; flap.prev = pv[1];
     }
-    // the flap casts a soft shadow onto the page underneath, along the fold
-    var shade = function (dir) { return 'linear-gradient(to ' + dir + ', transparent 45%, rgba(0,0,0,.28) 50%), '; };
-    this.cornerNext.querySelector('.u').style.backgroundImage = nextPage && nextPage <= this.N
-      ? shade('top left') + 'url("' + this.pageUrl(nextPage) + '")' : '';
-    this.cornerPrev.querySelector('.u').style.backgroundImage = prevPage && prevPage >= 1
-      ? shade('top right') + 'url("' + this.pageUrl(prevPage) + '")' : '';
+    var self = this, ok = function (n) { return n >= 1 && n <= self.N; };
+    [['next', this.cornerNext, 'top left'], ['prev', this.cornerPrev, 'top right']].forEach(function (c) {
+      var u = c[1].querySelector('.u'), f = c[1].querySelector('.f i'), n = under[c[0]], m = flap[c[0]];
+      // the flap casts a soft shadow onto the page underneath, along the fold
+      u.style.backgroundImage = ok(n) ? 'linear-gradient(to ' + c[2] + ', transparent 45%, rgba(0,0,0,.28) 50%), url("' + self.pageUrl(n) + '")' : '';
+      u.classList.toggle('empty', !ok(n));
+      f.hidden = !ok(m);
+      f.style.backgroundImage = ok(m) ? 'url("' + self.pageUrl(m) + '")' : '';
+    });
     if (!this.single) {
       var s = this.spread(this.page);
       this.book.classList.toggle('is-cover', !s[0]);

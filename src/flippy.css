@@ -328,6 +328,16 @@
                      background: linear-gradient(to bottom right, #fdfdfd 0%, #eef0f2 32%, #ccd0d5 48%, #a9aeb5 50%); }
 .fb-corner.prev .f { clip-path: polygon(0 0, 100% 0, 100% 100%);
                      background: linear-gradient(to bottom left, #fdfdfd 0%, #eef0f2 32%, #ccd0d5 48%, #a9aeb5 50%); }
+/* the back of the page on the flap: placed so the page's corner is the flap's tip, turned and
+   mirrored as a folded sheet would be; a little shade deepens towards the crease */
+.fb-peel .u.empty { background: var(--fb-bg-2); }
+.fb-peel .f i { position: absolute; left: 0; top: 0; width: var(--fb-pw); height: var(--fb-ph); transform-origin: 0 0;
+                background: #fff no-repeat 0 0 / 100% 100%; }
+.fb-corner.next .f i { transform: translate(var(--fb-ph), 0) rotate(90deg); }
+.fb-corner.prev .f i { left: 100%; transform: translate(calc(var(--fb-ph) * -1), var(--fb-pw)) rotate(-90deg); }
+.fb-peel .f::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+.fb-corner.next .f::after { background: linear-gradient(to bottom right, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 22%, rgba(0,0,0,.06) 38%, rgba(0,0,0,.28) 50%); }
+.fb-corner.prev .f::after { background: linear-gradient(to bottom left, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 22%, rgba(0,0,0,.06) 38%, rgba(0,0,0,.28) 50%); }
 @media (hover: none) { .fb-peel { display: none; } }
 @media (prefers-reduced-motion: reduce) { .fb-peel { transition: none; } }
 

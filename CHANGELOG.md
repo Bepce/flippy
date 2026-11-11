@@ -8,6 +8,9 @@
 - Builder: swatch boxes start just above the colour dot (found in the PDF's drawing), end under
   the colour name, share one width along a row and keep an even gap; a code under a product
   photo gets the whole photo in its box. Name and photo linking is off by default
+- Viewer: a lifted corner shows the real pages: the flap is the back of the sheet (the page that
+  lands on the other side), and underneath is the page that will be on that side. On the first
+  and last spread, where one of them doesn't exist, the background shows instead of white
 - Viewer: the search button opens a search view (focused box, results); buttons meant to be
   hidden (search without page text, PDF without a PDF) really are
 - Builder: a short name printed right above a code (one product per label, like a range of
