@@ -2,7 +2,7 @@
 // Configuration, database, requests and responses.
 declare(strict_types=1);
 
-const FLIPPY_VERSION = '0.3.0';
+const FLIPPY_VERSION = '0.3.1';
 
 // Windows PHP leaves mbstring off by default; these stand in for the two functions used here
 if (!function_exists('mb_strlen')) {

@@ -26,7 +26,7 @@ flipbook on your own website, with every product code linked to your shop.
 ## Quick start
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.3.0/dist/flippy.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.3.1/dist/flippy.min.js"></script>
 
 <flip-book src="/catalogues/spring-2026/"></flip-book>
 ```
@@ -228,7 +228,7 @@ are scoped to the viewer and don't affect the rest of your page.
 
 ## Updating
 
-Pin a version in the CDN URL (`@v0.3.0`). When you update your own copy, also raise the
+Pin a version in the CDN URL (`@v0.3.1`). When you update your own copy, also raise the
 `?v=` on the files: the viewer passes it on to the catalogue data, so returning visitors
 get the new files. See [CHANGELOG.md](CHANGELOG.md).
 

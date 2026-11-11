@@ -3,7 +3,7 @@
 import { zip } from './zip.js';
 
 const PDFLIB = 'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.esm.min.js';
-export const VIEWER_CDN = 'https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.3.0/dist/';
+export const VIEWER_CDN = 'https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.3.1/dist/';
 
 const r4 = v => Math.round(v * 10000) / 10000;
 const pad3 = n => String(n).padStart(3, '0');

@@ -1,7 +1,17 @@
 // Reading a PDF in the browser: page images, words and the links already in it.
 import { wordsFromText } from './linker.js';
 
-export const PDFJS = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@6.2.108/build/';
+const PDFJS_ROOT = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@6.2.108/';
+export const PDFJS = PDFJS_ROOT + 'build/';
+// decoders and data pdf.js loads on demand: JPEG 2000 and JBIG2 images (common in print PDFs),
+// colour profiles, fonts that aren't embedded, and character maps for CJK text
+const PDF_OPTIONS = {
+  wasmUrl: PDFJS_ROOT + 'wasm/',
+  iccUrl: PDFJS_ROOT + 'iccs/',
+  standardFontDataUrl: PDFJS_ROOT + 'standard_fonts/',
+  cMapUrl: PDFJS_ROOT + 'cmaps/',
+  cMapPacked: true
+};
 let lib = null;
 export async function pdfjs() {
   if (!lib) {
@@ -38,7 +48,7 @@ function shrink(src, h) {
 // Returns { pageCount, pages: [{ w, h, words, links }], images: { type, pages: [Blob], thumbs: [Blob] }, title }
 export async function readPdf(bytes, { render = true, onProgress = () => {} } = {}) {
   const pdf = await pdfjs();
-  const task = pdf.getDocument({ data: bytes.slice(), isEvalSupported: false });
+  const task = pdf.getDocument({ data: bytes.slice(), isEvalSupported: false, ...PDF_OPTIONS });
   const doc = await task.promise;
   const meta = await doc.getMetadata().catch(() => null);
   const n = doc.numPages, pages = [], imgs = [], thumbs = [];

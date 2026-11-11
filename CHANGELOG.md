@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1 (2026-11-11)
+
+- Builder: photos stored as JPEG 2000 (common in PDFs from InDesign and print workflows) were
+  missing from the pages. The builder now loads pdf.js's image decoders, colour profiles and
+  font data.
+- Server: works without PHP's mbstring extension, which is off by default on Windows (creating
+  the first account failed)
+
 ## 0.3.0 (2026-11-11)
 
 The optional server: a catalogue library on your own site.

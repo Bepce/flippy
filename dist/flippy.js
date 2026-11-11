@@ -1,4 +1,4 @@
-/*! flippy v0.3.0 | MIT licence | https://github.com/Bepce/flippy */
+/*! flippy v0.3.1 | MIT licence | https://github.com/Bepce/flippy */
 /*!
  * flippy — a page-turning catalogue viewer. Plain JavaScript, no dependencies. MIT licence.
  *
@@ -1125,7 +1125,7 @@
   }
 
   var Flippy = {
-    version: '0.3.0',
+    version: '0.3.1',
     mount: mount,
     // Flippy.addLanguage('sv', { prev: 'Föregående', ... }) - missing texts fall back to English
     addLanguage: function (code, strings) { TEXT[code] = strings; },
