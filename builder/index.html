@@ -57,7 +57,13 @@
         <button id="next" class="icon" aria-label="Next page" title="Next page (Page Down)"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
         <span class="sep"></span>
         <div class="seg" role="group" aria-label="Zoom">
-          <button data-zoom="page" class="on">Fit</button><button data-zoom="width">Width</button><button data-zoom="2">200%</button>
+          <button data-zoom="page" class="on" title="Whole page (Ctrl+0)">Fit</button><button data-zoom="width" title="Page width">Width</button>
+        </div>
+        <div class="zoom" role="group" aria-label="Zoom level">
+          <button id="zoom-out" class="icon sm" aria-label="Zoom out" title="Zoom out (Ctrl −)"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+          <input id="zoom" type="range" min="50" max="400" step="5" value="100" aria-label="Zoom">
+          <button id="zoom-in" class="icon sm" aria-label="Zoom in" title="Zoom in (Ctrl +, or Ctrl + scroll)"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></button>
+          <output id="zoom-val" for="zoom">100%</output>
         </div>
         <span class="tip">Drag on the page to draw a link · drag a box to move it · Delete removes it</span>
       </div>

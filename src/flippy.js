@@ -11,7 +11,7 @@
   // Interface text. Add a language by copying the "en" block; choose it with data-lang.
   var TEXT = {
     en: {
-      prev: 'Previous', next: 'Next', pages: 'All pages', links: 'Show links', zoom: 'Zoom',
+      first: 'First page', last: 'Last page', prev: 'Previous', next: 'Next', pages: 'All pages', links: 'Show links', zoom: 'Zoom',
       pdf: 'Download PDF', full: 'Full screen', close: 'Close', product: 'Product', newTab: 'Open in new tab',
       hint: 'Tap a product to open it', page: 'Page', of: 'of',
       swipe: 'Swipe to turn the page', click: 'Click the page edge or use ← →', sound: 'Sound',
@@ -19,7 +19,7 @@
       openProduct: 'Open product', goTo: 'Go to page', error: 'The catalogue could not be loaded.'
     },
     de: {
-      prev: 'Zurück', next: 'Weiter', pages: 'Alle Seiten', links: 'Links anzeigen', zoom: 'Vergrößern',
+      first: 'Erste Seite', last: 'Letzte Seite', prev: 'Zurück', next: 'Weiter', pages: 'Alle Seiten', links: 'Links anzeigen', zoom: 'Vergrößern',
       pdf: 'PDF herunterladen', full: 'Vollbild', close: 'Schließen', product: 'Produkt', newTab: 'In neuem Tab öffnen',
       hint: 'Tippen Sie auf ein Produkt, um es zu öffnen', page: 'Seite', of: 'von',
       swipe: 'Wischen zum Umblättern', click: 'Seitenrand anklicken oder ← → verwenden', sound: 'Ton',
@@ -27,7 +27,7 @@
       openProduct: 'Produkt öffnen', goTo: 'Zu Seite', error: 'Der Katalog konnte nicht geladen werden.'
     },
     fr: {
-      prev: 'Précédente', next: 'Suivante', pages: 'Toutes les pages', links: 'Afficher les liens', zoom: 'Zoom',
+      first: 'Première page', last: 'Dernière page', prev: 'Précédente', next: 'Suivante', pages: 'Toutes les pages', links: 'Afficher les liens', zoom: 'Zoom',
       pdf: 'Télécharger le PDF', full: 'Plein écran', close: 'Fermer', product: 'Produit', newTab: 'Ouvrir dans un nouvel onglet',
       hint: 'Touchez un produit pour l’ouvrir', page: 'Page', of: 'sur',
       swipe: 'Balayez pour tourner la page', click: 'Cliquez sur le bord de la page ou utilisez ← →', sound: 'Son',
@@ -35,7 +35,7 @@
       openProduct: 'Ouvrir le produit', goTo: 'Aller à la page', error: 'Le catalogue n’a pas pu être chargé.'
     },
     es: {
-      prev: 'Anterior', next: 'Siguiente', pages: 'Todas las páginas', links: 'Mostrar enlaces', zoom: 'Ampliar',
+      first: 'Primera página', last: 'Última página', prev: 'Anterior', next: 'Siguiente', pages: 'Todas las páginas', links: 'Mostrar enlaces', zoom: 'Ampliar',
       pdf: 'Descargar PDF', full: 'Pantalla completa', close: 'Cerrar', product: 'Producto', newTab: 'Abrir en una pestaña nueva',
       hint: 'Toca un producto para abrirlo', page: 'Página', of: 'de',
       swipe: 'Desliza para pasar la página', click: 'Haz clic en el borde de la página o usa ← →', sound: 'Sonido',
@@ -43,7 +43,7 @@
       openProduct: 'Abrir producto', goTo: 'Ir a la página', error: 'No se pudo cargar el catálogo.'
     },
     it: {
-      prev: 'Precedente', next: 'Successiva', pages: 'Tutte le pagine', links: 'Mostra i link', zoom: 'Ingrandisci',
+      first: 'Prima pagina', last: 'Ultima pagina', prev: 'Precedente', next: 'Successiva', pages: 'Tutte le pagine', links: 'Mostra i link', zoom: 'Ingrandisci',
       pdf: 'Scarica il PDF', full: 'Schermo intero', close: 'Chiudi', product: 'Prodotto', newTab: 'Apri in una nuova scheda',
       hint: 'Tocca un prodotto per aprirlo', page: 'Pagina', of: 'di',
       swipe: 'Scorri per sfogliare', click: 'Fai clic sul bordo della pagina o usa ← →', sound: 'Audio',
@@ -51,7 +51,7 @@
       openProduct: 'Apri il prodotto', goTo: 'Vai a pagina', error: 'Impossibile caricare il catalogo.'
     },
     nl: {
-      prev: 'Vorige', next: 'Volgende', pages: 'Alle pagina’s', links: 'Links tonen', zoom: 'Inzoomen',
+      first: 'Eerste pagina', last: 'Laatste pagina', prev: 'Vorige', next: 'Volgende', pages: 'Alle pagina’s', links: 'Links tonen', zoom: 'Inzoomen',
       pdf: 'PDF downloaden', full: 'Volledig scherm', close: 'Sluiten', product: 'Product', newTab: 'Openen in nieuw tabblad',
       hint: 'Tik op een product om het te openen', page: 'Pagina', of: 'van',
       swipe: 'Veeg om de pagina om te slaan', click: 'Klik op de rand van de pagina of gebruik ← →', sound: 'Geluid',
@@ -59,7 +59,7 @@
       openProduct: 'Product openen', goTo: 'Naar pagina', error: 'De catalogus kon niet worden geladen.'
     },
     pl: {
-      prev: 'Poprzednia', next: 'Następna', pages: 'Wszystkie strony', links: 'Pokaż linki', zoom: 'Powiększ',
+      first: 'Pierwsza strona', last: 'Ostatnia strona', prev: 'Poprzednia', next: 'Następna', pages: 'Wszystkie strony', links: 'Pokaż linki', zoom: 'Powiększ',
       pdf: 'Pobierz PDF', full: 'Pełny ekran', close: 'Zamknij', product: 'Produkt', newTab: 'Otwórz w nowej karcie',
       hint: 'Dotknij produktu, aby go otworzyć', page: 'Strona', of: 'z',
       swipe: 'Przesuń, aby przewrócić stronę', click: 'Kliknij krawędź strony lub użyj ← →', sound: 'Dźwięk',
@@ -67,7 +67,7 @@
       openProduct: 'Otwórz produkt', goTo: 'Przejdź do strony', error: 'Nie udało się wczytać katalogu.'
     },
     bg: {
-      prev: 'Предишна', next: 'Следваща', pages: 'Всички страници', links: 'Покажи връзките', zoom: 'Увеличи',
+      first: 'Първа страница', last: 'Последна страница', prev: 'Предишна', next: 'Следваща', pages: 'Всички страници', links: 'Покажи връзките', zoom: 'Увеличи',
       pdf: 'Изтегли PDF', full: 'Цял екран', close: 'Затвори', product: 'Продукт', newTab: 'Отвори в нов прозорец',
       hint: 'Натиснете върху продукт, за да го отворите', page: 'Страница', of: 'от',
       swipe: 'Плъзнете, за да прелистите', click: 'Натиснете ръба на страницата или ← →', sound: 'Звук',
@@ -77,6 +77,8 @@
   };
 
   var ICON = {
+    first: '<path d="M17 18l-6-6 6-6M7 6v12"/>',
+    last: '<path d="M7 6l6 6-6 6M17 6v12"/>',
     prev: '<path d="M15 18l-6-6 6-6"/>',
     next: '<path d="M9 6l6 6-6 6"/>',
     grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
@@ -249,6 +251,9 @@
     var title = el('div', 'fb-title'); title.textContent = this.data.title || '';
     this.btnPrev = this.button('prev', t.prev, function () { self.prev(); });
     this.btnNext = this.button('next', t.next, function () { self.next(); });
+    this.btnFirst = this.button('first', t.first, function () { self.go(1); });
+    this.btnLast = this.button('last', t.last, function () { self.go(self.N); });
+    this.btnFirst.classList.add('fb-ends'); this.btnLast.classList.add('fb-ends');   // left out on the narrowest phones
     var pageno = el('label', 'fb-pageno');
     this.pageInput = el('input'); this.pageInput.type = 'number'; this.pageInput.min = 1; this.pageInput.max = this.N;
     this.pageInput.setAttribute('aria-label', t.page);
@@ -282,7 +287,7 @@
     var btnFull = this.button('full', t.full, function () { self.toggleFullscreen(); });
     btnFull.classList.add('fb-hide-sm');
     if (!document.fullscreenEnabled) btnFull.hidden = true;
-    bar.append(title, this.btnPrev, pageno, this.btnNext, el('span', 'fb-sep'), btnGrid, this.btnLinks, btnColor, btnZoom, this.btnSound, pdf, btnFull);
+    bar.append(title, this.btnFirst, this.btnPrev, pageno, this.btnNext, this.btnLast, el('span', 'fb-sep'), btnGrid, this.btnLinks, btnColor, btnZoom, this.btnSound, pdf, btnFull);
 
     this.grid = this.overlay(t.pages);
     this.zoom = this.overlay(t.zoom);
@@ -660,8 +665,8 @@
     var v = this.visible();
     this.pageInput.value = v[0];
     var atStart = v[0] <= 1, atEnd = v[v.length - 1] >= this.N;
-    this.btnPrev.disabled = this.edgePrev.disabled = atStart;
-    this.btnNext.disabled = this.edgeNext.disabled = atEnd;
+    this.btnPrev.disabled = this.edgePrev.disabled = this.btnFirst.disabled = atStart;
+    this.btnNext.disabled = this.edgeNext.disabled = this.btnLast.disabled = atEnd;
     this.cornerNext.hidden = atEnd;
     // back corner sits on the left page; on phones (one page) the bottom-left of that page
     this.cornerPrev.hidden = atStart;

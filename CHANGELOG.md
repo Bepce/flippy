@@ -5,6 +5,10 @@
 - Builder: photos stored as JPEG 2000 (common in PDFs from InDesign and print workflows) were
   missing from the pages. The builder now loads pdf.js's image decoders, colour profiles and
   font data.
+- Viewer: first-page and last-page buttons (hidden on the narrowest phones, where the page grid
+  does the same)
+- Builder: zoom slider and buttons, Ctrl + scroll (or pinch on a trackpad) zooms around the
+  pointer, Ctrl +/−/0; Fit works again after zooming in
 - Server: works without PHP's mbstring extension, which is off by default on Windows (creating
   the first account failed)
 

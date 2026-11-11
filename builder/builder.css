@@ -87,6 +87,13 @@ button:disabled { opacity: .4; cursor: default; }
 .stage-bar { flex: none; display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid var(--line); }
 .pageno { min-width: 74px; text-align: center; font-variant-numeric: tabular-nums; }
 .sep { width: 1px; height: 20px; background: var(--line); margin: 0 4px; }
+.zoom { display: flex; align-items: center; gap: 4px; }
+.zoom input { width: 130px; accent-color: var(--accent-2); }
+.icon.sm { width: 26px; height: 26px; }
+.icon.sm svg { width: 14px; height: 14px; }
+.zoom output { min-width: 42px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stage-bar > * { flex: none; }
+.stage-bar > .tip { flex: 1 1 0; min-width: 0; text-align: right; }
 .tip { color: var(--muted); font-size: 12px; margin-left: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .stage { flex: 1; min-height: 0; overflow: auto; padding: 24px; display: flex; background: repeating-conic-gradient(#1a1c21 0 25%, #17191d 0 50%) 0 0 / 24px 24px; }
 .sheet { position: relative; margin: auto; flex: none; background: #fff; box-shadow: 0 6px 30px rgba(0,0,0,.5); user-select: none; touch-action: none; cursor: crosshair; }
@@ -167,10 +174,12 @@ textarea { resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, C
 .toast.bad { background: #4a2523; border-color: #6b3330; }
 
 /* narrow screens: the editor wants a mouse, but stays usable on a tablet */
+@media (max-width: 1240px) { .tip { display: none; } }
 @media (max-width: 980px) {
   .editor { grid-template-columns: 84px 1fr; grid-template-rows: minmax(0, 1fr) auto; }
   .side { grid-column: 1 / -1; max-height: 42vh; border-left: 0; border-top: 1px solid var(--line); }
   .tip { display: none; }
+  .zoom input { width: 80px; }
 }
 @media (max-width: 600px) {
   .top { gap: 8px; padding: 0 8px; }

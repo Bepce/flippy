@@ -23,7 +23,8 @@ const pad3 = n => String(n).padStart(3, '0');
 let P = null;           // the open project
 let cur = 0;            // page index shown
 let sel = null;         // selected link id
-let zoom = 'page';
+let zoom = 'page';      // 'page' (fit), 'width', or 'custom' with zoomFactor
+let zoomFactor = 1;     // size relative to the whole page fitting the window
 let undoStack = [], redoStack = [];
 let urls = [];          // object URLs of the page images (revoked when the project closes)
 let thumbUrls = [];
@@ -236,10 +237,27 @@ function layoutSheet() {
   if (!P) return;
   const pg = P.pages[cur], ar = pg.w / pg.h;
   const W = stage.clientWidth - 48, H = stage.clientHeight - 48;
-  let w = zoom === 'width' ? W : Math.min(W, H * ar);
-  if (zoom === '2') w = Math.min(W, H * ar) * 2;
-  w = Math.max(200, w);
+  const fit = Math.max(200, Math.min(W, H * ar));
+  const w = zoom === 'width' ? Math.max(200, W) : zoom === 'custom' ? fit * zoomFactor : fit;
+  zoomFactor = w / fit;
   sheet.style.width = w + 'px'; sheet.style.height = w / ar + 'px';
+  const pct = Math.round(zoomFactor * 100);
+  $('#zoom').value = String(pct);
+  $('#zoom-val').textContent = pct + '%';
+  $$('[data-zoom]').forEach(x => x.classList.toggle('on', x.dataset.zoom === zoom));
+}
+
+// zoom keeping the point under the cursor (or the middle of the view) where it is
+function setZoom(mode, factor, anchor) {
+  const st = stage.getBoundingClientRect(), before = sheet.getBoundingClientRect();
+  const ax = anchor ? anchor.x : st.left + st.width / 2, ay = anchor ? anchor.y : st.top + st.height / 2;
+  const px = (ax - before.left) / before.width, py = (ay - before.top) / before.height;
+  zoom = mode;
+  if (mode === 'custom') zoomFactor = clamp(factor, 0.5, 4);
+  layoutSheet();
+  const after = sheet.getBoundingClientRect();
+  stage.scrollLeft += after.left + px * after.width - ax;
+  stage.scrollTop += after.top + py * after.height - ay;
 }
 
 function renderPage() {
@@ -694,9 +712,16 @@ $('#prev').addEventListener('click', () => go(cur - 1));
 $('#next').addEventListener('click', () => go(cur + 1));
 $('#undo').addEventListener('click', undo);
 $('#redo').addEventListener('click', redo);
-$$('[data-zoom]').forEach(b => b.addEventListener('click', () => {
-  zoom = b.dataset.zoom; $$('[data-zoom]').forEach(x => x.classList.toggle('on', x === b)); layoutSheet();
-}));
+$$('[data-zoom]').forEach(b => b.addEventListener('click', () => setZoom(b.dataset.zoom)));
+$('#zoom').addEventListener('input', e => setZoom('custom', e.target.value / 100));
+$('#zoom-in').addEventListener('click', () => setZoom('custom', zoomFactor * 1.25));
+$('#zoom-out').addEventListener('click', () => setZoom('custom', zoomFactor / 1.25));
+// Ctrl + scroll (and pinch on a trackpad, which browsers send the same way)
+stage.addEventListener('wheel', e => {
+  if (!P || !(e.ctrlKey || e.metaKey)) return;
+  e.preventDefault();
+  setZoom('custom', zoomFactor * Math.exp(-e.deltaY * 0.002), { x: e.clientX, y: e.clientY });
+}, { passive: false });
 window.addEventListener('resize', layoutSheet);
 $('.brand').addEventListener('click', e => { e.preventDefault(); history.replaceState(null, '', location.pathname); showStart(); });
 
@@ -709,6 +734,9 @@ document.addEventListener('keydown', e => {
   if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
   if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
   if (mod && e.key.toLowerCase() === 'd') { e.preventDefault(); duplicateSel(); return; }
+  if (mod && (e.key === '+' || e.key === '=')) { e.preventDefault(); setZoom('custom', zoomFactor * 1.25); return; }
+  if (mod && (e.key === '-' || e.key === '_')) { e.preventDefault(); setZoom('custom', zoomFactor / 1.25); return; }
+  if (mod && e.key === '0') { e.preventDefault(); setZoom('page'); return; }
   if (e.key === 'Delete' || e.key === 'Backspace') { if (sel) { e.preventDefault(); deleteSel(); } return; }
   if (e.key === 'Escape') { select(null); return; }
   if (e.key === 'PageDown' || (e.key === 'ArrowRight' && !sel)) { e.preventDefault(); go(cur + 1); return; }

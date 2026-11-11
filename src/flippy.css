@@ -121,6 +121,11 @@
 .fb-sep { width: 1px; height: 24px; background: var(--fb-line); margin: 0 4px; }
 @media (max-width: 640px) {
   .fb-title, .fb-sep, .fb-hide-sm { display: none; }
+}
+@media (max-width: 459px) {
+  .fb-ends { display: none; }          /* phones: the page grid jumps to any page */
+}
+@media (max-width: 640px) {
   .fb-bar { justify-content: space-between; }
 }
 
