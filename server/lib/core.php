@@ -96,6 +96,11 @@ function migrate(PDO $pdo): void
             CREATE INDEX login_fails_who ON login_fails (who, at);
             PRAGMA user_version = 1;
         ");
+        $v = 1;
+    }
+    if ($v < 2) {
+        // per-catalogue appearance: theme, colours, link colour, language (JSON)
+        $pdo->exec("ALTER TABLE catalogues ADD COLUMN look TEXT NOT NULL DEFAULT '{}'; PRAGMA user_version = 2;");
     }
 }
 

@@ -16,6 +16,26 @@ function find_catalogue(string $slug): ?array
     return $s->fetch() ?: null;
 }
 
+// Only known keys and safe values: these end up in visitors' pages
+function clean_look($in): array
+{
+    $in = is_array($in) ? $in : [];
+    $out = [];
+    if (in_array($in['theme'] ?? '', ['light', 'dark'], true)) $out['theme'] = $in['theme'];
+    foreach (['bg', 'accent'] as $k) {
+        $v = strtolower(ltrim(trim((string) ($in[$k] ?? '')), '#'));
+        if (preg_match('/^[0-9a-f]{6}$/', $v)) $out[$k] = '#' . $v;
+    }
+    if (in_array($in['linkColor'] ?? '', ['grey', 'red', 'blue', 'white'], true)) $out['linkColor'] = $in['linkColor'];
+    if (preg_match('/^[a-z]{2}$/', (string) ($in['lang'] ?? ''))) $out['lang'] = $in['lang'];
+    return $out;
+}
+
+function catalogue_look(array $c): array
+{
+    return clean_look(json_decode((string) ($c['look'] ?? '{}'), true));
+}
+
 function catalogue_public(array $c, bool $withStats = false): array
 {
     $base = site_url() . '/c/' . $c['slug'] . '/';
@@ -23,6 +43,7 @@ function catalogue_public(array $c, bool $withStats = false): array
         'slug' => $c['slug'], 'title' => $c['title'], 'pages' => (int) $c['pages'], 'published' => (bool) $c['published'],
         'hasPdf' => (bool) $c['has_pdf'], 'bytes' => (int) $c['bytes'], 'created' => (int) $c['created'], 'updated' => (int) $c['updated'],
         'url' => $base, 'thumb' => $base . 'thumbs/001.' . $c['images'] . '?r=' . $c['rev'],
+        'look' => (object) catalogue_look($c),
     ];
     if ($withStats) {
         $s = db()->prepare("SELECT kind, SUM(n) n FROM stats WHERE catalogue_id = ? AND day >= ? AND kind IN ('view','click') GROUP BY kind");
@@ -221,6 +242,8 @@ function catalogue_data_for_visitors(array $c): array
     $d['title'] = $c['title'];                                    // renamed in the admin
     if (!$c['has_pdf']) unset($d['pdf']);
     if ($d['images'] === 'webp') unset($d['images']);
+    $look = catalogue_look($c);
+    if ($look) $d['look'] = $look;
     if (cfg('stats')) $d['track'] = site_url() . '/api/hit?c=' . rawurlencode($c['slug']);
     return $d;
 }
@@ -255,6 +278,12 @@ function serve_catalogue(string $slug, string $file): void
 function send_viewer_page(array $c): void
 {
     $title = h($c['title']);
+    $look = catalogue_look($c);
+    $q = $_GET['bg'] ?? '';
+    $bg = preg_match('/^#?[0-9a-fA-F]{6}$/', (string) $q) ? '#' . ltrim((string) $q, '#')
+        : ($look['bg'] ?? ((($_GET['theme'] ?? $look['theme'] ?? '') === 'light') ? '#e3e6eb' : '#1f2228'));
+    $bg = h($bg);
+    $lang = h($look['lang'] ?? 'en');
     $src = h(base_path() . '/c/' . $c['slug'] . '/');
     $dist = h(base_path() . '/dist/');
     $v = FLIPPY_VERSION;
@@ -263,14 +292,15 @@ function send_viewer_page(array $c): void
     security_headers();
     echo <<<HTML
 <!doctype html>
-<html lang="en">
+<html lang="$lang">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="$bg">
   <title>$title</title>
   <meta property="og:title" content="$title">
   <link rel="stylesheet" href="{$dist}flippy.min.css?v=$v">
-  <style>html, body { height: 100%; margin: 0; background: #1f2228; }</style>
+  <style>html, body { height: 100%; margin: 0; background: $bg; }</style>
 </head>
 <body>
   <div class="flippy" data-src="$src" style="height: 100%"></div>
@@ -291,6 +321,8 @@ function record_hit(string $slug): void
     if (cfg('ignore_bots') && preg_match('/bot|crawl|spider|slurp|preview|headless|lighthouse/i', $_SERVER['HTTP_USER_AGENT'] ?? 'bot')) { http_response_code(204); exit; }
     $c = find_catalogue($slug);
     if (!$c || !$c['published']) { http_response_code(204); exit; }
+    // your own team looking at catalogues (and the admin's preview) doesn't count
+    if (!empty($_COOKIE['flippy_sid']) && current_user()) { http_response_code(204); exit; }
     $b = body_json();
     $e = $b['e'] ?? '';
     $day = gmdate('Y-m-d');

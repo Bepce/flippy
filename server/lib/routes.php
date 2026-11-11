@@ -103,6 +103,7 @@ function api(string $method, string $p): void
                 if ($t === '') fail(422, 'Give the catalogue a title.');
                 db()->prepare('UPDATE catalogues SET title = ? WHERE id = ?')->execute([$t, $c['id']]);
             }
+            if (isset($b['look'])) db()->prepare('UPDATE catalogues SET look = ? WHERE id = ?')->execute([json_encode((object) clean_look($b['look'])), $c['id']]);
             if (isset($b['published'])) db()->prepare('UPDATE catalogues SET published = ? WHERE id = ?')->execute([$b['published'] ? 1 : 0, $c['id']]);
             if (isset($b['slug']) && $b['slug'] !== $c['slug']) {
                 if (!valid_slug((string) $b['slug'])) fail(422, 'An address is lowercase letters, digits and dashes.');

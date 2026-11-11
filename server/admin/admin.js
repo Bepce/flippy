@@ -234,6 +234,7 @@ async function showCatalogue(slug) {
   // embed
   const dist = me.siteUrl + '/dist/flippy.min.js';
   const embed = `<script src="${dist}"></script>\n<flip-book src="${c.url}"></flip-book>`;
+  const iframe = `<iframe src="${c.url}" title="${c.title.replace(/"/g, '&quot;')}" style="width:100%;height:85vh;border:0" allow="fullscreen"></iframe>`;
   const copy = (text, what) => navigator.clipboard.writeText(text).then(() => toast(what + ' copied.'), () => toast('Couldn’t copy; select the text instead.', true));
   const share = el('section', { class: 'panel' },
     el('h2', {}, 'Share and embed'),
@@ -242,7 +243,11 @@ async function showCatalogue(slug) {
     el('p', { class: 'note' }, 'Or show it inside any page of your website:'),
     el('pre', { class: 'code' }, embed),
     el('div', { class: 'row' }, el('button', { class: 'ghost small', onclick: () => copy(embed, 'Code') }, 'Copy code'),
-      el('span', { class: 'help' }, 'Size it with CSS, e.g. flip-book { height: 700px }')));
+      el('span', { class: 'help' }, 'Size it with CSS, e.g. flip-book { height: 700px }')),
+    el('p', { class: 'note' }, 'Or, where scripts aren’t allowed, as an iframe:'),
+    el('pre', { class: 'code' }, iframe),
+    el('div', { class: 'row' }, el('button', { class: 'ghost small', onclick: () => copy(iframe, 'Iframe code') }, 'Copy iframe code'),
+      el('span', { class: 'help' }, 'Products then open in a new tab, not over the catalogue.')));
 
   // settings
   const slugIn = el('input', { value: c.slug, pattern: '[a-z0-9-]+', spellcheck: 'false', 'aria-label': 'Address' });
@@ -269,9 +274,72 @@ async function showCatalogue(slug) {
       } }, 'Delete')));
 
   const stats = el('section', { class: 'panel' }, el('h2', {}, 'Statistics'), el('p', { class: 'note' }, 'Loading…'));
+  const look = appearancePanel(c, r => { c = r; });
   view(el('a', { class: 'crumb', href: '#/' }, '← Catalogues'), head,
-    el('div', { class: 'sections' }, el('div', {}, stats), el('div', {}, share, settings, danger)));
+    el('div', { class: 'sections' }, el('div', {}, look, stats), el('div', {}, share, settings, danger)));
   renderStats(stats, c);
+}
+
+// theme, colours, link colour and language, with a live preview
+const LANGS = { '': 'Visitor’s page language', en: 'English', bg: 'Български', de: 'Deutsch', fr: 'Français', es: 'Español', it: 'Italiano', nl: 'Nederlands', pl: 'Polski' };
+function appearancePanel(c, onSaved) {
+  const saved = { theme: 'dark', bg: '', accent: '', linkColor: 'grey', lang: '', ...c.look };
+  let cur = { ...saved };
+  const select = (name, opts) => {
+    const s = el('select', { name }, Object.entries(opts).map(([v, t]) => el('option', { value: v, selected: v === cur[name] }, t)));
+    s.addEventListener('change', () => { cur[name] = s.value; changed(); });
+    return s;
+  };
+  const colour = (name, fallback) => {
+    const input = el('input', { type: 'color', value: cur[name] || fallback, 'aria-label': name });
+    const reset = el('button', { type: 'button', class: 'ghost small' }, 'Default');
+    const state = el('span', { class: 'help' });
+    const show = () => { state.textContent = cur[name] ? cur[name] : 'theme default'; reset.disabled = !cur[name]; };
+    input.addEventListener('input', () => { cur[name] = input.value; show(); changed(); });
+    reset.addEventListener('click', () => { cur[name] = ''; input.value = fallback; show(); changed(); });
+    show();
+    return el('div', { class: 'row' }, input, state, reset);
+  };
+  const frame = el('iframe', { class: 'look-preview', title: 'Preview', loading: 'lazy' });
+  const save = el('button', { class: 'primary small', disabled: true }, 'Save');
+  const undo = el('button', { class: 'ghost small', disabled: true }, 'Undo changes');
+  const previewUrl = () => {
+    const q = new URLSearchParams({ theme: cur.theme });
+    q.set('bg', cur.bg ? cur.bg.slice(1) : 'none');
+    q.set('accent', cur.accent ? cur.accent.slice(1) : 'none');
+    q.set('lang', cur.lang || 'en');
+    q.set('links', cur.linkColor);
+    return c.url + '?' + q;
+  };
+  let t = 0;
+  function changed() {
+    const dirty = JSON.stringify(cur) !== JSON.stringify(saved);
+    save.disabled = undo.disabled = !dirty;
+    clearTimeout(t); t = setTimeout(() => { frame.src = previewUrl(); }, 250);
+  }
+  save.addEventListener('click', async () => {
+    try {
+      const look = { theme: cur.theme, bg: cur.bg, accent: cur.accent, linkColor: cur.linkColor, lang: cur.lang };
+      const r = await api('/catalogues/' + encodeURIComponent(c.slug), { method: 'PATCH', body: { look } });
+      Object.assign(saved, cur); onSaved(r.catalogue); changed();
+      toast('Appearance saved. It applies everywhere the catalogue is shown, embeds and iframes included.');
+    } catch (e) { toast(e.message, true); }
+  });
+  undo.addEventListener('click', () => { panel.replaceWith(appearancePanel(c, onSaved)); });
+  frame.src = previewUrl();
+  const panel = el('section', { class: 'panel' },
+    el('h2', {}, 'Appearance'),
+    el('div', { class: 'look' },
+      el('div', { class: 'look-fields' },
+        el('label', { class: 'f' }, 'Theme', select('theme', { dark: 'Dark', light: 'Light' })),
+        el('div', { class: 'f' }, 'Background', colour('bg', cur.theme === 'light' ? '#f3f4f6' : '#2b2f36')),
+        el('div', { class: 'f' }, 'Accent (buttons that are on)', colour('accent', '#2f6fe4')),
+        el('label', { class: 'f' }, 'Link highlight', select('linkColor', { grey: 'Grey', red: 'Red', blue: 'Blue', white: 'White' })),
+        el('label', { class: 'f' }, 'Toolbar language', select('lang', LANGS)),
+        el('div', { class: 'row' }, save, undo)),
+      frame),
+    el('p', { class: 'help' }, 'Applies to the catalogue’s page, iframes and embeds. A website can still restyle an embedded <flip-book> with its own CSS. Visitors who picked a link colour themselves keep theirs.'));
+  return panel;
 }
 
 async function renderStats(panel, c) {

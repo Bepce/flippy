@@ -142,6 +142,7 @@
         self.N = data.pageCount;
         self.aspect = data.aspect;
         self.root.style.setProperty('--fb-aspect', String(data.aspect));
+        self.applyLook(data.look);
         if (data.title && self.opts.setTitle) document.title = data.title + (self.opts.titleSuffix || '');
         self.build();
         self.root.flippy = self;                       // the viewer instance, for scripting
@@ -189,6 +190,7 @@
     clearTimeout(this._toast);
     instances.splice(instances.indexOf(this), 1);
     this.root.innerHTML = '';
+    if (this.lookClass) this.root.classList.remove(this.lookClass);
     this.root.classList.remove('fb');
     delete this.root.flippy;
   };
@@ -780,6 +782,37 @@
   };
 
   // grey / red / blue / white; default from data-link-color or ?links=, the visitor's choice is remembered
+  // A catalogue's own look (from the flippy server's catalogue.json, or bg/accent/theme
+  // attributes): theme, background, accent, link colour, language. Page CSS still wins.
+  var lookStyle = null, lookCount = 0;
+  function hexColor(v) {
+    v = String(v || '').trim().replace(/^#/, '');
+    return /^[0-9a-f]{6}$/i.test(v) ? '#' + v.toLowerCase() : /^[0-9a-f]{3}$/i.test(v) ? '#' + v.replace(/./g, '$&$&').toLowerCase() : '';
+  }
+  function darker(hex, f) {
+    var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    function c(x) { return ('0' + Math.round(x * (1 - f)).toString(16)).slice(-2); }
+    return '#' + c(r) + c(g) + c(b);
+  }
+  Flipbook.prototype.applyLook = function (look) {
+    look = look && typeof look === 'object' ? look : {};
+    var o = this.opts;
+    var theme = o.theme || look.theme;
+    if (theme === 'light' || theme === 'dark') this.root.dataset.theme = theme;
+    if (!o.langGiven && look.lang && TEXT[look.lang]) this.t = text(look.lang);
+    if (!o.linkColor && look.linkColor) o.linkColor = look.linkColor;
+    // bg="none" / accent="none": the theme's own colour, ignoring the catalogue's
+    var bg = o.bg === 'none' ? '' : hexColor(o.bg) || hexColor(look.bg);
+    var accent = o.accent === 'none' ? '' : hexColor(o.accent) || hexColor(look.accent), vars = [];
+    if (bg) vars.push('--fb-bg:' + bg, '--fb-bg-2:' + darker(bg, 0.1));
+    if (accent) vars.push('--fb-accent:' + accent);
+    if (!vars.length) return;
+    if (!lookStyle) { lookStyle = document.createElement('style'); lookStyle.setAttribute('data-flippy-look', ''); document.head.appendChild(lookStyle); }
+    this.lookClass = 'fb-look-' + (++lookCount);
+    this.root.classList.add(this.lookClass);
+    lookStyle.textContent += ':where(.fb.' + this.lookClass + '){' + vars.join(';') + '}\n';
+  };
+
   Flipbook.prototype.setLinkColor = function (c, save) {
     if (['grey', 'red', 'blue', 'white'].indexOf(c) < 0) c = 'grey';
     this.root.dataset.links = c;
@@ -1046,6 +1079,9 @@
     var fb = new Flipbook(root, {
       src: o.src,
       lang: lang,
+      langGiven: !!o.lang,
+      bg: o.bg || null,
+      accent: o.accent || null,
       theme: o.theme || null,
       popup: bool(o.popup, false),
       noPdf: !bool(o.pdf, true),
@@ -1071,7 +1107,7 @@
     return {
       src: get('src'),
       lang: q.get('lang') || get('lang'),
-      theme: get('theme'),
+      theme: q.get('theme') || get('theme'),
       popup: q.get('popup') === '1' || get('popup'),
       pdf: get('pdf'),
       sound: get('sound'),
@@ -1081,7 +1117,9 @@
       linkColor: q.get('links') || get('link-color'),
       setTitle: get('set-title'),
       titleSuffix: get('title-suffix'),
-      track: get('track')
+      track: get('track'),
+      bg: q.get('bg') || get('bg'),
+      accent: q.get('accent') || get('accent')
     };
   }
 

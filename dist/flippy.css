@@ -3,8 +3,9 @@
    Everything is scoped to .fb (the viewer element), so it doesn't touch the rest of the page.
    Theme it by overriding these variables on .fb, flip-book or .flippy, e.g.
      flip-book { --fb-accent: #0a7; --fb-bg: #f4f1ea; }
-   or use data-theme="light" / theme="light". */
-.fb {
+   or use data-theme="light" / theme="light". The defaults have zero specificity (:where), so any
+   rule of yours wins; a catalogue's own colours (set in the flippy server) sit in between. */
+:where(.fb) {
   --fb-bg: #2b2f36;              /* background around the book (centre of the gradient) */
   --fb-bg-2: #1f2228;            /* background towards the edges */
   --fb-bar: rgba(20, 22, 26, .92);   /* toolbar */
@@ -21,7 +22,7 @@
   --fb-bar-h: 56px;
   --fb-font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
-.fb[data-theme="light"] {
+:where(.fb[data-theme="light"]) {
   --fb-bg: #f3f4f6;
   --fb-bg-2: #e3e6eb;
   --fb-bar: rgba(255, 255, 255, .94);

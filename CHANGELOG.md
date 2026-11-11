@@ -5,6 +5,12 @@
 - Builder: photos stored as JPEG 2000 (common in PDFs from InDesign and print workflows) were
   missing from the pages. The builder now loads pdf.js's image decoders, colour profiles and
   font data.
+- Server: **Appearance** per catalogue (theme, background, accent, link highlight, toolbar
+  language) with a live preview; applies to the catalogue page, iframes and embeds. Iframe
+  embed code. Views by signed-in users aren't counted.
+- Viewer: `bg` and `accent` options, and `?theme=`, `?bg=`, `?accent=` in the address
+- Viewer: the default colours now have zero specificity, so `flip-book { --fb-bg: … }` in a
+  site's CSS really overrides them (it didn't before)
 - Viewer: first-page and last-page buttons (hidden on the narrowest phones, where the page grid
   does the same)
 - Builder: zoom slider and buttons, Ctrl + scroll (or pinch on a trackpad) zooms around the

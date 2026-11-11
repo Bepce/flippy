@@ -101,6 +101,13 @@ Copy `config.sample.php` to `config.php`. Each setting can also be an environmen
   Embedding on another domain works because catalogue files are served with CORS
   (`cors` setting). Products still open in a new tab there, unless the shop is on the same site;
   see "Popup or new tab" in the README.
+- **Appearance** sets a catalogue's theme, background, accent colour, link highlight and toolbar
+  language, with a live preview. It applies wherever the catalogue is shown: its own page,
+  iframes and `<flip-book>` embeds (where the site's CSS can still override it). The address
+  can override it too: `/c/spring/?theme=light&bg=ffffff`.
+- **Iframe code** is there for sites that don't allow scripts in their pages. Products then
+  open in a new tab.
+- Views by signed-in users (your team, the admin's preview) aren't counted.
 - **Hide** takes a catalogue offline without deleting it. Signed-in users can still preview it.
 - **Replace with zip** or **Edit in builder → Publish** updates a catalogue in place; its address,
   embeds and statistics stay.

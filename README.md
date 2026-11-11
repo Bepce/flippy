@@ -153,6 +153,8 @@ As attributes on `<flip-book>` (or `data-` attributes on `<div class="flippy">`)
 | `src` | folder URL | | the catalogue folder (required) |
 | `lang` | `en` `bg` `de` `es` `fr` `it` `nl` `pl` | the page's `<html lang>` | interface language |
 | `theme` | `dark`, `light` | `dark` | colour scheme of the viewer |
+| `bg` | colour, e.g. `fdf6e3` | | background around the book (`none`: the theme's) |
+| `accent` | colour | | switched-on buttons and focus rings (`none`: the theme's) |
 | `link-color` | `grey`, `red`, `blue`, `white` | `grey` | link highlight; visitors can change it in the toolbar |
 | `popup` | `true` | `false` | open products in a popup over the catalogue (see below) |
 | `hash` | `false` | `true` | keep the page number in the address (`#p=12`) for sharing |
@@ -164,8 +166,9 @@ As attributes on `<flip-book>` (or `data-` attributes on `<div class="flippy">`)
 | `track` | `false` | `true` | statistics for catalogues from a flippy server |
 
 \* `true` for `<div class="flippy">`, which is meant for a page that is only the catalogue.
-The page URL can also set `?lang=`, `?links=`, `?popup=1` and `?hint=1` (show the swipe
-hint again).
+The page URL can also set `?lang=`, `?theme=`, `?bg=`, `?accent=`, `?links=`, `?popup=1` and
+`?hint=1` (show the swipe hint again), which is handy for an iframe:
+`<iframe src="https://catalogues.example/c/spring/?theme=light&bg=ffffff">`.
 
 **Popup or new tab.** Products open in a popup when the shop is on the same site as
 the viewer, so the visitor's cart and login keep working. Otherwise they open in a new
@@ -224,7 +227,9 @@ flip-book {
 ```
 
 The full list is at the top of [`src/flippy.css`](src/flippy.css). The viewer's styles
-are scoped to the viewer and don't affect the rest of your page.
+are scoped to the viewer and don't affect the rest of your page, and its defaults have zero
+specificity, so any rule of yours wins. Catalogues from the flippy server can carry their own
+look (set under *Appearance* in the admin), which applies to iframes too; your CSS still wins.
 
 ## Updating
 

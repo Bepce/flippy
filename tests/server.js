@@ -121,6 +121,32 @@ process.on('exit', () => php && php.kill());
   const st = (await api('/catalogues/hollowbrook/stats?days=7')).data;
   ok(fake === 204 && st.links.length === 1, 'clicks on addresses not in the catalogue are ignored');
 
+  // appearance: saved per catalogue, applied on the public page; page CSS still wins
+  await page.goto(BASE + 'admin/#/c/hollowbrook');
+  await page.waitForSelector('.look-preview');
+  await page.selectOption('select[name=theme]', 'light');
+  await page.locator('.look input[type=color]').first().evaluate(i => { i.value = '#fdf6e3'; i.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.selectOption('select[name=lang]', 'bg');
+  await page.click('.look button:has-text("Save")');
+  await page.waitForSelector('#toast:has-text("Appearance saved")');
+  await page.waitForTimeout(1500);
+  await page.locator('.look').screenshot({ path: path.join(TMP, 'appearance.png') });
+  const lookJson = await page.evaluate(async u => (await (await fetch(u)).json()).look, BASE + 'c/hollowbrook/catalogue.json');
+  ok(lookJson.theme === 'light' && lookJson.bg === '#fdf6e3' && lookJson.lang === 'bg', 'appearance saved into catalogue.json', JSON.stringify(lookJson));
+  const v2 = await (await context(browser)).newPage();
+  await v2.goto(BASE + 'c/hollowbrook/');
+  await v2.waitForSelector('.fb-book img');
+  const seen = await v2.evaluate(() => { const r = document.querySelector('.fb'); return { theme: r.dataset.theme, bg: getComputedStyle(r).getPropertyValue('--fb-bg').trim(), next: r.querySelector('.fb-bar [aria-label="Следваща"]') !== null }; });
+  ok(seen.theme === 'light' && seen.bg === '#fdf6e3' && seen.next, 'public page uses the theme, background and language', JSON.stringify(seen));
+  await v2.addStyleTag({ content: '.flippy { --fb-bg: #123456 }' });
+  ok((await v2.evaluate(() => getComputedStyle(document.querySelector('.fb')).getPropertyValue('--fb-bg').trim())) === '#123456', 'the page’s own CSS still overrides it');
+  await v2.goto(BASE + 'c/hollowbrook/?theme=dark&bg=none');
+  await v2.waitForSelector('.fb-book img');
+  const dflt = await v2.evaluate(() => { const r = document.querySelector('.fb'); return r.dataset.theme + ' ' + getComputedStyle(r).getPropertyValue('--fb-bg').trim(); });
+  ok(dflt === 'dark #2b2f36', 'address options override it (?theme=dark&bg=none)', dflt);
+  const bad = await api('/catalogues/hollowbrook', { method: 'PATCH', body: { look: { bg: 'red;}</style><script>', theme: 'neon', lang: 'english' } } });
+  ok(JSON.stringify(bad.data.catalogue.look) === '{}', 'invalid appearance values are dropped', JSON.stringify(bad.data.catalogue.look));
+
   // builder: open from the server, publish a copy, republish
   await page.goto(BASE + 'builder/?open=hollowbrook');
   await page.waitForFunction(() => window.flippyBuilder.project && window.flippyBuilder.project.pages.length === 12, null, { timeout: 60000 });
