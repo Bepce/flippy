@@ -52,6 +52,8 @@
 
     <section class="stage-wrap">
       <div class="stage-bar">
+        <button id="toggle-thumbs" class="icon" aria-label="Show or hide the page list" title="Page list" aria-pressed="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+        <span class="sep"></span>
         <button id="prev" class="icon" aria-label="Previous page" title="Previous page (Page Up)"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
         <span id="pageno" class="pageno"></span>
         <button id="next" class="icon" aria-label="Next page" title="Next page (Page Down)"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
@@ -66,6 +68,7 @@
           <output id="zoom-val" for="zoom">100%</output>
         </div>
         <span class="tip">Drag on the page to draw a link · drag a box to move it · Delete removes it</span>
+        <button id="toggle-side" class="icon" aria-label="Show or hide the side panel" title="Side panel" aria-pressed="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
       </div>
       <div class="stage" id="stage"><div class="sheet" id="sheet"><img id="pageimg" alt=""></div></div>
     </section>
@@ -114,6 +117,16 @@
         <label class="f">Campaign name for analytics <span class="muted">(optional)</span>
           <input id="utm" placeholder="spring-2026" spellcheck="false">
         </label>
+        <label class="check"><input type="checkbox" id="products"> Also link each product’s name and photo</label>
+        <div class="src src-products">
+          <label class="f">They open
+            <select id="product-url">
+              <option value="first">the first colour’s address</option>
+              <option value="strip">the first colour’s address without the part after “?”</option>
+            </select>
+          </label>
+          <p class="help">Found next to each group of colour codes: the bold line above them and the nearest photo.</p>
+        </div>
         <button id="run" class="primary wide">Find and link codes</button>
         <p id="result" class="result" aria-live="polite"></p>
       </section>

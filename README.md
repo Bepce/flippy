@@ -63,9 +63,12 @@ Open the **[builder](https://bepce.github.io/flippy/builder/)** (or `builder/` i
    link to: a CSV of `code,url`, a product feed from your shop (Google Merchant XML works), or one
    address pattern such as `https://your-shop.example/search?q={code}`. Press *Find and link codes*.
    Codes without an address show as orange boxes and in the *Codes* list, where you can type one in.
+   Each product's name and photo are linked as well: the builder finds them next to the colour
+   codes (the bold line above them, the nearest picture).
 3. **Adjust by hand.** Drag on the page to draw a link, drag a box to move it, pull its handles to
    resize, Delete to remove. A box can open an address or turn to a page. Ctrl+Z undoes.
-4. **Preview**, then **Export**. You get a zip with the catalogue folder. Upload it, and either link
+4. **Preview**, then **Export**. You get a zip with the catalogue folder, including each page's
+   text so visitors can search the catalogue. Upload it, and either link
    to its `index.html` or embed it with `<flip-book src="/catalogues/your-folder/">`.
 
 Your work is saved in the browser as you go. To change a catalogue later, open its zip in the

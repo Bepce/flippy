@@ -147,6 +147,15 @@ function unpack_catalogue(string $zipPath): array
         $hasPdf = $copy($prefix . $src, 'catalogue.pdf', 'pdf');
         if (!$hasPdf) $data['pdf'] = null;
     }
+    // each page's text for the viewer's search: a list of strings, one per page
+    $search = $zip->getFromName($prefix . 'search.json', 30 << 20);
+    if ($search !== false) {
+        $list = json_decode($search, true);
+        if (is_array($list) && count($list) <= $data['pageCount']) {
+            $list = array_map(fn($t) => is_string($t) ? mb_substr($t, 0, 50000) : '', array_values($list));
+            file_put_contents($tmp . '/search.json', json_encode($list, JSON_UNESCAPED_UNICODE));
+        }
+    }
     // the builder's project file (codes, settings), so the catalogue can be edited again; never served publicly
     $proj = $zip->getFromName($prefix . 'flippy-project.json', 30 << 20);
     if ($proj !== false && is_array(json_decode($proj, true))) file_put_contents($tmp . '/flippy-project.json', $proj);
@@ -215,7 +224,7 @@ function send_catalogue_zip(array $c): void
     $zip = new ZipArchive();
     $zip->open($tmp, ZipArchive::OVERWRITE);
     $root = $c['slug'] . '/';
-    foreach (['catalogue.json', 'catalogue.pdf', 'flippy-project.json'] as $f) {
+    foreach (['catalogue.json', 'catalogue.pdf', 'flippy-project.json', 'search.json'] as $f) {
         if (is_file("$dir/$f")) { $zip->addFile("$dir/$f", $root . $f); $zip->setCompressionName($root . $f, ZipArchive::CM_STORE); }
     }
     foreach (['pages', 'thumbs'] as $sub) {
@@ -244,6 +253,7 @@ function catalogue_data_for_visitors(array $c): array
     if ($d['images'] === 'webp') unset($d['images']);
     $look = catalogue_look($c);
     if ($look) $d['look'] = $look;
+    if (is_file(catalogue_dir((int) $c['id']) . '/search.json')) $d['search'] = 'search.json'; else unset($d['search']);
     if (cfg('stats')) $d['track'] = site_url() . '/api/hit?c=' . rawurlencode($c['slug']);
     return $d;
 }
@@ -265,6 +275,7 @@ function serve_catalogue(string $slug, string $file): void
         exit;
     }
     $dir = catalogue_dir((int) $c['id']);
+    if ($file === 'search.json') send_file(catalogue_dir((int) $c['id']) . '/search.json', 'application/json; charset=utf-8', 300, $cors);
     if ($file === 'catalogue.pdf' && $c['has_pdf']) {
         send_file("$dir/catalogue.pdf", 'application/pdf', 300, $cors + ['Content-Disposition' => 'inline; filename="' . $slug . '.pdf"']);
     }

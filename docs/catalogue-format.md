@@ -36,6 +36,7 @@ thumbs/001.webp ... one image per page, 300 px tall, for the page grid
 |---|---|
 | `title` | shown in the toolbar and, unless switched off, the page title |
 | `pdf` | file name of the PDF in the folder, for the download button |
+| `search` | optional: `search.json`, a list with each page's text, for the viewer's search |
 | `track` | optional: address the viewer reports views and clicks to (added by the flippy server) |
 | `images` | `webp` (default) or `jpg`: the format of the page images |
 | `aspect` | page width ÷ height (all pages are shown at this ratio) |

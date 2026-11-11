@@ -11,65 +11,65 @@
   // Interface text. Add a language by copying the "en" block; choose it with data-lang.
   var TEXT = {
     en: {
-      first: 'First page', last: 'Last page', more: 'More', prev: 'Previous', next: 'Next', pages: 'All pages', links: 'Show links', zoom: 'Zoom',
+      search: 'Search', noResults: 'Nothing found', first: 'First page', last: 'Last page', more: 'More', prev: 'Previous', next: 'Next', pages: 'All pages', links: 'Show links', zoom: 'Zoom',
       pdf: 'Download PDF', full: 'Full screen', close: 'Close', product: 'Product', newTab: 'Open in new tab',
-      hint: 'Tap a product to open it', page: 'Page', of: 'of',
+      hint: 'Tap a product to open it', hintPage: 'Tap a highlighted entry to go to its page', page: 'Page', of: 'of',
       swipe: 'Swipe to turn the page', click: 'Click the page edge or use ← →', sound: 'Sound',
       linkColor: 'Link colour', colors: { grey: 'Grey', red: 'Red', blue: 'Blue', white: 'White' },
       openProduct: 'Open product', goTo: 'Go to page', error: 'The catalogue could not be loaded.'
     },
     de: {
-      first: 'Erste Seite', last: 'Letzte Seite', more: 'Mehr', prev: 'Zurück', next: 'Weiter', pages: 'Alle Seiten', links: 'Links anzeigen', zoom: 'Vergrößern',
+      search: 'Suchen', noResults: 'Nichts gefunden', first: 'Erste Seite', last: 'Letzte Seite', more: 'Mehr', prev: 'Zurück', next: 'Weiter', pages: 'Alle Seiten', links: 'Links anzeigen', zoom: 'Vergrößern',
       pdf: 'PDF herunterladen', full: 'Vollbild', close: 'Schließen', product: 'Produkt', newTab: 'In neuem Tab öffnen',
-      hint: 'Tippen Sie auf ein Produkt, um es zu öffnen', page: 'Seite', of: 'von',
+      hint: 'Tippen Sie auf ein Produkt, um es zu öffnen', hintPage: 'Tippen Sie auf einen markierten Eintrag, um zur Seite zu springen', page: 'Seite', of: 'von',
       swipe: 'Wischen zum Umblättern', click: 'Seitenrand anklicken oder ← → verwenden', sound: 'Ton',
       linkColor: 'Linkfarbe', colors: { grey: 'Grau', red: 'Rot', blue: 'Blau', white: 'Weiß' },
       openProduct: 'Produkt öffnen', goTo: 'Zu Seite', error: 'Der Katalog konnte nicht geladen werden.'
     },
     fr: {
-      first: 'Première page', last: 'Dernière page', more: 'Plus', prev: 'Précédente', next: 'Suivante', pages: 'Toutes les pages', links: 'Afficher les liens', zoom: 'Zoom',
+      search: 'Rechercher', noResults: 'Aucun résultat', first: 'Première page', last: 'Dernière page', more: 'Plus', prev: 'Précédente', next: 'Suivante', pages: 'Toutes les pages', links: 'Afficher les liens', zoom: 'Zoom',
       pdf: 'Télécharger le PDF', full: 'Plein écran', close: 'Fermer', product: 'Produit', newTab: 'Ouvrir dans un nouvel onglet',
-      hint: 'Touchez un produit pour l’ouvrir', page: 'Page', of: 'sur',
+      hint: 'Touchez un produit pour l’ouvrir', hintPage: 'Touchez une entrée en surbrillance pour aller à sa page', page: 'Page', of: 'sur',
       swipe: 'Balayez pour tourner la page', click: 'Cliquez sur le bord de la page ou utilisez ← →', sound: 'Son',
       linkColor: 'Couleur des liens', colors: { grey: 'Gris', red: 'Rouge', blue: 'Bleu', white: 'Blanc' },
       openProduct: 'Ouvrir le produit', goTo: 'Aller à la page', error: 'Le catalogue n’a pas pu être chargé.'
     },
     es: {
-      first: 'Primera página', last: 'Última página', more: 'Más', prev: 'Anterior', next: 'Siguiente', pages: 'Todas las páginas', links: 'Mostrar enlaces', zoom: 'Ampliar',
+      search: 'Buscar', noResults: 'Sin resultados', first: 'Primera página', last: 'Última página', more: 'Más', prev: 'Anterior', next: 'Siguiente', pages: 'Todas las páginas', links: 'Mostrar enlaces', zoom: 'Ampliar',
       pdf: 'Descargar PDF', full: 'Pantalla completa', close: 'Cerrar', product: 'Producto', newTab: 'Abrir en una pestaña nueva',
-      hint: 'Toca un producto para abrirlo', page: 'Página', of: 'de',
+      hint: 'Toca un producto para abrirlo', hintPage: 'Toca una entrada resaltada para ir a su página', page: 'Página', of: 'de',
       swipe: 'Desliza para pasar la página', click: 'Haz clic en el borde de la página o usa ← →', sound: 'Sonido',
       linkColor: 'Color de los enlaces', colors: { grey: 'Gris', red: 'Rojo', blue: 'Azul', white: 'Blanco' },
       openProduct: 'Abrir producto', goTo: 'Ir a la página', error: 'No se pudo cargar el catálogo.'
     },
     it: {
-      first: 'Prima pagina', last: 'Ultima pagina', more: 'Altro', prev: 'Precedente', next: 'Successiva', pages: 'Tutte le pagine', links: 'Mostra i link', zoom: 'Ingrandisci',
+      search: 'Cerca', noResults: 'Nessun risultato', first: 'Prima pagina', last: 'Ultima pagina', more: 'Altro', prev: 'Precedente', next: 'Successiva', pages: 'Tutte le pagine', links: 'Mostra i link', zoom: 'Ingrandisci',
       pdf: 'Scarica il PDF', full: 'Schermo intero', close: 'Chiudi', product: 'Prodotto', newTab: 'Apri in una nuova scheda',
-      hint: 'Tocca un prodotto per aprirlo', page: 'Pagina', of: 'di',
+      hint: 'Tocca un prodotto per aprirlo', hintPage: 'Tocca una voce evidenziata per andare alla pagina', page: 'Pagina', of: 'di',
       swipe: 'Scorri per sfogliare', click: 'Fai clic sul bordo della pagina o usa ← →', sound: 'Audio',
       linkColor: 'Colore dei link', colors: { grey: 'Grigio', red: 'Rosso', blue: 'Blu', white: 'Bianco' },
       openProduct: 'Apri il prodotto', goTo: 'Vai a pagina', error: 'Impossibile caricare il catalogo.'
     },
     nl: {
-      first: 'Eerste pagina', last: 'Laatste pagina', more: 'Meer', prev: 'Vorige', next: 'Volgende', pages: 'Alle pagina’s', links: 'Links tonen', zoom: 'Inzoomen',
+      search: 'Zoeken', noResults: 'Niets gevonden', first: 'Eerste pagina', last: 'Laatste pagina', more: 'Meer', prev: 'Vorige', next: 'Volgende', pages: 'Alle pagina’s', links: 'Links tonen', zoom: 'Inzoomen',
       pdf: 'PDF downloaden', full: 'Volledig scherm', close: 'Sluiten', product: 'Product', newTab: 'Openen in nieuw tabblad',
-      hint: 'Tik op een product om het te openen', page: 'Pagina', of: 'van',
+      hint: 'Tik op een product om het te openen', hintPage: 'Tik op een gemarkeerd item om naar die pagina te gaan', page: 'Pagina', of: 'van',
       swipe: 'Veeg om de pagina om te slaan', click: 'Klik op de rand van de pagina of gebruik ← →', sound: 'Geluid',
       linkColor: 'Kleur van links', colors: { grey: 'Grijs', red: 'Rood', blue: 'Blauw', white: 'Wit' },
       openProduct: 'Product openen', goTo: 'Naar pagina', error: 'De catalogus kon niet worden geladen.'
     },
     pl: {
-      first: 'Pierwsza strona', last: 'Ostatnia strona', more: 'Więcej', prev: 'Poprzednia', next: 'Następna', pages: 'Wszystkie strony', links: 'Pokaż linki', zoom: 'Powiększ',
+      search: 'Szukaj', noResults: 'Nic nie znaleziono', first: 'Pierwsza strona', last: 'Ostatnia strona', more: 'Więcej', prev: 'Poprzednia', next: 'Następna', pages: 'Wszystkie strony', links: 'Pokaż linki', zoom: 'Powiększ',
       pdf: 'Pobierz PDF', full: 'Pełny ekran', close: 'Zamknij', product: 'Produkt', newTab: 'Otwórz w nowej karcie',
-      hint: 'Dotknij produktu, aby go otworzyć', page: 'Strona', of: 'z',
+      hint: 'Dotknij produktu, aby go otworzyć', hintPage: 'Dotknij wyróżnionej pozycji, aby przejść do strony', page: 'Strona', of: 'z',
       swipe: 'Przesuń, aby przewrócić stronę', click: 'Kliknij krawędź strony lub użyj ← →', sound: 'Dźwięk',
       linkColor: 'Kolor linków', colors: { grey: 'Szary', red: 'Czerwony', blue: 'Niebieski', white: 'Biały' },
       openProduct: 'Otwórz produkt', goTo: 'Przejdź do strony', error: 'Nie udało się wczytać katalogu.'
     },
     bg: {
-      first: 'Първа страница', last: 'Последна страница', more: 'Още', prev: 'Предишна', next: 'Следваща', pages: 'Всички страници', links: 'Покажи връзките', zoom: 'Увеличи',
+      search: 'Търсене', noResults: 'Няма резултати', first: 'Първа страница', last: 'Последна страница', more: 'Още', prev: 'Предишна', next: 'Следваща', pages: 'Всички страници', links: 'Покажи връзките', zoom: 'Увеличи',
       pdf: 'Изтегли PDF', full: 'Цял екран', close: 'Затвори', product: 'Продукт', newTab: 'Отвори в нов прозорец',
-      hint: 'Натиснете върху продукт, за да го отворите', page: 'Страница', of: 'от',
+      hint: 'Натиснете върху продукт, за да го отворите', hintPage: 'Натиснете маркиран ред, за да отидете на страницата', page: 'Страница', of: 'от',
       swipe: 'Плъзнете, за да прелистите', click: 'Натиснете ръба на страницата или ← →', sound: 'Звук',
       linkColor: 'Цвят на връзките', colors: { grey: 'Сив', red: 'Червен', blue: 'Син', white: 'Бял' },
       openProduct: 'Отвори продукта', goTo: 'Към страница', error: 'Каталогът не може да бъде зареден.'
@@ -78,6 +78,7 @@
 
   var ICON = {
     first: '<path d="M17 18l-6-6 6-6M7 6v12"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
     more: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
     last: '<path d="M7 6l6 6-6 6M17 6v12"/>',
     prev: '<path d="M15 18l-6-6 6-6"/>',
@@ -276,6 +277,9 @@
 
     this.btnGrid = this.button('grid', t.pages, function () { self.toggleDrawer(); });
     this.btnGrid.setAttribute('aria-pressed', 'false');
+    this.btnSearch = this.button('search', t.search, function () { self.toggleDrawer(true); self.searchInput.focus(); });
+    this.btnSearch.classList.add('fb-hide-sm');
+    if (!this.data.search) this.btnSearch.hidden = true;
     this.btnLinks = this.button('links', t.links, function () { self.showLinks(!self.root.classList.contains('show-links')); });
     this.btnLinks.setAttribute('aria-pressed', 'false');
     this.btnLinks.classList.add('fb-hide-sm');
@@ -336,7 +340,7 @@
     this.on(document, 'click', function (e) { if (!self.menu.contains(e.target)) self.menu.classList.remove('open'); });
 
     bar.append(title, this.btnFirst, this.btnPrev, pageno, this.btnNext, this.btnLast, el('span', 'fb-sep'),
-      this.btnGrid, this.btnLinks, zoomctl, this.btnSound, pdf, btnFull, btnMore);
+      this.btnGrid, this.btnSearch, this.btnLinks, zoomctl, this.btnSound, pdf, btnFull, btnMore);
 
     // thumbnails in a side panel
     this.drawer = el('aside', 'fb-drawer');
@@ -344,7 +348,20 @@
     var dh = el('div', 'fb-drawer-head'), dt = el('h2'); dt.textContent = t.pages;
     dh.append(dt, this.button('close', t.close, function () { self.toggleDrawer(false); }));
     this.drawerList = el('div', 'fb-drawer-list');
-    this.drawer.append(dh, this.drawerList);
+    // search the catalogue's text (search.json, written by the builder)
+    var sf = el('div', 'fb-search');
+    this.searchInput = el('input'); this.searchInput.type = 'search'; this.searchInput.placeholder = t.search;
+    this.searchInput.setAttribute('aria-label', t.search); this.searchInput.autocomplete = 'off'; this.searchInput.spellcheck = false;
+    sf.innerHTML = svg('search'); sf.append(this.searchInput);
+    if (!this.data.search) sf.hidden = true;
+    this.searchResults = el('div', 'fb-results'); this.searchResults.hidden = true;
+    var st = 0;
+    this.searchInput.addEventListener('input', function () { clearTimeout(st); st = setTimeout(function () { self.search(self.searchInput.value); }, 120); });
+    this.searchInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { var first = self.searchResults.querySelector('button'); if (first) first.click(); }
+      if (e.key === 'Escape' && self.searchInput.value) { e.stopPropagation(); self.searchInput.value = ''; self.search(''); }
+    });
+    this.drawer.append(dh, sf, this.searchResults, this.drawerList);
 
     this.modal = el('div', 'fb-modal');
     this.modal.innerHTML = '<div class="fb-modal-box" role="dialog" aria-modal="true"><div class="fb-overlay-head"><h2></h2>' +
@@ -391,7 +408,7 @@
     if (img.complete) shim.remove();
     p.append(shim, img);
     if (!(opts && opts.noLinks)) {
-      var layer = el('div', 'flippy-links');
+      var layer = el('div', 'fb-links');
       (this.data.pages[n - 1].links || []).forEach(function (l) {
         // product links are real <a href> links (new tab, middle-click, long-press all work);
         // contents links are buttons that turn the book
@@ -738,14 +755,17 @@
     }
   };
 
+  // the first time links are on show, flash them and say what they do: products open in the
+  // shop, contents entries turn to a page (each hint once)
   Flipbook.prototype.afterTurn = function () {
     if (this.flashed) return;
     var layers = this.book.querySelectorAll('.fb-slot .fb-links');
-    var has = Array.prototype.some.call(layers, function (l) { return l.querySelector('.fb-hot'); });
-    if (!has) return;
-    this.flashed = true;
-    Array.prototype.forEach.call(layers, function (l) { l.classList.add('flash'); });
-    this.toast(this.t.hint, 4000);
+    var products = Array.prototype.some.call(layers, function (l) { return l.querySelector('a.fb-hot'); });
+    var pages = Array.prototype.some.call(layers, function (l) { return l.querySelector('button.fb-hot'); });
+    if (!products && (!pages || this.flashedPages)) return;
+    if (products) this.flashed = true; else this.flashedPages = true;
+    Array.prototype.forEach.call(layers, function (l) { l.classList.remove('flash'); void l.offsetWidth; l.classList.add('flash'); });
+    this.toast(products ? this.t.hint : this.t.hintPage, 4000);
   };
 
   Flipbook.prototype.preload = function () {
@@ -1040,6 +1060,43 @@
       var top = cur.offsetTop - (list.clientHeight - cur.offsetHeight) / 2;
       list.scrollTo ? list.scrollTo({ top: top, behavior: 'smooth' }) : (list.scrollTop = top);
     }
+  };
+
+  function fold(str) { return String(str).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+  function escapeHtml(str) { return str.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  Flipbook.prototype.search = function (q) {
+    var self = this, box = this.searchResults;
+    q = fold(q.trim());
+    var terms = q.split(/\s+/).filter(function (w) { return w.length > 1 || /\d/.test(w); });
+    if (!terms.length) { box.hidden = true; this.drawerList.hidden = false; return; }
+    if (!this.searchText) {
+      if (!this.searchLoading) {
+        this.searchLoading = fetch(this.opts.resolve ? this.fileUrl(this.data.search) : bust(this.fileUrl(this.data.search))).then(function (r) { return r.json(); })
+          .then(function (pages) { self.searchText = pages.map(function (t) { return { raw: String(t || ''), low: fold(t || '') }; }); self.search(self.searchInput.value); })
+          .catch(function () { self.searchLoading = null; });
+      }
+      return;
+    }
+    var hits = [];
+    this.searchText.forEach(function (p, i) {
+      if (terms.every(function (w) { return p.low.indexOf(w) >= 0; })) hits.push(i + 1);
+    });
+    box.innerHTML = '';
+    if (!hits.length) { var none = el('p', 'fb-noresults'); none.textContent = this.t.noResults; box.append(none); }
+    hits.slice(0, 200).forEach(function (n) {
+      var p = self.searchText[n - 1], at = p.low.indexOf(terms[0]);
+      // a short piece of text around the first match, with the match marked
+      var from = Math.max(0, at - 36), to = Math.min(p.raw.length, at + terms[0].length + 60);
+      var piece = (from ? '…' : '') + p.raw.slice(from, to) + (to < p.raw.length ? '…' : '');
+      var low = fold(piece), html = '', i = 0;
+      var re = new RegExp(terms.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'), 'g'), m;
+      while ((m = re.exec(low))) { html += escapeHtml(piece.slice(i, m.index)) + '<mark>' + escapeHtml(piece.slice(m.index, m.index + m[0].length)) + '</mark>'; i = m.index + m[0].length; }
+      html += escapeHtml(piece.slice(i));
+      var b = el('button', 'fb-result', '<b>' + self.t.page + ' ' + n + '</b><span>' + html + '</span>');
+      b.onclick = function () { self.go(n); if (self.root.clientWidth <= 640) self.toggleDrawer(false); };
+      box.append(b);
+    });
+    box.hidden = false; this.drawerList.hidden = true;
   };
 
   Flipbook.prototype.showLinks = function (on) {

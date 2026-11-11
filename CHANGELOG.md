@@ -5,6 +5,16 @@
 - Builder: photos stored as JPEG 2000 (common in PDFs from InDesign and print workflows) were
   missing from the pages. The builder now loads pdf.js's image decoders, colour profiles and
   font data.
+- Builder: links each **product's name and photo** too, found next to its colour codes (the bold
+  line above them and the nearest picture), to the first colour's address or without the
+  part after "?"
+- Viewer: **search** in the pages panel (and a search button on desktop), with the matching pages
+  and a snippet; codes are searchable too. The builder and `build.py` write each page's text to
+  `search.json`, and the server keeps it
+- Viewer: the first link hint fits what is on show: page links on a contents page, products
+  later. The links' flash and hint hadn't been showing at all (a class name was wrong)
+- Builder: the logo goes back to the library on a server; the page list and side panel can be
+  hidden, and each side panel section folds (remembered)
 - Server: **Appearance** per catalogue (theme, background, accent, link highlight, toolbar
   language) with a live preview; applies to the catalogue page, iframes and embeds. Iframe
   embed code. Views by signed-in users aren't counted.

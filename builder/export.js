@@ -31,7 +31,13 @@ export function catalogueData(p, { pdf = 'catalogue.pdf' } = {}) {
     }))
   };
   if (p.images.type !== 'webp') data.images = p.images.type;
+  if (p.pages.some(pg => pg.words && pg.words.length)) data.search = 'search.json';
   return data;
+}
+
+// each page's text, for the viewer's search
+export function searchText(p) {
+  return JSON.stringify(p.pages.map(pg => (pg.words || []).map(w => w.text).join(' ').replace(/\s+/g, ' ').trim()));
 }
 
 // The original PDF with its link annotations replaced by the project's links
@@ -120,6 +126,7 @@ export async function exportZip(p, onStep = () => {}) {
     { name: folder + '/index.html', data: indexHtml(data.title, folder) },
     { name: folder + '/flippy-project.json', data: JSON.stringify(projectFile(p)) }
   ];
+  if (data.search) files.push({ name: folder + '/search.json', data: searchText(p) });
   p.images.pages.forEach((b, i) => files.push({ name: `${folder}/pages/${pad3(i + 1)}.${p.images.type}`, data: b }));
   p.images.thumbs.forEach((b, i) => files.push({ name: `${folder}/thumbs/${pad3(i + 1)}.${p.images.type}`, data: b }));
   onStep('Packing the zip');

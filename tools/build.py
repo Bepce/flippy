@@ -115,6 +115,17 @@ def main():
         "pageCount": len(pages),
         "pages": pages,
     }
+    # each page's text, for the viewer's search
+    texts = []
+    for p in reader.pages:
+        try:
+            texts.append(" ".join((p.extract_text() or "").split()))
+        except Exception:
+            texts.append("")
+    if any(texts):
+        with open(os.path.join(outdir, "search.json"), "w", encoding="utf-8") as f:
+            json.dump(texts, f, ensure_ascii=False, separators=(",", ":"))
+        manifest["search"] = "search.json"
     blob = json.dumps(manifest, ensure_ascii=False, separators=(",", ":"))
     with open(os.path.join(outdir, "catalogue.json"), "w", encoding="utf-8") as f:
         f.write(blob)

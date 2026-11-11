@@ -18,7 +18,7 @@ export function wordsFromText(items, viewport, Util) {
     let i = 0;
     for (const part of it.str.split(/(\s+)/)) {
       if (part && !/^\s+$/.test(part)) {
-        out.push({ text: part, x0: tx[4] + i * cw, x1: tx[4] + (i + part.length) * cw, top, bottom, size: h });
+        out.push({ text: part, x0: tx[4] + i * cw, x1: tx[4] + (i + part.length) * cw, top, bottom, size: h, font: it.fontName });
       }
       i += part.length;
     }
@@ -112,4 +112,91 @@ export function parseLinkTable(text) {
 export function withUtm(url, campaign) {
   if (!url || !campaign) return url;
   return url + (url.includes('?') ? '&' : '?') + 'utm_source=catalogue&utm_medium=flipbook&utm_campaign=' + encodeURIComponent(campaign);
+}
+
+// Product blocks: each group of colour swatches is one product. Its name is the nearest bold
+// (or larger) line above the swatches, in the same column; its photo is the nearest picture.
+// laid: layoutCodes() output; images: picture boxes on the page; pg: { w, h }.
+// Returns [{ codes: [...], title: box|null, photo: box|null }]
+export function productBlocks(words, laid, images, pg, codeRe) {
+  const sw = laid.filter(l => l.how === 'swatch');
+  if (!sw.length) return [];
+  // group swatches: side by side on one row, or rows stacked closely
+  const parent = sw.map((_, i) => i);
+  const find = i => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  for (let i = 0; i < sw.length; i++) for (let j = i + 1; j < sw.length; j++) {
+    const a = sw[i].box, b = sw[j].box, w = Math.max(a.x1 - a.x0, b.x1 - b.x0), h = Math.max(a.bottom - a.top, b.bottom - b.top);
+    const gapX = Math.max(a.x0, b.x0) - Math.min(a.x1, b.x1), gapY = Math.max(a.top, b.top) - Math.min(a.bottom, b.bottom);
+    const sameRow = Math.abs(a.top - b.top) < 6 && gapX < 1.5 * w;
+    const stacked = gapY >= -2 && gapY < 0.6 * h && gapX < 0.5 * w;
+    if (sameRow || stacked) parent[find(i)] = find(j);
+  }
+  const groups = new Map();
+  sw.forEach((s, i) => { const r = find(i); (groups.get(r) || groups.set(r, []).get(r)).push(s); });
+
+  const area = r => (r.x1 - r.x0) * (r.bottom - r.top);
+  const pageArea = pg.w * pg.h;
+  // pictures: on the page, not tiny (icons, swatch dots), not the whole page (backgrounds)
+  const pics = (images || []).map(r => ({ x0: Math.max(0, r.x0), top: Math.max(0, r.top), x1: Math.min(pg.w, r.x1), bottom: Math.min(pg.h, r.bottom) }))
+    .filter(r => r.x1 > r.x0 && r.bottom > r.top && area(r) > pageArea * 0.02 && area(r) < pageArea * 0.7);
+  const gap = (a, b) => Math.max(0, Math.max(a.x0, b.x0) - Math.min(a.x1, b.x1)) + Math.max(0, Math.max(a.top, b.top) - Math.min(a.bottom, b.bottom));
+
+  // lines of text, each in one size and weight
+  // the body text size: the one most of the page's text is set in
+  const bySize = new Map();
+  for (const w of words) { const k = Math.round(w.size * 2) / 2; bySize.set(k, (bySize.get(k) || 0) + w.text.length); }
+  const median = [...bySize.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 10;
+  const lines = [];
+  for (const w of words.slice().sort((a, b) => a.top - b.top || a.x0 - b.x0)) {
+    if (codeRe.test(w.text)) continue;
+    const l = lines.find(l => Math.abs(l.top - w.top) < 2 && Math.abs(l.size - w.size) < 0.5 && !!l.bold === !!w.bold && w.x0 - l.x1 < 2.5 * w.size && w.x0 >= l.x0 - 1);
+    if (l) { l.x1 = Math.max(l.x1, w.x1); l.bottom = Math.max(l.bottom, w.bottom); l.text += ' ' + w.text; }
+    else lines.push({ x0: w.x0, x1: w.x1, top: w.top, bottom: w.bottom, size: w.size, bold: w.bold, text: w.text });
+  }
+  // a name: bold or larger than the body text, with at least four letters (not a "NEW" badge)
+  const heading = l => (l.bold || l.size >= median * 1.2) && (l.text.match(/\p{L}/gu) || []).length >= 4;
+  const inside = (l, b) => l.x1 > b.x0 && l.x0 < b.x1 && l.bottom > b.top && l.top < b.bottom;
+
+  const out = [];
+  for (const g of groups.values()) {
+    g.sort((a, b) => a.box.top - b.box.top || a.box.x0 - b.box.x0);
+    const gb = { x0: Math.min(...g.map(s => s.box.x0)), top: Math.min(...g.map(s => s.box.top)), x1: Math.max(...g.map(s => s.box.x1)), bottom: Math.max(...g.map(s => s.box.bottom)) };
+    const colW = Math.max(gb.x1 - gb.x0, pg.w * 0.25);
+    // name: nearest heading line above the swatches, starting in the same column
+    let title = null;
+    // the name is already inside the code's own box (a label right above the code): nothing to add
+    const own = lines.some(l => heading(l) && inside(l, gb));
+    for (const l of own ? [] : lines) {
+      if (!heading(l) || l.bottom > gb.top + 2 || gb.top - l.bottom > pg.h * 0.45) continue;
+      if (l.x0 < gb.x0 - colW * 0.35 || l.x0 > gb.x0 + colW * 0.6) continue;
+      if (!title || l.bottom > title.bottom) title = l;
+    }
+    // photo: a nearby picture, preferring big ones beside or above the colours (pictures below
+    // them are usually close-ups of details)
+    let photo = null, best = Infinity;
+    for (const r of pics) {
+      if (gap(r, gb) === 0 && area(r) < area(gb) * 3) continue;        // a picture behind the swatches themselves
+      const d = gap(r, gb);
+      if (d > Math.max(pg.w, pg.h) * 0.2) continue;
+      const score = d + (r.top >= gb.bottom - 2 ? 60 : 0) - 0.5 * Math.sqrt(area(r));
+      if (score < best) { best = score; photo = r; }
+    }
+    out.push({
+      codes: g.map(s => s.code),
+      title: title && { x0: title.x0 - 3, top: title.top - 3, x1: title.x1 + 3, bottom: title.bottom + 3 },
+      photo
+    });
+  }
+  // colour rows under one name are one product
+  const merged = [];
+  for (const b of out) {
+    const same = b.title && merged.find(m => m.title && Math.abs(m.title.top - b.title.top) < 1 && Math.abs(m.title.x0 - b.title.x0) < 1);
+    if (same) { same.codes.push(...b.codes); same.photo = same.photo || b.photo; }
+    else merged.push(b);
+  }
+  // a picture shared by several products links to none of them
+  const uses = new Map();
+  merged.forEach(b => { if (b.photo) uses.set(b.photo, (uses.get(b.photo) || 0) + 1); });
+  merged.forEach(b => { if (b.photo && uses.get(b.photo) > 1) b.photo = null; });
+  return merged;
 }

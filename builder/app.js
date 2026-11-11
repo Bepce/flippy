@@ -1,7 +1,7 @@
 // flippy builder: PDF in, linked flipbook folder out. Runs entirely in the browser.
 import { readPdf } from './extract.js';
-import { layoutCodes, codeRegex, parseLinkTable, withUtm } from './linker.js';
-import { exportZip, linkedPdf, catalogueData, slugify } from './export.js';
+import { layoutCodes, codeRegex, parseLinkTable, withUtm, productBlocks } from './linker.js';
+import { exportZip, linkedPdf, catalogueData, slugify, searchText } from './export.js';
 import { unzip } from './zip.js';
 import * as store from './store.js';
 
@@ -30,7 +30,7 @@ let urls = [];          // object URLs of the page images (revoked when the proj
 let thumbUrls = [];
 let codeFilter = 'missing';
 
-const DEFAULTS = { pattern: '\\d{6}', source: 'table', table: '', tableName: '', template: '', utm: '' };
+const DEFAULTS = { pattern: '\\d{6}', source: 'table', table: '', tableName: '', template: '', utm: '', products: true, productUrl: 'first' };
 
 /* ---------------- start screen ---------------- */
 
@@ -78,7 +78,7 @@ async function importPdf(bytes, name, extra = {}) {
   const p = {
     id: crypto.randomUUID ? crypto.randomUUID() : uid() + uid(),
     title, folder: slugify(title), pdf: bytes, images: r.images,
-    pages: r.pages.map(pg => ({ w: pg.w, h: pg.h, words: pg.words, links: pg.links.map(l => ({ ...l, id: uid() })) })),
+    pages: r.pages.map(pg => ({ w: pg.w, h: pg.h, words: pg.words, images: pg.images || [], links: pg.links.map(l => ({ ...l, id: uid() })) })),
     settings: { ...DEFAULTS }, codeUrls: {}
   };
   busy(false);
@@ -119,7 +119,7 @@ async function importZip(file) {
     pdf: bytes, images: { type, pages, thumbs },
     settings: { ...DEFAULTS, ...((proj && proj.settings) || {}) }, codeUrls: (proj && proj.codeUrls) || {},
     pages: r.pages.map((pg, i) => ({
-      w: pg.w, h: pg.h, words: pg.words,
+      w: pg.w, h: pg.h, words: pg.words, images: pg.images || [],
       links: proj && proj.pages[i] ? proj.pages[i].links.map(l => ({ ...l, id: l.id || uid() }))
         : ((data.pages[i] && data.pages[i].links) || []).map(l => ({ ...l, id: uid(), from: l.kind === 'link' ? 'pdf' : undefined }))
     }))
@@ -270,7 +270,7 @@ function renderPage() {
   sheet.querySelectorAll('.box, .draft').forEach(b => b.remove());
   for (const l of pg.links) {
     const st = linkState(l);
-    const label = l.page ? `→ page ${l.page}` : (l.code || (l.url ? shortUrl(l.url) : 'no address'));
+    const label = l.page ? `→ page ${l.page}` : l.kind === 'title' ? `name · ${l.product}` : l.kind === 'photo' ? `photo · ${l.product}` : (l.code || (l.url ? shortUrl(l.url) : 'no address'));
     const b = el('div', { class: 'box' + (st ? ' ' + st : '') + (l.id === sel ? ' sel' : ''), 'data-id': l.id, title: l.page ? `Turns to page ${l.page}` : (l.url || 'No address yet') },
       el('span', { class: 'lab' }, label + (!l.url && !l.page && l.code ? ' · no address' : '')),
       ...['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map(d => el('i', { class: 'h ' + d, 'data-h': d })));
@@ -360,6 +360,9 @@ function select(id) {
 
 function renderInspector() {
   const l = sel && findLink(sel);
+  if (l && (layout.noSide || (layout.folded || {}).inspector)) {
+    layout.noSide = false; if (layout.folded) layout.folded.inspector = false; saveLayout(); applyLayout();
+  }
   $('#inspector .empty').hidden = !!l;
   $('#inspector .fields').hidden = !l;
   if (!l) return;
@@ -427,16 +430,21 @@ function showSettings() {
   $('#pattern').value = s.pattern; $('#table').value = s.table; $('#template').value = s.template; $('#utm').value = s.utm;
   $('#table-name').textContent = s.tableName || 'CSV, or a Google Merchant / shop product feed';
   $$('[name=source]').forEach(r => { r.checked = r.value === s.source; });
+  $('#products').checked = s.products !== false;
+  $('#product-url').value = s.productUrl || 'first';
   showSource();
 }
 function showSource() {
   $('.src-table').hidden = P.settings.source !== 'table';
   $('.src-template').hidden = P.settings.source !== 'template';
+  $('.src-products').hidden = P.settings.products === false;
 }
 $('#pattern').addEventListener('input', e => { P.settings.pattern = e.target.value; e.target.setCustomValidity(codeRegex(e.target.value) ? '' : 'Not a valid pattern'); changed(); });
 $('#table').addEventListener('input', e => { P.settings.table = e.target.value; P.settings.tableName = ''; $('#table-name').textContent = 'Pasted list'; changed(); });
 $('#template').addEventListener('input', e => { P.settings.template = e.target.value; changed(); });
 $('#utm').addEventListener('input', e => { P.settings.utm = e.target.value.trim(); changed(); });
+$('#products').addEventListener('change', e => { P.settings.products = e.target.checked; showSource(); changed(); });
+$('#product-url').addEventListener('change', e => { P.settings.productUrl = e.target.value; changed(); });
 $$('[name=source]').forEach(r => r.addEventListener('change', () => { P.settings.source = r.value; showSource(); changed(); }));
 $('#table-file').addEventListener('change', async e => {
   const f = e.target.files[0]; if (!f) return;
@@ -460,20 +468,39 @@ const overlap = (a, b) => {
   return w > 0 && h > 0 ? (w * h) / Math.min(a.w * a.h, b.w * b.h) : 0;
 };
 
-function runAuto() {
+async function runAuto() {
   const re = codeRegex(P.settings.pattern);
   if (!re) { toast('The code pattern isn’t a valid regular expression.', true); return; }
   if (P.settings.source === 'template' && !P.settings.template.includes('{code}')) { toast('Put {code} in the address pattern.', true); $('#template').focus(); return; }
   const table = P.settings.source === 'table' ? parseLinkTable(P.settings.table) : new Map();
   if (P.settings.source === 'table' && !table.size) toast('The list has no codes with addresses yet; codes are boxed so you can fill them in.', true);
+  // projects from before picture detection: read the page layout once more
+  if (P.settings.products !== false && P.pages.some(pg => !pg.images)) {
+    try {
+      busy('Reading the page layout');
+      const r = await readPdf(P.pdf, { render: false, onProgress: (i, n) => busy(`Reading page ${Math.min(i + 1, n)} of ${n}`, i / n) });
+      r.pages.forEach((rp, i) => { if (P.pages[i]) { P.pages[i].words = rp.words; P.pages[i].images = rp.images || []; } });
+    } catch (e) { console.error(e); }
+    busy(false);
+  }
   pushUndo();
-  let found = 0, linked = 0, kept = 0;
+  let found = 0, linked = 0, kept = 0, products = 0;
+  const productUrl = codes => {
+    const first = codes.map(c => urlFor(c, table)).find(Boolean);
+    if (!first) return '';
+    return P.settings.productUrl === 'strip' ? withUtm(first.split('?')[0].split('#')[0], P.settings.utm) : first;
+  };
+  const toBox = (pg, b) => {
+    const box = { x: clamp(b.x0 / pg.w, 0, 1), y: clamp(b.top / pg.h, 0, 1) };
+    box.w = clamp(b.x1 / pg.w, 0, 1) - box.x; box.h = clamp(b.bottom / pg.h, 0, 1) - box.y;
+    return box;
+  };
   for (const pg of P.pages) {
     // hand-edited auto boxes stay; the rest are placed again
     pg.links = pg.links.filter(l => !l.auto || l.manual);
-    for (const c of layoutCodes(pg.words, re)) {
-      const box = { x: clamp(c.box.x0 / pg.w, 0, 1), y: clamp(c.box.top / pg.h, 0, 1) };
-      box.w = clamp(c.box.x1 / pg.w, 0, 1) - box.x; box.h = clamp(c.box.bottom / pg.h, 0, 1) - box.y;
+    const laid = layoutCodes(pg.words, re);
+    for (const c of laid) {
+      const box = toBox(pg, c.box);
       if (box.w <= 0 || box.h <= 0) continue;
       found++;
       if (pg.links.some(l => overlap(l, box) > 0.5)) { kept++; continue; }      // already linked by hand or in the PDF
@@ -481,12 +508,25 @@ function runAuto() {
       if (url) linked++;
       pg.links.push({ id: uid(), ...box, kind: c.how === 'swatch' ? 'swatch' : c.how, code: c.code, url, auto: true });
     }
+    // the product's name and photo, found next to its colour codes
+    if (P.settings.products !== false) {
+      for (const b of productBlocks(pg.words, laid, pg.images, pg, re)) {
+        for (const [kind, r] of [['title', b.title], ['photo', b.photo]]) {
+          if (!r) continue;
+          const box = toBox(pg, r);
+          if (box.w <= 0 || box.h <= 0 || pg.links.some(l => overlap(l, box) > 0.5)) continue;
+          pg.links.push({ id: uid(), ...box, kind, product: b.codes[0], url: productUrl(b.codes), auto: true });
+          products++;
+        }
+      }
+    }
   }
   P.settings.lastRun = Date.now();
   afterEdit();
   const missing = found - linked - kept;
   $('#result').innerHTML = found
     ? `<span class="ok">${found} codes found</span>, ${linked} linked` + (kept ? `, ${kept} already had a link` : '') +
+      (products ? `, ${products} product names and photos linked` : '') +
       (missing ? ` · <span class="warn-t">${missing} need an address</span> (orange boxes)` : '.')
     : 'No codes matching the pattern were found. Check “What a code looks like”.';
   codeFilter = missing ? 'missing' : 'all';
@@ -523,6 +563,9 @@ function renderCodes() {
       const v = input.value.trim();
       P.codeUrls[c.code] = v;
       c.links.forEach(l => { if (!l.page) l.url = v; });
+      // the product's name and photo follow its first colour
+      const pv = P.settings.productUrl === 'strip' ? v.split('?')[0].split('#')[0] : v;
+      P.pages.forEach(pg => pg.links.forEach(l => { if (l.product === c.code && !l.manual) l.url = pv; }));
       renderPage(); renderThumbCounts(); changed();
     });
     input.addEventListener('change', () => { if (before) pushUndo(before); before = null; renderCodes(); });
@@ -542,6 +585,7 @@ function openPreview() {
   const data = catalogueData(P, { pdf: null });
   const map = {};
   P.images.pages.forEach((_, i) => { map[`pages/${pad3(i + 1)}.${P.images.type}`] = urls[i]; map[`thumbs/${pad3(i + 1)}.${P.images.type}`] = thumbUrls[i]; });
+  if (data.search) { if (pv && pv.searchUrl) URL.revokeObjectURL(pv.searchUrl); map['search.json'] = URL.createObjectURL(new Blob([searchText(P)], { type: 'application/json' })); }
   $('#pv').hidden = false; $('#toast').hidden = true;
   pv = window.Flippy.mount($('#pv-book'), {
     data, resolve: path => map[path] || '', hash: false, setTitle: false, page: cur + 1, pdf: false
@@ -723,7 +767,39 @@ stage.addEventListener('wheel', e => {
   setZoom('custom', zoomFactor * Math.exp(-e.deltaY * 0.002), { x: e.clientX, y: e.clientY });
 }, { passive: false });
 window.addEventListener('resize', layoutSheet);
-$('.brand').addEventListener('click', e => { e.preventDefault(); history.replaceState(null, '', location.pathname); showStart(); });
+// the logo leads home: the library when the builder runs on a flippy server, else the start screen
+$('.brand').addEventListener('click', async e => {
+  e.preventDefault();
+  if (server) { await saveNow(); location.href = '../admin/'; return; }
+  history.replaceState(null, '', location.pathname); showStart();
+});
+
+// layout preferences: side bars shown or hidden, panels folded (remembered in this browser)
+const LAYOUT_KEY = 'flippy-builder-layout';
+let layout = {};
+try { layout = JSON.parse(localStorage.getItem(LAYOUT_KEY) || '{}') || {}; } catch (e) { layout = {}; }
+const saveLayout = () => { try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(layout)); } catch (e) { /* private mode */ } };
+function applyLayout() {
+  $('#editor').classList.toggle('no-thumbs', !!layout.noThumbs);
+  $('#editor').classList.toggle('no-side', !!layout.noSide);
+  $('#toggle-thumbs').setAttribute('aria-pressed', String(!layout.noThumbs));
+  $('#toggle-side').setAttribute('aria-pressed', String(!layout.noSide));
+  $$('.side .panel').forEach(p => {
+    const f = !!(layout.folded || {})[p.id];
+    p.classList.toggle('folded', f);
+    p.querySelector('h2').setAttribute('aria-expanded', String(!f));
+  });
+  layoutSheet();
+}
+$('#toggle-thumbs').addEventListener('click', () => { layout.noThumbs = !layout.noThumbs; saveLayout(); applyLayout(); });
+$('#toggle-side').addEventListener('click', () => { layout.noSide = !layout.noSide; saveLayout(); applyLayout(); });
+$$('.side .panel > h2').forEach(h => {
+  h.classList.add('fold'); h.tabIndex = 0; h.setAttribute('role', 'button');
+  const flip = () => { layout.folded = layout.folded || {}; const id = h.parentElement.id; layout.folded[id] = !layout.folded[id]; saveLayout(); applyLayout(); };
+  h.addEventListener('click', e => { if (!e.target.closest('.seg')) flip(); });
+  h.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+});
+applyLayout();
 
 document.addEventListener('keydown', e => {
   if (!P || !$('#pv').hidden || $('#ex').open) { if (e.key === 'Escape' && !$('#pv').hidden) closePreview(); return; }

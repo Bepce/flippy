@@ -50,6 +50,12 @@ const ok = (cond, name, extra) => { console.log((cond ? '  ok  ' : '  FAIL ') + 
     return o;
   });
   ok(overlaps === 0, 'no overlapping auto boxes', overlaps + ' overlaps');
+  const names = await page.evaluate(() => {
+    const pg = window.flippyBuilder.project.pages[2];
+    const t = pg.links.find(l => l.kind === 'title'), first = pg.links.find(l => l.code === '300101');
+    return { has: !!t, sameUrl: t && first && t.url === first.url, total: window.flippyBuilder.project.pages.reduce((s, p) => s + p.links.filter(l => l.kind === 'title').length, 0) };
+  });
+  ok(names.has && names.sameUrl && names.total >= 5, 'product names linked to the first colour', JSON.stringify(names));
 
   // go to page 3 and check boxes are drawn
   await page.click('#thumbs .thumb:nth-child(3)');
@@ -140,7 +146,7 @@ const ok = (cond, name, extra) => { console.log((cond ? '  ok  ' : '  FAIL ') + 
   await page.waitForFunction(() => window.flippyBuilder.project && window.flippyBuilder.project.folder === 'hollowbrook-test', null, { timeout: 60000 });
   const reopened = await page.evaluate(() => ({
     links: window.flippyBuilder.project.pages.reduce((s, p) => s + p.links.length, 0),
-    auto: window.flippyBuilder.project.pages.reduce((s, p) => s + p.links.filter(l => l.auto).length, 0),
+    auto: window.flippyBuilder.project.pages.reduce((s, p) => s + p.links.filter(l => l.auto && l.code).length, 0),
     table: window.flippyBuilder.project.settings.table.length
   }));
   ok(reopened.auto === 49 && reopened.table > 0, 'zip reopens with codes and settings', JSON.stringify(reopened));
