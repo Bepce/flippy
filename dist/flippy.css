@@ -331,7 +331,8 @@
                      background: linear-gradient(to bottom left, #fdfdfd 0%, #eef0f2 32%, #ccd0d5 48%, #a9aeb5 50%); }
 /* the back of the page on the flap: placed so the page's corner is the flap's tip, turned and
    mirrored as a folded sheet would be; a little shade deepens towards the crease */
-.fb-peel .u.empty { background: var(--fb-bg-2); }
+/* nothing underneath (first and last spread): no patch, the page's own corner stays visible */
+.fb-peel .u.empty { background: none; }
 .fb-peel .f i { position: absolute; left: 0; top: 0; width: var(--fb-pw); height: var(--fb-ph); transform-origin: 0 0;
                 background: #fff no-repeat 0 0 / 100% 100%; }
 .fb-corner.next .f i { transform: translate(var(--fb-ph), 0) rotate(90deg); }
