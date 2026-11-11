@@ -760,6 +760,7 @@
       // the flap casts a soft shadow onto the page underneath, along the fold
       u.style.backgroundImage = ok(n) ? 'linear-gradient(to ' + c[2] + ', transparent 45%, rgba(0,0,0,.28) 50%), url("' + self.pageUrl(n) + '")' : '';
       u.classList.toggle('empty', !ok(n));
+      self.book.classList.toggle('empty-' + c[0], !ok(n));
       f.hidden = !ok(m);
       f.style.backgroundImage = ok(m) ? 'url("' + self.pageUrl(m) + '")' : '';
     });

@@ -331,8 +331,18 @@
                      background: linear-gradient(to bottom left, #fdfdfd 0%, #eef0f2 32%, #ccd0d5 48%, #a9aeb5 50%); }
 /* the back of the page on the flap: placed so the page's corner is the flap's tip, turned and
    mirrored as a folded sheet would be; a little shade deepens towards the crease */
-/* nothing underneath (first and last spread): no patch, the page's own corner stays visible */
+/* nothing underneath (first and last spread): the corner is cut out of the page itself, so the
+   real background shows through, as with a sheet that has no page behind it */
 .fb-peel .u.empty { background: none; }
+@property --fb-notch { syntax: "<length>"; inherits: true; initial-value: 0px; }
+.fb-slot { --fb-notch: 0px; transition: --fb-notch .25s ease; }
+.fb-slot.right { clip-path: polygon(-140px -140px, calc(100% + 140px) -140px, calc(100% + 140px) calc(100% - var(--fb-notch)),
+  100% calc(100% - var(--fb-notch)), calc(100% - var(--fb-notch)) 100%, calc(100% - var(--fb-notch)) calc(100% + 140px), -140px calc(100% + 140px)); }
+.fb-slot.left { clip-path: polygon(-140px -140px, calc(100% + 140px) -140px, calc(100% + 140px) calc(100% + 140px), var(--fb-notch) calc(100% + 140px),
+  var(--fb-notch) 100%, 0 calc(100% - var(--fb-notch)), -140px calc(100% - var(--fb-notch))); }
+.fb-book.empty-next:has(.fb-corner.next:hover, .fb-corner.next:focus-visible) .fb-slot.right,
+.fb-book.single.empty-next:has(.fb-corner.next:hover) .fb-slot.right { --fb-notch: var(--fb-corner, 52px); }
+.fb-book.empty-prev:has(.fb-corner.prev:hover, .fb-corner.prev:focus-visible) .fb-slot.left { --fb-notch: var(--fb-corner, 52px); }
 .fb-peel .f i { position: absolute; left: 0; top: 0; width: var(--fb-pw); height: var(--fb-ph); transform-origin: 0 0;
                 background: #fff no-repeat 0 0 / 100% 100%; }
 .fb-corner.next .f i { transform: translate(var(--fb-ph), 0) rotate(90deg); }
