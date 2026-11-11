@@ -160,6 +160,13 @@ process.on('exit', () => php && php.kill());
   await page.waitForSelector('#toast:has-text("Published")', { timeout: 60000 });
   let list = (await api('/catalogues')).data.catalogues.map(c => c.slug).sort();
   ok(list.join() === 'hollowbrook,hollowbrook-copy', 'published from the builder', list.join());
+  const searchable = await page.evaluate(async base => {
+    const d = await (await fetch(base + 'c/hollowbrook-copy/catalogue.json')).json();
+    const r = await fetch(base + 'c/hollowbrook-copy/search.json');
+    const t = r.ok ? await r.json() : [];
+    return { flag: d.search, pages: t.length, hasWord: t.some(x => /canvas/i.test(x)) };
+  }, BASE);
+  ok(searchable.flag === 'search.json' && searchable.pages === 12 && searchable.hasWord, 'published catalogue is searchable', JSON.stringify(searchable));
   await page.click('#export');
   await page.click('#ex-publish');
   await page.waitForSelector('#toast:has-text("Published")', { timeout: 60000 });
