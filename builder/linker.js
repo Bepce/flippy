@@ -31,6 +31,7 @@ export function layoutCodes(words, codeRe) {
   const isCode = w => codeRe.test(w.text);
   const codes = words.filter(isCode);
   const laid = [];
+  let lab;
   for (const w of codes) {
     const lineH = w.bottom - w.top;
     const column = codes.filter(u => u !== w && Math.abs(u.x0 - w.x0) < 3 && Math.abs(u.top - w.top) > 0 && Math.abs(u.top - w.top) < 2.5 * lineH);
@@ -44,6 +45,8 @@ export function layoutCodes(words, codeRe) {
       }
       const mid = (w.top + w.bottom) / 2, hh = step / 2 - 1;
       laid.push({ w, how: 'row', box: { x0: w.x0 - 3, top: mid - hh, x1: x1 + 3, bottom: mid + hh } });
+    } else if (!inText && (lab = labelAbove(w, words, isCode))) {   // a name printed right above the code
+      laid.push({ w, how: 'label', box: lab });
     } else if (inText) {                                    // mentioned in a sentence
       laid.push({ w, how: 'text', box: { x0: w.x0 - 2, top: w.top - 2, x1: w.x1 + 2, bottom: w.bottom + 2 } });
     } else {                                                // swatch: colour above, name below
@@ -66,6 +69,36 @@ export function layoutCodes(words, codeRe) {
   // a code inside a sentence is skipped when the same code also has its own box
   const boxed = new Set(laid.filter(l => l.how !== 'text').map(l => l.w.text));
   return laid.filter(l => !(l.how === 'text' && boxed.has(l.w.text))).map(l => ({ code: l.w.text, how: l.how, box: l.box }));
+}
+
+// Up to three short lines directly above a code, starting at the same left edge
+// ("AERIAL PRO LADY / Butterfly Whisper / 560018"): name and code become one box.
+function labelAbove(code, words, isCode) {
+  const lineH = code.bottom - code.top;
+  const lineAt = start => {
+    const ws = words.filter(u => Math.abs(u.top - start.top) < 2 && u.x0 >= start.x0 - 1).sort((a, b) => a.x0 - b.x0);
+    const out = [start];
+    for (const u of ws) { if (u === start) continue; const last = out[out.length - 1]; if (u.x0 - last.x1 < 2 * u.size && u.x0 > last.x0) out.push(u); }
+    return { words: out, x0: start.x0, x1: Math.max(...out.map(u => u.x1)), top: Math.min(...out.map(u => u.top)), bottom: Math.max(...out.map(u => u.bottom)),
+      text: out.map(u => u.text).join(' ') };
+  };
+  const lines = [];
+  let ref = code;
+  for (let k = 0; k < 3; k++) {
+    // the next line up: starts within a few points of the code's left edge, just above the line before
+    const start = words.filter(u => !isCode(u) && Math.abs(u.x0 - code.x0) < 4 && u.bottom <= ref.top + 1 && ref.top - u.bottom < Math.max(lineH, u.size) * 0.9)
+      .sort((a, b) => b.bottom - a.bottom)[0];
+    if (!start) break;
+    const line = lineAt(start);
+    if (line.text.length > 45 || line.words.some(isCode)) break;
+    lines.push(line);
+    ref = line;
+  }
+  if (!lines.length) return null;
+  return {
+    x0: Math.min(code.x0, ...lines.map(l => l.x0)) - 3, top: Math.min(...lines.map(l => l.top)) - 3,
+    x1: Math.max(code.x1, ...lines.map(l => l.x1)) + 3, bottom: code.bottom + 3
+  };
 }
 
 // "^...$" around the user's pattern, so the whole word has to match

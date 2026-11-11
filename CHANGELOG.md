@@ -5,6 +5,8 @@
 - Builder: photos stored as JPEG 2000 (common in PDFs from InDesign and print workflows) were
   missing from the pages. The builder now loads pdf.js's image decoders, colour profiles and
   font data.
+- Builder: a short name printed right above a code (one product per label, like a range of
+  shoes) is linked together with its code as one box
 - Builder: links each **product's name and photo** too, found next to its colour codes (the bold
   line above them and the nearest picture), to the first colour's address or without the
   part after "?"

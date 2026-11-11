@@ -123,6 +123,7 @@ How the link boxes are placed:
 |---|---|
 | Colour swatch (circle or square above the code) | swatch + code + colour name, never overlapping its neighbours |
 | List or table (codes stacked in a column) | the whole row |
+| Name printed right above the code | name and code together |
 | Code mentioned in a sentence | skipped if the same code has a swatch on the page, otherwise the code itself |
 
 Links that are already in your PDF, such as a clickable table of contents, are kept.
