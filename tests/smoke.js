@@ -72,6 +72,12 @@ function check(ok, msg) { if (!ok) throw new Error(msg); console.log('  ok  ' + 
     await m.click('.fb-btn[aria-label="More"]');
     await m.click('.fb-menu button:has-text("Show links")');
     check(await m.$eval('.fb', r => r.classList.contains('show-links')), 'links switched on from the More menu');
+    await m.click('.fb-btn[aria-label="More"]');
+    await m.click('.fb-menu button:has-text("Search")'); await m.waitForTimeout(400);
+    await m.fill('.fb-search input', 'notebook'); await m.waitForTimeout(500);
+    await m.click('.fb-result >> nth=0'); await m.waitForTimeout(1800);
+    check(!(await m.$eval('.fb', r => r.classList.contains('drawer-open'))) && (await m.inputValue('.fb-pageno input')) !== '3', 'phone: Search in the More menu, a result turns to its page');
+    await m.evaluate(() => document.querySelector('.fb').flippy.go(3)); await m.waitForTimeout(1800);
     await m.tap('.fb-zoombar button[aria-label="Zoom +"]');
     check(await m.evaluate(() => document.querySelector('.fb').flippy.zoomLevel) === 1.5, 'phone zoom bar zooms in');
     await m.tap('.fb-zoombar button[aria-label="Zoom −"]');

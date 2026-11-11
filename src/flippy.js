@@ -335,6 +335,10 @@
       self.menu.append(b);
       return b;
     };
+    if (this.data.search) {
+      var ms = item('search', t.search, function () { self.toggleDrawer(true, 'search'); });
+      ms.setAttribute('role', 'menuitem');
+    }
     this.menuLinks = item('links', t.links, function () { self.showLinks(!self.root.classList.contains('show-links')); });
     this.menuSound = item(this.sound.on ? 'sound' : 'mute', t.sound, function () { self.toggleSound(); });
     this.menuSound.setAttribute('aria-checked', String(this.sound.on));

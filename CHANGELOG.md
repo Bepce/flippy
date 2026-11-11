@@ -12,6 +12,7 @@
   lands on the other side), and underneath is the page that will be on that side. On the first
   and last spread, where there is no page underneath, the corner is cut out of the page
   so the real background shows through
+- Viewer on phones: Search in the ⋯ menu
 - Viewer: the search button opens a search view (focused box, results); buttons meant to be
   hidden (search without page text, PDF without a PDF) really are
 - Builder: a short name printed right above a code (one product per label, like a range of
