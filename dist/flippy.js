@@ -1067,7 +1067,10 @@
     this.btnGrid.setAttribute('aria-pressed', String(open && !searching));
     this.btnSearch.setAttribute('aria-pressed', String(open && searching));
     if (open) { this.search(this.searchInput.value); this.markThumbs(true); }
-    if (open && searching) setTimeout(function () { self.searchInput.focus(); }, 60);
+    if (open && searching) {
+      try { this.searchInput.focus({ preventScroll: true }); } catch (e) { /* hidden for a moment */ }
+      setTimeout(function () { if (document.activeElement !== self.searchInput) self.searchInput.focus({ preventScroll: true }); }, 60);
+    }
   };
   // highlight the pages on show, and keep them in view in the panel
   Flipbook.prototype.markThumbs = function (scroll) {
@@ -1120,7 +1123,9 @@
       var re = new RegExp(terms.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'), 'g'), m;
       while ((m = re.exec(low))) { html += escapeHtml(piece.slice(i, m.index)) + '<mark>' + escapeHtml(piece.slice(m.index, m.index + m[0].length)) + '</mark>'; i = m.index + m[0].length; }
       html += escapeHtml(piece.slice(i));
-      var b = el('button', 'fb-result', '<b>' + self.t.page + ' ' + n + '</b><span>' + html + '</span>');
+      var b = el('button', 'fb-result', '<span class="fb-result-text"><b>' + self.t.page + ' ' + n + '</b><span>' + html + '</span></span>');
+      var thumb = new Image(); thumb.loading = 'lazy'; thumb.alt = ''; thumb.src = self.pageUrl(n, true);
+      b.prepend(thumb);
       b.onclick = function () { self.go(n); if (self.root.clientWidth <= 640) self.toggleDrawer(false); };
       box.append(b);
     });
