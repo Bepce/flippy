@@ -19,6 +19,8 @@
 - Viewer: all pages open in a side panel of thumbnails instead of a full-screen grid. On wide
   screens the book moves over and the panel stays open while you read; on phones it slides over
   the page and closes when you pick one
+- Viewer on phones: a zoom bar (−, slider, +) at the top of the catalogue, and pinching zooms the
+  catalogue page instead of the whole web page
 - Viewer on phones: the toolbar is back, page, next, pages and a "more" menu (show links, sound,
   download PDF)
 - Admin: the Appearance preview changes colours instantly instead of reloading

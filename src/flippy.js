@@ -295,6 +295,18 @@
     box.append(this.zoomRange, this.zoomVal); pop.append(box);
     zoomctl.append(pop, this.btnZoom);
 
+    // phones: a small zoom bar at the top of the catalogue (pinching works too)
+    this.zoomBar = el('div', 'fb-zoombar fb-only-sm');
+    this.zoomBar.setAttribute('role', 'group'); this.zoomBar.setAttribute('aria-label', t.zoom);
+    var zout = el('button', 'fb-zb-btn', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg>');
+    var zin = el('button', 'fb-zb-btn', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg>');
+    zout.setAttribute('aria-label', t.zoom + ' −'); zin.setAttribute('aria-label', t.zoom + ' +');
+    zout.onclick = function () { self.setZoom(self.zoomLevel - 0.5); };
+    zin.onclick = function () { self.setZoom(self.zoomLevel + 0.5); };
+    this.zoomRange2 = this.zoomRange.cloneNode();
+    this.zoomRange2.addEventListener('input', function () { self.setZoom(self.zoomRange2.value / 100); });
+    this.zoomBar.append(zout, this.zoomRange2, zin);
+
     var pdf = el('a', 'fb-btn fb-hide-sm', svg('pdf'));
     pdf.href = this.fileUrl(this.data.pdf); pdf.download = ''; pdf.title = t.pdf; pdf.setAttribute('aria-label', t.pdf);
     var hasPdf = !!this.data.pdf && !this.opts.noPdf;
@@ -345,7 +357,7 @@
     this.modal.addEventListener('click', function (e) { if (e.target === self.modal) self.closeModal(); });
 
     this.toastEl = el('div', 'fb-toast');
-    this.root.append(this.drawer, this.stage, bar, this.menu, this.modal, this.toastEl);
+    this.root.append(this.drawer, this.stage, this.zoomBar, bar, this.menu, this.modal, this.toastEl);
     this.setLinkColor(this.opts.linkColor || 'grey');
 
     this.bindGestures();
@@ -1043,7 +1055,7 @@
     this.zoomLevel = z;
     this.pan(0, 0);
     this.root.classList.toggle('is-zoomed', z > 1);
-    this.zoomRange.value = Math.round(z * 100);
+    this.zoomRange.value = this.zoomRange2.value = Math.round(z * 100);
     this.zoomVal.textContent = Math.round(z * 100) + '%';
     this.btnZoom.setAttribute('aria-pressed', String(z > 1));
   };
@@ -1074,12 +1086,30 @@
   Flipbook.prototype.bindGestures = function () {
     var self = this, sx = 0, sy = 0, down = false, moved = false;
     var lx = 0, ly = 0;
+    // two fingers: pinch to zoom the catalogue (not the whole web page)
+    var touches = {}, pinch = null, pinched = false;
+    function pts() { return Object.keys(touches).map(function (k) { return touches[k]; }); }
+    function spread() { var p = pts(); return Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1; }
+    function mid() { var p = pts(); return { x: (p[0].x + p[1].x) / 2, y: (p[0].y + p[1].y) / 2 }; }
     this.stage.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch') {
+        touches[e.pointerId] = { x: e.clientX, y: e.clientY };
+        if (pts().length === 2) { pinch = { d: spread(), z: self.zoomLevel, m: mid() }; pinched = true; down = false; return; }
+      }
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       down = true; moved = false; sx = lx = e.clientX; sy = ly = e.clientY;
       if (self.zoomLevel > 1) self.root.classList.add('panning');
     });
     this.stage.addEventListener('pointermove', function (e) {
+      if (touches[e.pointerId]) { touches[e.pointerId] = { x: e.clientX, y: e.clientY }; }
+      if (pinch && pts().length === 2) {
+        var m = mid();
+        self.root.classList.add('panning');
+        self.setZoom(pinch.z * spread() / pinch.d);
+        self.pan(m.x - pinch.m.x, m.y - pinch.m.y);
+        pinch.m = m;
+        return;
+      }
       if (!down) return;
       if (Math.hypot(e.clientX - sx, e.clientY - sy) > 10) moved = true;
       if (self.zoomLevel > 1) { self.pan(e.clientX - lx, e.clientY - ly); lx = e.clientX; ly = e.clientY; }
@@ -1090,7 +1120,15 @@
       if (e.ctrlKey || e.metaKey) { e.preventDefault(); self.setZoom(self.zoomLevel * Math.exp(-e.deltaY * 0.004)); }
       else if (self.zoomLevel > 1) { e.preventDefault(); self.pan(-e.deltaX, -e.deltaY); }
     }, { passive: false });
+    function lift(e) {
+      delete touches[e.pointerId];
+      if (pts().length < 2) pinch = null;
+      if (!pts().length) { self.root.classList.remove('panning'); setTimeout(function () { pinched = false; }, 0); }
+    }
+    this.stage.addEventListener('pointerup', lift);
+    this.stage.addEventListener('pointercancel', lift);
     function up(e) {
+      if (pinched) { down = false; self.dragged = true; setTimeout(function () { self.dragged = false; }, 0); return; }
       if (!down) return;
       down = false;
       self.root.classList.remove('panning');

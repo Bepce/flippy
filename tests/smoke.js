@@ -60,6 +60,9 @@ function check(ok, msg) { if (!ok) throw new Error(msg); console.log('  ok  ' + 
     await m.click('.fb-btn[aria-label="More"]');
     await m.click('.fb-menu button:has-text("Show links")');
     check(await m.$eval('.fb', r => r.classList.contains('show-links')), 'links switched on from the More menu');
+    await m.tap('.fb-zoombar button[aria-label="Zoom +"]');
+    check(await m.evaluate(() => document.querySelector('.fb').flippy.zoomLevel) === 1.5, 'phone zoom bar zooms in');
+    await m.tap('.fb-zoombar button[aria-label="Zoom −"]');
     const box = await m.$eval('.fb-stage', e => { const r = e.getBoundingClientRect(); return [r.x, r.y, r.width, r.height]; });
     await m.evaluate(([x, y, w, h]) => {
       const st = document.querySelector('.fb-stage'), o = { pointerId: 1, pointerType: 'touch', bubbles: true };

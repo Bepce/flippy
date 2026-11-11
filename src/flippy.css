@@ -42,7 +42,7 @@
 
 /* ---------- stage & book ---------- */
 .fb-stage { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center;
-            touch-action: pan-y pinch-zoom; perspective: 2600px; }
+            touch-action: pan-y; perspective: 2600px; }
 .fb-book { position: relative; transition: transform .45s ease; transform-style: preserve-3d; }
 .fb-book.is-cover { transform: translateX(-25%); }
 .fb-book.is-back  { transform: translateX(25%); }
@@ -135,7 +135,17 @@
 .fb-zoomval { min-width: 38px; font-size: 12px; color: var(--fb-muted); font-variant-numeric: tabular-nums; text-align: right; }
 .fb-zoomer { display: flex; align-items: center; justify-content: center; transition: transform .25s ease; transform-origin: 50% 50%; }
 .fb.panning .fb-zoomer { transition: none; }
-.fb.is-zoomed .fb-stage { cursor: grab; overflow: hidden; }
+.fb.is-zoomed .fb-stage { cursor: grab; overflow: hidden; touch-action: none; }
+.fb-zoombar { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 14; align-items: center; gap: 4px;
+              padding: 4px; border-radius: 22px; background: linear-gradient(var(--fb-bar), var(--fb-bar)), var(--fb-bg-2);
+              box-shadow: 0 4px 18px rgba(0, 0, 0, .3), inset 0 0 0 1px var(--fb-line); opacity: .82; transition: opacity .2s; }
+.fb-zoombar:focus-within, .fb.is-zoomed .fb-zoombar { opacity: 1; }
+.fb-zoombar input { width: 120px; margin: 0 4px; accent-color: var(--fb-accent); }
+.fb-zb-btn { width: 34px; height: 34px; border: 0; border-radius: 50%; background: transparent; color: var(--fb-text); display: flex;
+             align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.fb-zb-btn:active { background: var(--fb-hover); }
+.fb-zb-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.fb.drawer-open .fb-zoombar { display: none; }
 .fb.panning .fb-stage { cursor: grabbing; }
 .fb.is-zoomed .fb-corner, .fb.is-zoomed .fb-edge, .fb.is-zoomed .fb-hint { display: none; }
 .fb-sep { width: 1px; height: 24px; background: var(--fb-line); margin: 0 4px; }
