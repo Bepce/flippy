@@ -136,7 +136,7 @@
 .fb-zoomer { display: flex; align-items: center; justify-content: center; transition: transform .25s ease; transform-origin: 50% 50%; }
 .fb.panning .fb-zoomer { transition: none; }
 .fb.is-zoomed .fb-stage { cursor: grab; overflow: hidden; touch-action: none; }
-.fb-zoombar { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 14; align-items: center; gap: 2px;
+.fb-zoombar { position: absolute; bottom: calc(var(--fb-bar-h) + 8px); left: 50%; transform: translateX(-50%); z-index: 14; align-items: center; gap: 2px;
               width: min(86%, 340px); padding: 1px 3px; border-radius: 16px; background: linear-gradient(var(--fb-bar), var(--fb-bar)), var(--fb-bg-2);
               box-shadow: 0 4px 18px rgba(0, 0, 0, .3), inset 0 0 0 1px var(--fb-line); opacity: .82; transition: opacity .2s; }
 .fb-zoombar:focus-within, .fb.is-zoomed .fb-zoombar { opacity: 1; }
@@ -176,6 +176,8 @@
             background: #fff; color: #111; padding: 10px 16px; border-radius: 999px; font-weight: 500; box-shadow: 0 8px 30px rgba(0,0,0,.35);
             opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; max-width: calc(100% - 32px); text-align: center; }
 .fb-toast.show { opacity: 1; transform: translate(-50%, 0); }
+/* phones: above the zoom bar */
+@media (max-width: 640px) { .fb-toast { bottom: calc(var(--fb-bar-h) + 56px); } }
 
 .fb-error { margin: auto; color: var(--fb-muted); text-align: center; padding: 24px; }
 
