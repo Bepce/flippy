@@ -286,7 +286,8 @@ function send_viewer_page(array $c): void
     $lang = h($look['lang'] ?? 'en');
     $src = h(base_path() . '/c/' . $c['slug'] . '/');
     $dist = h(base_path() . '/dist/');
-    $v = FLIPPY_VERSION;
+    // the viewer's address changes whenever its file does, so browsers never keep an old copy
+    $v = FLIPPY_VERSION . '-' . @filemtime(app_asset_dir('dist') . '/flippy.min.js');
     header('Content-Type: text/html; charset=utf-8');
     header('Cache-Control: no-cache');
     security_headers();
