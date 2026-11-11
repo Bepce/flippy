@@ -94,17 +94,22 @@ function login(string $username, string $password): array
     db()->prepare('DELETE FROM login_fails WHERE at < ?')->execute([time() - 86400]);
     $s = db()->prepare('SELECT COUNT(*) FROM login_fails WHERE who = ? AND at > ?');
     foreach ($keys as $k) {
-        $s->execute([$k, $since]);
-        if ((int) $s->fetchColumn() >= 8) fail(429, 'Too many failed attempts. Try again in 15 minutes.');
+        $s->bindValue(1, $k);
+        $s->bindValue(2, $since, PDO::PARAM_INT);
+        $s->execute();
+        $n = (int) $s->fetchColumn();
+        $s->closeCursor();
+        if ($n >= 8) fail(429, 'Too many failed attempts. Try again in 15 minutes.');
     }
     $q = db()->prepare('SELECT * FROM users WHERE username = ?');
     $q->execute([trim($username)]);
     $u = $q->fetch();
     // verify against a dummy hash when the user doesn't exist, so timing doesn't reveal usernames
-    $ok = password_verify($password, $u['pass_hash'] ?? password_hash(random_bytes(12), PASSWORD_DEFAULT));
+    // unknown username: still check a (never matching) hash, so the response time doesn't reveal it
+    $ok = password_verify($password, $u['pass_hash'] ?? '$2y$10$TtF4wg/3W0snbHVRLZcnQ.Fj57N6LwoLLgYhNNBapXpfl8WVOgK8G');
     if (!$u || !$ok) {
         $ins = db()->prepare('INSERT INTO login_fails (who, at) VALUES (?, ?)');
-        foreach ($keys as $k) $ins->execute([$k, time()]);
+        foreach ($keys as $k) { $ins->bindValue(1, $k); $ins->bindValue(2, time(), PDO::PARAM_INT); $ins->execute(); }
         fail(401, 'Wrong username or password.');
     }
     if (password_needs_rehash($u['pass_hash'], PASSWORD_DEFAULT)) {

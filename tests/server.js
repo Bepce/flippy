@@ -178,12 +178,12 @@ process.on('exit', () => php && php.kill());
   // sign-in throttling
   await page.click('#logout');
   await page.waitForSelector('text=Sign in');
-  let last = 0;
-  for (let i = 0; i < 9; i++) last = (await page.evaluate(async () => {
+  const codes = [];
+  for (let i = 0; i < 9; i++) codes.push(await page.evaluate(async () => {
     const me = await (await fetch('../api/me')).json();
     return (await fetch('../api/login', { method: 'POST', headers: { 'X-CSRF-Token': me.csrf, 'Content-Type': 'application/json' }, body: JSON.stringify({ username: 'mallory', password: 'guess' }) })).status;
   }));
-  ok(last === 429, 'repeated failed sign-ins are paused', last);
+  ok(codes[8] === 429 && codes[7] === 401, 'repeated failed sign-ins are paused', codes.join(' '));
 
   // private files
   for (const p of ['data/flippy.sqlite', 'lib/core.php', 'config.sample.php', 'index.php/../data/flippy.sqlite']) {
