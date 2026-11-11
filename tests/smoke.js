@@ -68,15 +68,14 @@ function check(ok, msg) { if (!ok) throw new Error(msg); console.log('  ok  ' + 
     await m.waitForSelector('.fb-slot.right img');
     check(await m.$eval('.fb-book', b => b.classList.contains('single')), 'phone shows one page');
     const shown = await m.$$eval('.fb-bar > *', els => els.filter(e => getComputedStyle(e).display !== 'none' && !e.hidden).length);
-    check(shown === 5 && await m.$eval('.fb-bar', b => b.scrollWidth <= b.clientWidth), 'phone toolbar: back, page, next, pages, more');
+    check(shown === 6 && await m.$eval('.fb-bar', b => b.scrollWidth <= b.clientWidth), 'phone toolbar: back, page, next, pages, search, more');
     await m.click('.fb-btn[aria-label="More"]');
     await m.click('.fb-menu button:has-text("Show links")');
     check(await m.$eval('.fb', r => r.classList.contains('show-links')), 'links switched on from the More menu');
-    await m.click('.fb-btn[aria-label="More"]');
-    await m.click('.fb-menu button:has-text("Search")'); await m.waitForTimeout(400);
+    await m.click('.fb-btn[aria-label="Search"]'); await m.waitForTimeout(400);
     await m.fill('.fb-search input', 'notebook'); await m.waitForTimeout(500);
     await m.click('.fb-result >> nth=0'); await m.waitForTimeout(1800);
-    check(!(await m.$eval('.fb', r => r.classList.contains('drawer-open'))) && (await m.inputValue('.fb-pageno input')) !== '3', 'phone: Search in the More menu, a result turns to its page');
+    check(!(await m.$eval('.fb', r => r.classList.contains('drawer-open'))) && (await m.inputValue('.fb-pageno input')) !== '3', 'phone: search button next to the pages, a result turns to its page');
     await m.evaluate(() => document.querySelector('.fb').flippy.go(3)); await m.waitForTimeout(1800);
     await m.tap('.fb-zoombar button[aria-label="Zoom +"]');
     check(await m.evaluate(() => document.querySelector('.fb').flippy.zoomLevel) === 1.5, 'phone zoom bar zooms in');

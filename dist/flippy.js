@@ -286,7 +286,6 @@
       self.toggleDrawer(!on, 'search');
     });
     this.btnSearch.setAttribute('aria-pressed', 'false');
-    this.btnSearch.classList.add('fb-hide-sm');
     if (!this.data.search) this.btnSearch.hidden = true;
     this.btnLinks = this.button('links', t.links, function () { self.showLinks(!self.root.classList.contains('show-links')); });
     this.btnLinks.setAttribute('aria-pressed', 'false');
@@ -336,10 +335,6 @@
       self.menu.append(b);
       return b;
     };
-    if (this.data.search) {
-      var ms = item('search', t.search, function () { self.toggleDrawer(true, 'search'); });
-      ms.setAttribute('role', 'menuitem');
-    }
     this.menuLinks = item('links', t.links, function () { self.showLinks(!self.root.classList.contains('show-links')); });
     this.menuSound = item(this.sound.on ? 'sound' : 'mute', t.sound, function () { self.toggleSound(); });
     this.menuSound.setAttribute('aria-checked', String(this.sound.on));

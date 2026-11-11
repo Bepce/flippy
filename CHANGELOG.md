@@ -12,7 +12,7 @@
   lands on the other side), and underneath is the page that will be on that side. On the first
   and last spread, where there is no page underneath, the corner is cut out of the page
   so the real background shows through
-- Viewer on phones: Search in the ⋯ menu
+- Viewer on phones: a search button next to the pages button
 - Viewer: the search button opens a search view (focused box, results); buttons meant to be
   hidden (search without page text, PDF without a PDF) really are
 - Builder: a short name printed right above a code (one product per label, like a range of
@@ -43,7 +43,7 @@
   the page and closes when you pick one
 - Viewer on phones: a zoom bar (−, slider, +) just above the toolbar, and pinching zooms the
   catalogue page instead of the whole web page
-- Viewer on phones: the toolbar is back, page, next, pages and a "more" menu (show links, sound,
+- Viewer on phones: the toolbar is back, page, next, pages, search and a "more" menu (show links, sound,
   download PDF)
 - Admin: the Appearance preview changes colours instantly instead of reloading
 - Builder: zoom slider and buttons, Ctrl + scroll (or pinch on a trackpad) zooms around the
