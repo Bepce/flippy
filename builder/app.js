@@ -162,7 +162,7 @@ function openProject(p) {
   showSettings();
   renderThumbs(); renderPage(); renderCodes(); updateUndo();
   $('#saved').textContent = '';
-  history.replaceState(null, '', '#' + P.id);
+  history.replaceState(null, '', location.pathname + '#' + P.id);
 }
 
 function closeProject() {
@@ -551,7 +551,9 @@ function openExport() {
 }
 function snippet() {
   const f = slugify($('#ex-folder').value);
-  $('#ex-snippet').textContent = `<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.2.0/dist/flippy.min.js"></script>\n<flip-book src="/catalogues/${f}/"></flip-book>`;
+  $('#ex-snippet').textContent = server
+    ? `<script src="${server.siteUrl}/dist/flippy.min.js"></script>\n<flip-book src="${server.siteUrl}/c/${f}/"></flip-book>`
+    : `<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.3.0/dist/flippy.min.js"></script>\n<flip-book src="/catalogues/${f}/"></flip-book>`;
 }
 $('#ex-folder').addEventListener('input', snippet);
 $('#ex-folder').addEventListener('change', e => { P.folder = slugify(e.target.value); e.target.value = P.folder; snippet(); changed(); });
@@ -585,6 +587,79 @@ $('#ex-pdf').addEventListener('click', async () => {
   } catch (e) { busy(false); console.error(e); toast('Export failed: ' + e.message, true); }
 });
 $('#export').addEventListener('click', openExport);
+
+/* ---------------- flippy server: publish, and open catalogues from it ---------------- */
+
+let server = null;          // the server's /api/me when the builder is served by a flippy server
+
+async function detectServer() {
+  try {
+    const r = await fetch('../api/me', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+    const d = r.ok ? await r.json() : null;
+    if (d && d.flippyServer) server = d;
+  } catch (e) { /* not on a server: the builder works on its own */ }
+  if (!server) return;
+  $('.actions').prepend(el('a', { class: 'btn ghost', href: '../admin/', title: 'Back to the catalogue library' }, 'Library'));
+  const site = server.site || 'your site';
+  if (server.user) {
+    const pub = el('button', { id: 'ex-publish', class: 'primary', type: 'button' }, 'Publish to ' + site);
+    pub.addEventListener('click', publish);
+    $('.ex-buttons').prepend(pub);
+    $('#ex-zip').className = 'ghost';
+    $('#ex-zip').textContent = 'Download zip';
+    $('.how summary').textContent = 'Using it on your website';
+    $('.how ol').replaceChildren(
+      el('li', {}, 'Publish, then open the catalogue in the library for its link and statistics.'),
+      el('li', {}, 'To show it inside a page of your website:', el('pre', { id: 'ex-snippet' }), $('#ex-copy')));
+  } else {
+    $('.ex-buttons').append(el('a', { class: 'btn ghost', href: '../admin/' }, 'Sign in to publish'));
+  }
+}
+
+async function publish() {
+  P.folder = slugify($('#ex-folder').value); $('#ex-folder').value = P.folder;
+  $('#ex').close();
+  const folder = P.folder;
+  try {
+    busy('Preparing the catalogue', 0.2);
+    const { blob } = await exportZip(P, step => busy(step, step.startsWith('Pack') ? 0.5 : 0.3));
+    if (server.maxUploadMb && blob.size > server.maxUploadMb * 1048576) {
+      throw new Error(`The catalogue is ${(blob.size / 1048576).toFixed(0)} MB; the server accepts up to ${server.maxUploadMb} MB.`);
+    }
+    const send = async replace => {
+      busy('Uploading to ' + (server.site || 'the site'), 0.75);
+      const fd = new FormData();
+      fd.append('zip', blob, folder + '.zip'); fd.append('slug', folder); fd.append('replace', replace ? '1' : '0');
+      const r = await fetch('../api/catalogues', { method: 'POST', body: fd, credentials: 'same-origin', headers: { 'X-CSRF-Token': server.csrf } });
+      let d = null; try { d = await r.json(); } catch (e) { /* not json */ }
+      return { r, d };
+    };
+    let { r, d } = await send(P.server && P.server.slug === folder);
+    if (r.status === 409) {
+      busy(false);
+      if (!confirm(`The site already has a catalogue at “${folder}”. Replace it with this one?\n\nCancel to change the folder name instead.`)) { openExport(); $('#ex-folder').focus(); return; }
+      ({ r, d } = await send(true));
+    }
+    if (r.status === 401) throw new Error('You’ve been signed out. Sign in to the admin in another tab, then publish again.');
+    if (!r.ok) throw new Error((d && d.error) || 'The server answered ' + r.status + '.');
+    busy(false);
+    P.server = { slug: d.catalogue.slug, url: d.catalogue.url, published: Date.now() };
+    saveNow();
+    toast(`Published: ${d.catalogue.url}`);
+  } catch (e) { busy(false); console.error(e); toast('Publishing failed: ' + e.message, true); }
+}
+
+async function openFromServer(slug) {
+  try {
+    busy('Downloading ' + slug, 0.1);
+    const r = await fetch('../api/catalogues/' + encodeURIComponent(slug) + '/zip', { credentials: 'same-origin' });
+    if (!r.ok) throw new Error(r.status === 401 ? 'Sign in to the admin first.' : 'The catalogue couldn’t be downloaded (' + r.status + ').');
+    await importZip(new File([await r.blob()], slug + '.zip'));
+    P.folder = slug;
+    P.server = { slug };
+    saveNow();
+  } catch (e) { busy(false); toast(e.message, true); showStart(); }
+}
 
 /* ---------------- small UI ---------------- */
 
@@ -648,6 +723,9 @@ window.addEventListener('beforeunload', () => { if (P) store.save(P); });
 
 // open the project named in the address (#id), else the start screen
 (async () => {
+  await detectServer();
+  const open = new URLSearchParams(location.search).get('open');
+  if (open && server && server.user) { await openFromServer(open); return; }
   const id = location.hash.slice(1);
   if (id) { try { const p = await store.load(id); if (p) { openProject(p); return; } } catch (e) { /* fall through */ } }
   showStart();

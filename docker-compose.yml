@@ -1,0 +1,17 @@
+# docker compose up -d   ->   http://localhost:8080/
+services:
+  flippy:
+    image: ghcr.io/bepce/flippy-server:latest
+    build: .                       # or build it from this folder
+    ports:
+      - "8080:80"
+    volumes:
+      - flippy-data:/data          # database and catalogues: back this up
+    environment:
+      FLIPPY_SITE_NAME: "Catalogues"
+      # FLIPPY_CORS: "https://shop.example"     # only let your own site embed catalogues
+      # FLIPPY_TRUST_PROXY: "1"                 # behind a reverse proxy that terminates HTTPS
+    restart: unless-stopped
+
+volumes:
+  flippy-data:

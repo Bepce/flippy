@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>flippy</title>
+  <link rel="stylesheet" href="admin.css?v=0.3.0">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#/"><span class="mark" aria-hidden="true"></span><span id="site">flippy</span></a>
+    <nav id="nav" hidden>
+      <a href="#/" data-nav="library">Catalogues</a>
+      <a href="#/users" data-nav="users" id="nav-users" hidden>Users</a>
+      <a href="#/account" data-nav="account">Account</a>
+    </nav>
+    <div class="who" id="who" hidden><span id="who-name"></span><button id="logout" class="ghost small">Sign out</button></div>
+  </header>
+  <div id="banner" class="banner" hidden></div>
+  <main id="view" class="view" aria-live="polite"></main>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script type="module" src="admin.js?v=0.3.0"></script>
+</body>
+</html>

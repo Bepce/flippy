@@ -6,3 +6,6 @@ Thumbs.db
 # your own catalogues: keep them out of a public fork unless you mean to publish them
 # catalogues/*
 # !catalogues/hollowbrook/
+build/
+server/data/
+server/config.php

@@ -1,4 +1,4 @@
-/*! flippy v0.2.0 | MIT licence | https://github.com/Bepce/flippy */
+/*! flippy v0.3.0 | MIT licence | https://github.com/Bepce/flippy */
 /*!
  * flippy — a page-turning catalogue viewer. Plain JavaScript, no dependencies. MIT licence.
  *
@@ -161,6 +161,8 @@
         });
         self.emit('ready', { pageCount: self.N, title: data.title });
         self.emit('page', { page: self.visible()[0], pages: self.visible() });
+        self.track('view');
+        self.trackPages();
       })
       .catch(function (e) {
         self.root.innerHTML = '<p class="fb-error">' + self.t.error + '</p>';
@@ -651,6 +653,7 @@
     this.updateUi();
     if (this.opts.hash && history.replaceState) history.replaceState(null, '', '#p=' + this.visible()[0]);
     this.emit('page', { page: this.visible()[0], pages: this.visible() });
+    this.trackPages();
     this.preload();
   };
 
@@ -855,6 +858,28 @@
     return typeof window.flippyLinkFilter === 'function' ? window.flippyLinkFilter(url) : url;
   };
 
+  // Statistics for catalogues served by the flippy server: its catalogue.json carries a "track"
+  // address. Anonymous counts only (a view, the pages seen, the links clicked); no cookies.
+  // Switched off with track="false".
+  Flipbook.prototype.track = function (e, extra) {
+    var url = this.data && this.data.track;
+    if (!url || this.opts.track === false || !/^https?:/.test(url)) return;
+    var body = { e: e };
+    for (var k in extra) body[k] = extra[k];
+    body = JSON.stringify(body);
+    try {
+      // text/plain keeps it a "simple" request: no CORS preflight when the server is on another domain
+      if (navigator.sendBeacon && navigator.sendBeacon(url, new Blob([body], { type: 'text/plain' }))) return;
+      fetch(url, { method: 'POST', body: body, mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain' } });
+    } catch (err) { /* statistics must never break the viewer */ }
+  };
+  Flipbook.prototype.trackPages = function () {
+    if (!this.data || !this.data.track) return;
+    var seen = this._seen || (this._seen = {}), fresh = [];
+    this.visible().forEach(function (n) { if (!seen[n]) { seen[n] = 1; fresh.push(n); } });
+    if (fresh.length) this.track('page', { p: fresh });
+  };
+
   Flipbook.prototype.follow = function (link, fromPage, evt) {
     if (link.page) {
       this.grid.close(); this.zoom.close();
@@ -868,6 +893,7 @@
       this.emit('link', detail);                              // on the viewer element (bubbles)
       window.dispatchEvent(new CustomEvent('flippy:link', { detail: detail }));   // and on window, for site-wide analytics
       if (typeof window.gtag === 'function') window.gtag('event', 'catalogue_link', { link_url: url, page_number: fromPage, link_kind: link.kind });
+      this.track('click', { u: link.url, p: fromPage });
     } catch (e) { /* analytics must never break navigation */ }
 
     // Same site -> show the product in a popup: the shop's own cookies apply, so the cart works.
@@ -1027,7 +1053,8 @@
       setTitle: bool(o.setTitle, false),
       titleSuffix: o.titleSuffix || '',
       data: o.data || null,          // a catalogue object instead of loading src/catalogue.json
-      resolve: o.resolve || null     // function (path) -> URL, for catalogues not on a server
+      resolve: o.resolve || null,    // function (path) -> URL, for catalogues not on a server
+      track: bool(o.track, true)     // statistics, when the catalogue comes from a flippy server
     });
     root.classList.add('fb');
     instances.push(fb);
@@ -1049,7 +1076,8 @@
       page: get('page'),
       linkColor: q.get('links') || get('link-color'),
       setTitle: get('set-title'),
-      titleSuffix: get('title-suffix')
+      titleSuffix: get('title-suffix'),
+      track: get('track')
     };
   }
 
@@ -1097,7 +1125,7 @@
   }
 
   var Flippy = {
-    version: '0.2.0',
+    version: '0.3.0',
     mount: mount,
     // Flippy.addLanguage('sv', { prev: 'Föregående', ... }) - missing texts fall back to English
     addLanguage: function (code, strings) { TEXT[code] = strings; },

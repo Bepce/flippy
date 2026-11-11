@@ -34,12 +34,18 @@ npm test
 drawing, moving and resizing boxes, undo, preview, export, and reopening the zip
 (`npm run test:builder`).
 
-Please run them before opening a pull request.
+`tests/server.js` starts the PHP server with an empty database and tests setup, uploads,
+the public page, statistics, publishing from the builder, users and permissions
+(`npm run test:server`, needs PHP 8.1+ with pdo_sqlite and zip).
+
+Please run them before opening a pull request. GitHub Actions runs all three on every push.
 
 ## Guidelines
 
 - **The builder** (`builder/`) is plain ES modules with no build step. It loads pdf.js and
   pdf-lib from jsDelivr at pinned versions; keep it working without a bundler.
+- **The server** (`server/`) is plain PHP 8.1 with no Composer packages, so it can be uploaded
+  to shared hosting as it is. Keep it that way.
 - **Keep the viewer dependency-free** and readable without a build step: plain
   ES5-style JavaScript that runs in current browsers.
 - **Test on a phone size**, not just desktop. Page turns, swipes and the toolbar must
@@ -62,6 +68,7 @@ happened. A screenshot or screen recording is the fastest way to a fix.
 1. Update the version in `package.json` and `Flippy.version` in `src/flippy.js`, and
    add a section to `CHANGELOG.md`.
 2. `npm run dist`, `npm test`, commit.
-3. Tag `vX.Y.Z` and push the tag; jsDelivr serves it at
+3. Publish a GitHub release with the tag `vX.Y.Z`. GitHub Actions attaches the server zip and
+   publishes the Docker image. jsDelivr serves the viewer at
    `https://cdn.jsdelivr.net/gh/Bepce/flippy@vX.Y.Z/dist/flippy.min.js`.
 4. `npm publish --access public` (maintainers).

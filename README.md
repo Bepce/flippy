@@ -15,6 +15,9 @@ flipbook on your own website, with every product code linked to your shop.
   your shop in a frame from *their* domain, where browsers drop your shop's
   cookies, so the cart and login break. Served from your site (or a subdomain),
   flippy can open products in a popup that keeps them.
+- **Optional server.** A catalogue library on your own site with sign-in, publishing
+  straight from the builder, and anonymous click statistics. PHP and SQLite, so it runs on
+  ordinary web hosting, or in Docker.
 - **One script, no framework.** About 16 kB gzipped. A `<flip-book>` element,
   a small JavaScript API, light and dark themes, 8 interface languages.
 
@@ -23,7 +26,7 @@ flipbook on your own website, with every product code linked to your shop.
 ## Quick start
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.2.0/dist/flippy.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.3.0/dist/flippy.min.js"></script>
 
 <flip-book src="/catalogues/spring-2026/"></flip-book>
 ```
@@ -122,6 +125,25 @@ How the link boxes are placed:
 Links that are already in your PDF, such as a clickable table of contents, are kept.
 The folder format is described in [docs/catalogue-format.md](docs/catalogue-format.md).
 
+## Catalogue library (optional server)
+
+For several catalogues, several people, or to see what visitors click, run the flippy server:
+
+```sh
+docker run -d -p 8080:80 -v flippy-data:/data ghcr.io/bepce/flippy-server
+```
+
+or upload `flippy-server-<version>.zip` from the
+[latest release](https://github.com/Bepce/flippy/releases/latest) to any PHP 8.1+ host. Then open
+it and create the first account. You get:
+
+- a library of your catalogues, each with a public page and embed code
+- *Publish* in the builder, and *Edit in builder* for published catalogues
+- views, pages seen and product clicks per day, page and link (anonymous: no cookies)
+- named users: admins and editors
+
+Setup, settings, nginx and the API are in [docs/server.md](docs/server.md).
+
 ## Options
 
 As attributes on `<flip-book>` (or `data-` attributes on `<div class="flippy">`):
@@ -139,6 +161,7 @@ As attributes on `<flip-book>` (or `data-` attributes on `<div class="flippy">`)
 | `sound` | `false` | `true` | page-flip sound on by default (visitors can switch it) |
 | `set-title` | `true` | `false`* | set the page title to the catalogue title |
 | `title-suffix` | text | | added after the catalogue title |
+| `track` | `false` | `true` | statistics for catalogues from a flippy server |
 
 \* `true` for `<div class="flippy">`, which is meant for a page that is only the catalogue.
 The page URL can also set `?lang=`, `?links=`, `?popup=1` and `?hint=1` (show the swipe
@@ -156,6 +179,7 @@ const viewer = Flippy.mount(document.querySelector('#catalogue'), {
   src: '/catalogues/spring-2026/', lang: 'de', theme: 'light', hash: false
 });
 viewer.next(); viewer.prev(); viewer.go(12); viewer.destroy();
+// Flippy.version is the viewer's version
 
 // the element has the same methods
 document.querySelector('flip-book').go(12);
@@ -204,7 +228,7 @@ are scoped to the viewer and don't affect the rest of your page.
 
 ## Updating
 
-Pin a version in the CDN URL (`@v0.2.0`). When you update your own copy, also raise the
+Pin a version in the CDN URL (`@v0.3.0`). When you update your own copy, also raise the
 `?v=` on the files: the viewer passes it on to the catalogue data, so returning visitors
 get the new files. See [CHANGELOG.md](CHANGELOG.md).
 
@@ -218,9 +242,11 @@ examples/embed.html     the viewer inside an ordinary page, with the API and eve
 examples/hollowbrook/   how the demo catalogue was made (source PDF, links.csv, make.js)
 catalogues/hollowbrook/ the built demo catalogue
 builder/                the builder (plain ES modules, no build step)
+server/                 the optional server (PHP, SQLite): index.php, lib/, admin/
+Dockerfile              the server image (server + builder + dist)
 tools/                  add_links.py, build.py (Python), build-dist.js (release build)
 docs/                   catalogue format
-tests/                  browser tests: smoke.js (viewer), builder.js (builder end to end)
+tests/                  browser tests: smoke.js (viewer), builder.js, server.js (end to end)
 ```
 
 ## Roadmap
@@ -228,8 +254,8 @@ tests/                  browser tests: smoke.js (viewer), builder.js (builder en
 1. ~~Package the viewer~~ (0.1): CDN and npm, `<flip-book>`, API, themes, languages.
 2. ~~Builder in the browser~~ (0.2): open a PDF, auto-link, edit link boxes by hand,
    preview, export. No Python needed.
-3. **Optional server**: catalogue library, logins, publishing, click statistics
-   (Docker).
+3. ~~Optional server~~ (0.3): catalogue library, sign-in, publishing from the builder,
+   click statistics. PHP + SQLite, Docker.
 4. **Plugins**: WordPress first.
 
 ## Contributing

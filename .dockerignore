@@ -1,0 +1,11 @@
+.git
+.github
+node_modules
+catalogues
+examples
+tests
+docs
+tools
+server/data
+server/config.php
+*.zip

@@ -1,0 +1,23 @@
+# flippy server on Apache: everything goes through index.php, which serves the files itself.
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # the viewer and builder files can be served directly (faster)
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^(dist|builder)/ - [L]
+  RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+# never serve these directly, whatever happens above
+<FilesMatch "\.(sqlite|sqlite-wal|sqlite-shm|md)$|^config\.php$">
+  Require all denied
+</FilesMatch>
+
+# large catalogues: these only work where the host allows php_value in .htaccess (mod_php)
+<IfModule mod_php.c>
+  php_value upload_max_filesize 300M
+  php_value post_max_size 310M
+  php_value max_execution_time 300
+</IfModule>

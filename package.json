@@ -1,6 +1,6 @@
 {
   "name": "@bepce/flippy",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Self-hosted page-turning catalogue viewer. Turn a PDF into a flipbook on your own site, with product links that keep your shop's cart working.",
   "license": "MIT",
   "author": "flippy contributors",
@@ -18,6 +18,8 @@
     "serve": "python3 -m http.server 8080",
     "test": "node tests/smoke.js && node tests/builder.js",
     "test:builder": "node tests/builder.js",
+    "test:server": "node tests/server.js",
+    "package-server": "sh tools/package-server.sh",
     "sample": "node examples/hollowbrook/make.js"
   },
   "devDependencies": {

@@ -24,7 +24,8 @@ const ok = (cond, name, extra) => { console.log((cond ? '  ok  ' : '  FAIL ') + 
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
-  page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+  // the builder asks ../api/me whether a flippy server is there; on a static site that's a 404
+  page.on('console', m => { if (m.type() === 'error' && !(/status of 404/.test(m.text()) && /api\/me/.test(m.location().url || ''))) errors.push(m.text()); });
 
   await page.goto(BASE + 'builder/');
   await page.click('#demo');

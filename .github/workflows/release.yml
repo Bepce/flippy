@@ -1,0 +1,49 @@
+# On a published release: attach the server zip for PHP hosting, and publish the Docker image
+# to ghcr.io/bepce/flippy-server (tagged with the version and "latest").
+name: release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  server-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh tools/package-server.sh
+      - name: Attach to the release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" build/flippy-server-*.zip --clobber
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - id: v
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/bepce/flippy-server:${{ steps.v.outputs.version }}
+            ghcr.io/bepce/flippy-server:latest
+          labels: |
+            org.opencontainers.image.source=https://github.com/Bepce/flippy
+            org.opencontainers.image.description=flippy server: catalogue library, publishing and click statistics
+            org.opencontainers.image.licenses=MIT

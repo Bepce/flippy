@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.0 (2026-11-11)
+
+The optional server: a catalogue library on your own site.
+
+- **Server** (`server/`, PHP 8.1+ with SQLite): catalogue library with a public page and embed
+  code per catalogue, publish/hide, rename, replace, delete, download
+- Sign-in with named users (admins and editors), sign-in throttling, CSRF protection
+- **Statistics**: views, pages seen and product clicks per day, page and link; anonymous daily
+  totals, no cookies; CSV download
+- **Builder**: *Publish* to the server, and *Edit in builder* opens a published catalogue again
+- Uploaded catalogues are checked: only expected files are stored, page images and PDF are
+  verified by content, catalogue.json is rebuilt so only http(s) links reach visitors
+- Docker image (`ghcr.io/bepce/flippy-server`), docker-compose.yml, and a zip for PHP hosting,
+  both built for each release by GitHub Actions; tests run on every push
+- Viewer: sends statistics when catalogue.json has a `track` address (`track="false"` to turn
+  off)
+
 ## 0.2.0 (2026-11-10)
 
 The builder: make a catalogue in the browser, no Python needed.
