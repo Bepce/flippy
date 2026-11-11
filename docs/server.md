@@ -68,6 +68,10 @@ In a subfolder (`/catalogues/`), use `SCRIPT_NAME /catalogues/index.php` and pre
 php -S 127.0.0.1:8090 server/index.php        # from the repository
 ```
 
+On Windows: `winget install PHP.PHP.8.3`, then in PHP's folder copy `php.ini-development` to
+`php.ini` and remove the `;` before `extension_dir = "ext"`, `extension=pdo_sqlite` and
+`extension=zip`. Run `php -S localhost:8090 index.php` in the folder that contains `index.php`.
+
 ## Settings
 
 Copy `config.sample.php` to `config.php`. Each setting can also be an environment variable.

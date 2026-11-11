@@ -4,6 +4,17 @@ declare(strict_types=1);
 
 const FLIPPY_VERSION = '0.3.0';
 
+// Windows PHP leaves mbstring off by default; these stand in for the two functions used here
+if (!function_exists('mb_strlen')) {
+    function mb_strlen($s): int { return (int) preg_match_all('/./us', (string) $s); }
+}
+if (!function_exists('mb_substr')) {
+    function mb_substr($s, int $start, ?int $length = null): string
+    {
+        return implode('', array_slice(preg_split('//u', (string) $s, -1, PREG_SPLIT_NO_EMPTY) ?: [], $start, $length));
+    }
+}
+
 function cfg(string $key)
 {
     static $c = null;
@@ -220,7 +231,7 @@ function app_asset_dir(string $name): string
 
 function slugify(string $s): string
 {
-    $s = strtolower(trim(preg_replace('/[^A-Za-z0-9]+/', '-', iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $s) ?: $s), '-'));
+    $s = strtolower(trim(preg_replace('/[^A-Za-z0-9]+/', '-', (function_exists('iconv') ? @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $s) : '') ?: $s), '-'));
     return substr($s, 0, 60) ?: 'catalogue';
 }
 
