@@ -12,7 +12,7 @@
   // Interface text. Add a language by copying the "en" block; choose it with data-lang.
   var TEXT = {
     en: {
-      first: 'First page', last: 'Last page', prev: 'Previous', next: 'Next', pages: 'All pages', links: 'Show links', zoom: 'Zoom',
+      first: 'First page', last: 'Last page', more: 'More', prev: 'Previous', next: 'Next', pages: 'All pages', links: 'Show links', zoom: 'Zoom',
       pdf: 'Download PDF', full: 'Full screen', close: 'Close', product: 'Product', newTab: 'Open in new tab',
       hint: 'Tap a product to open it', page: 'Page', of: 'of',
       swipe: 'Swipe to turn the page', click: 'Click the page edge or use ← →', sound: 'Sound',
@@ -20,7 +20,7 @@
       openProduct: 'Open product', goTo: 'Go to page', error: 'The catalogue could not be loaded.'
     },
     de: {
-      first: 'Erste Seite', last: 'Letzte Seite', prev: 'Zurück', next: 'Weiter', pages: 'Alle Seiten', links: 'Links anzeigen', zoom: 'Vergrößern',
+      first: 'Erste Seite', last: 'Letzte Seite', more: 'Mehr', prev: 'Zurück', next: 'Weiter', pages: 'Alle Seiten', links: 'Links anzeigen', zoom: 'Vergrößern',
       pdf: 'PDF herunterladen', full: 'Vollbild', close: 'Schließen', product: 'Produkt', newTab: 'In neuem Tab öffnen',
       hint: 'Tippen Sie auf ein Produkt, um es zu öffnen', page: 'Seite', of: 'von',
       swipe: 'Wischen zum Umblättern', click: 'Seitenrand anklicken oder ← → verwenden', sound: 'Ton',
@@ -28,7 +28,7 @@
       openProduct: 'Produkt öffnen', goTo: 'Zu Seite', error: 'Der Katalog konnte nicht geladen werden.'
     },
     fr: {
-      first: 'Première page', last: 'Dernière page', prev: 'Précédente', next: 'Suivante', pages: 'Toutes les pages', links: 'Afficher les liens', zoom: 'Zoom',
+      first: 'Première page', last: 'Dernière page', more: 'Plus', prev: 'Précédente', next: 'Suivante', pages: 'Toutes les pages', links: 'Afficher les liens', zoom: 'Zoom',
       pdf: 'Télécharger le PDF', full: 'Plein écran', close: 'Fermer', product: 'Produit', newTab: 'Ouvrir dans un nouvel onglet',
       hint: 'Touchez un produit pour l’ouvrir', page: 'Page', of: 'sur',
       swipe: 'Balayez pour tourner la page', click: 'Cliquez sur le bord de la page ou utilisez ← →', sound: 'Son',
@@ -36,7 +36,7 @@
       openProduct: 'Ouvrir le produit', goTo: 'Aller à la page', error: 'Le catalogue n’a pas pu être chargé.'
     },
     es: {
-      first: 'Primera página', last: 'Última página', prev: 'Anterior', next: 'Siguiente', pages: 'Todas las páginas', links: 'Mostrar enlaces', zoom: 'Ampliar',
+      first: 'Primera página', last: 'Última página', more: 'Más', prev: 'Anterior', next: 'Siguiente', pages: 'Todas las páginas', links: 'Mostrar enlaces', zoom: 'Ampliar',
       pdf: 'Descargar PDF', full: 'Pantalla completa', close: 'Cerrar', product: 'Producto', newTab: 'Abrir en una pestaña nueva',
       hint: 'Toca un producto para abrirlo', page: 'Página', of: 'de',
       swipe: 'Desliza para pasar la página', click: 'Haz clic en el borde de la página o usa ← →', sound: 'Sonido',
@@ -44,7 +44,7 @@
       openProduct: 'Abrir producto', goTo: 'Ir a la página', error: 'No se pudo cargar el catálogo.'
     },
     it: {
-      first: 'Prima pagina', last: 'Ultima pagina', prev: 'Precedente', next: 'Successiva', pages: 'Tutte le pagine', links: 'Mostra i link', zoom: 'Ingrandisci',
+      first: 'Prima pagina', last: 'Ultima pagina', more: 'Altro', prev: 'Precedente', next: 'Successiva', pages: 'Tutte le pagine', links: 'Mostra i link', zoom: 'Ingrandisci',
       pdf: 'Scarica il PDF', full: 'Schermo intero', close: 'Chiudi', product: 'Prodotto', newTab: 'Apri in una nuova scheda',
       hint: 'Tocca un prodotto per aprirlo', page: 'Pagina', of: 'di',
       swipe: 'Scorri per sfogliare', click: 'Fai clic sul bordo della pagina o usa ← →', sound: 'Audio',
@@ -52,7 +52,7 @@
       openProduct: 'Apri il prodotto', goTo: 'Vai a pagina', error: 'Impossibile caricare il catalogo.'
     },
     nl: {
-      first: 'Eerste pagina', last: 'Laatste pagina', prev: 'Vorige', next: 'Volgende', pages: 'Alle pagina’s', links: 'Links tonen', zoom: 'Inzoomen',
+      first: 'Eerste pagina', last: 'Laatste pagina', more: 'Meer', prev: 'Vorige', next: 'Volgende', pages: 'Alle pagina’s', links: 'Links tonen', zoom: 'Inzoomen',
       pdf: 'PDF downloaden', full: 'Volledig scherm', close: 'Sluiten', product: 'Product', newTab: 'Openen in nieuw tabblad',
       hint: 'Tik op een product om het te openen', page: 'Pagina', of: 'van',
       swipe: 'Veeg om de pagina om te slaan', click: 'Klik op de rand van de pagina of gebruik ← →', sound: 'Geluid',
@@ -60,7 +60,7 @@
       openProduct: 'Product openen', goTo: 'Naar pagina', error: 'De catalogus kon niet worden geladen.'
     },
     pl: {
-      first: 'Pierwsza strona', last: 'Ostatnia strona', prev: 'Poprzednia', next: 'Następna', pages: 'Wszystkie strony', links: 'Pokaż linki', zoom: 'Powiększ',
+      first: 'Pierwsza strona', last: 'Ostatnia strona', more: 'Więcej', prev: 'Poprzednia', next: 'Następna', pages: 'Wszystkie strony', links: 'Pokaż linki', zoom: 'Powiększ',
       pdf: 'Pobierz PDF', full: 'Pełny ekran', close: 'Zamknij', product: 'Produkt', newTab: 'Otwórz w nowej karcie',
       hint: 'Dotknij produktu, aby go otworzyć', page: 'Strona', of: 'z',
       swipe: 'Przesuń, aby przewrócić stronę', click: 'Kliknij krawędź strony lub użyj ← →', sound: 'Dźwięk',
@@ -68,7 +68,7 @@
       openProduct: 'Otwórz produkt', goTo: 'Przejdź do strony', error: 'Nie udało się wczytać katalogu.'
     },
     bg: {
-      first: 'Първа страница', last: 'Последна страница', prev: 'Предишна', next: 'Следваща', pages: 'Всички страници', links: 'Покажи връзките', zoom: 'Увеличи',
+      first: 'Първа страница', last: 'Последна страница', more: 'Още', prev: 'Предишна', next: 'Следваща', pages: 'Всички страници', links: 'Покажи връзките', zoom: 'Увеличи',
       pdf: 'Изтегли PDF', full: 'Цял екран', close: 'Затвори', product: 'Продукт', newTab: 'Отвори в нов прозорец',
       hint: 'Натиснете върху продукт, за да го отворите', page: 'Страница', of: 'от',
       swipe: 'Плъзнете, за да прелистите', click: 'Натиснете ръба на страницата или ← →', sound: 'Звук',
@@ -79,6 +79,7 @@
 
   var ICON = {
     first: '<path d="M17 18l-6-6 6-6M7 6v12"/>',
+    more: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
     last: '<path d="M7 6l6 6-6 6M17 6v12"/>',
     prev: '<path d="M15 18l-6-6 6-6"/>',
     next: '<path d="M9 6l6 6-6 6"/>',
@@ -248,7 +249,10 @@
     this.edgeNext = el('button', 'fb-edge next'); this.edgeNext.setAttribute('aria-label', t.next);
     this.edgePrev.onclick = function () { self.prev(); };
     this.edgeNext.onclick = function () { self.next(); };
-    this.stage.append(this.book, this.edgePrev, this.edgeNext);
+    this.zoomer = el('div', 'fb-zoomer');          // scales and pans the book when zoomed in
+    this.zoomer.append(this.book);
+    this.stage.append(this.zoomer, this.edgePrev, this.edgeNext);
+    this.zoomLevel = 1; this.panX = 0; this.panY = 0;
 
     var bar = el('div', 'fb-bar');
     var title = el('div', 'fb-title'); title.textContent = this.data.title || '';
@@ -257,43 +261,80 @@
     this.btnFirst = this.button('first', t.first, function () { self.go(1); });
     this.btnLast = this.button('last', t.last, function () { self.go(self.N); });
     this.btnFirst.classList.add('fb-ends'); this.btnLast.classList.add('fb-ends');   // left out on the narrowest phones
+    // page number pill: "12 / 108"; type a number and press Enter
     var pageno = el('label', 'fb-pageno');
-    this.pageInput = el('input'); this.pageInput.type = 'number'; this.pageInput.min = 1; this.pageInput.max = this.N;
+    this.pageInput = el('input');
+    this.pageInput.type = 'text'; this.pageInput.inputMode = 'numeric'; this.pageInput.autocomplete = 'off';
     this.pageInput.setAttribute('aria-label', t.page);
-    this.pageInput.addEventListener('change', function () { self.go(+self.pageInput.value || 1); self.pageInput.blur(); });
-    var total = el('span'); total.textContent = '/ ' + this.N;
+    this.pageInput.addEventListener('focus', function () { self.pageInput.value = self.visible()[0]; self.pageInput.select(); });
+    this.pageInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { var n = parseInt(self.pageInput.value, 10); self.pageInput.blur(); if (n) self.go(n); }
+      else if (e.key === 'Escape') self.pageInput.blur();
+    });
+    this.pageInput.addEventListener('blur', function () { self.updateUi(); });
+    var total = el('span', 'fb-total'); total.textContent = '/ ' + this.N;
     pageno.append(this.pageInput, total);
-    this.btnLinks = this.button('links', t.links, function () {
-      var on = !self.root.classList.contains('show-links');
-      self.root.classList.toggle('show-links', on);
-      self.btnLinks.setAttribute('aria-pressed', String(on));
-    });
+
+    this.btnGrid = this.button('grid', t.pages, function () { self.toggleDrawer(); });
+    this.btnGrid.setAttribute('aria-pressed', 'false');
+    this.btnLinks = this.button('links', t.links, function () { self.showLinks(!self.root.classList.contains('show-links')); });
     this.btnLinks.setAttribute('aria-pressed', 'false');
-    this.menu = el('div', 'fb-menu'); this.menu.setAttribute('role', 'menu');
-    var mh = el('h3'); mh.textContent = t.linkColor; this.menu.append(mh);
-    ['grey', 'red', 'blue', 'white'].forEach(function (c) {
-      var it = el('button', null, '<span class="dot ' + c + '"></span>');
-      it.setAttribute('role', 'menuitemradio'); it.dataset.c = c;
-      it.append(document.createTextNode(t.colors[c]));
-      it.onclick = function () { self.setLinkColor(c, true); self.menu.classList.remove('open'); };
-      self.menu.append(it);
-    });
-    var btnColor = this.button('palette', t.linkColor, function (e) { e.stopPropagation(); self.menu.classList.toggle('open'); });
-    this.on(document, 'click', function (e) { if (!self.menu.contains(e.target)) self.menu.classList.remove('open'); });
-    var btnGrid = this.button('grid', t.pages, function () { self.openGrid(); });
+    this.btnLinks.classList.add('fb-hide-sm');
     this.btnSound = this.button(this.sound.on ? 'sound' : 'mute', t.sound, function () { self.toggleSound(); });
-    var btnZoom = this.button('zoom', t.zoom, function () { self.openZoom(); });
-    btnZoom.classList.add('fb-hide-sm');     // phones pinch-zoom instead
+    this.btnSound.classList.add('fb-hide-sm');
+
+    // zoom: the button toggles 100% / 200%; hovering it shows a slider
+    var zoomctl = el('div', 'fb-zoomctl fb-hide-sm');
+    this.btnZoom = this.button('zoom', t.zoom, function () { self.setZoom(self.zoomLevel > 1 ? 1 : 2); });
+    this.btnZoom.setAttribute('aria-pressed', 'false');
+    var pop = el('div', 'fb-zoompop'), box = el('div', 'fb-zoombox');
+    this.zoomRange = el('input'); this.zoomRange.type = 'range';
+    this.zoomRange.min = 100; this.zoomRange.max = 300; this.zoomRange.step = 10; this.zoomRange.value = 100;
+    this.zoomRange.setAttribute('aria-label', t.zoom);
+    this.zoomRange.addEventListener('input', function () { self.setZoom(self.zoomRange.value / 100); });
+    this.zoomVal = el('span', 'fb-zoomval'); this.zoomVal.textContent = '100%';
+    box.append(this.zoomRange, this.zoomVal); pop.append(box);
+    zoomctl.append(pop, this.btnZoom);
+
     var pdf = el('a', 'fb-btn fb-hide-sm', svg('pdf'));
-    if (this.opts.noPdf) pdf.hidden = true;
-    pdf.href = this.fileUrl(this.data.pdf); if (!this.data.pdf) pdf.hidden = true; pdf.download = ''; pdf.title = t.pdf; pdf.setAttribute('aria-label', t.pdf);
+    pdf.href = this.fileUrl(this.data.pdf); pdf.download = ''; pdf.title = t.pdf; pdf.setAttribute('aria-label', t.pdf);
+    var hasPdf = !!this.data.pdf && !this.opts.noPdf;
+    if (!hasPdf) pdf.hidden = true;
     var btnFull = this.button('full', t.full, function () { self.toggleFullscreen(); });
     btnFull.classList.add('fb-hide-sm');
     if (!document.fullscreenEnabled) btnFull.hidden = true;
-    bar.append(title, this.btnFirst, this.btnPrev, pageno, this.btnNext, this.btnLast, el('span', 'fb-sep'), btnGrid, this.btnLinks, btnColor, btnZoom, this.btnSound, pdf, btnFull);
 
-    this.grid = this.overlay(t.pages);
-    this.zoom = this.overlay(t.zoom);
+    // phones: links, sound and PDF move into a "more" menu
+    this.menu = el('div', 'fb-menu'); this.menu.setAttribute('role', 'menu');
+    var item = function (icon, label, fn) {
+      var b = el('button', null, svg(icon)); b.setAttribute('role', 'menuitemcheckbox');
+      b.append(document.createTextNode(label));
+      b.onclick = function () { fn(); self.menu.classList.remove('open'); };
+      self.menu.append(b);
+      return b;
+    };
+    this.menuLinks = item('links', t.links, function () { self.showLinks(!self.root.classList.contains('show-links')); });
+    this.menuSound = item(this.sound.on ? 'sound' : 'mute', t.sound, function () { self.toggleSound(); });
+    this.menuSound.setAttribute('aria-checked', String(this.sound.on));
+    if (hasPdf) {
+      var mp = el('a', null, svg('pdf')); mp.href = pdf.href; mp.download = ''; mp.setAttribute('role', 'menuitem');
+      mp.append(document.createTextNode(t.pdf)); this.menu.append(mp);
+    }
+    var btnMore = this.button('more', t.more, function (e) { e.stopPropagation(); self.menu.classList.toggle('open'); });
+    btnMore.classList.add('fb-only-sm');
+    this.on(document, 'click', function (e) { if (!self.menu.contains(e.target)) self.menu.classList.remove('open'); });
+
+    bar.append(title, this.btnFirst, this.btnPrev, pageno, this.btnNext, this.btnLast, el('span', 'fb-sep'),
+      this.btnGrid, this.btnLinks, zoomctl, this.btnSound, pdf, btnFull, btnMore);
+
+    // thumbnails in a side panel
+    this.drawer = el('aside', 'fb-drawer');
+    this.drawer.setAttribute('aria-label', t.pages);
+    var dh = el('div', 'fb-drawer-head'), dt = el('h2'); dt.textContent = t.pages;
+    dh.append(dt, this.button('close', t.close, function () { self.toggleDrawer(false); }));
+    this.drawerList = el('div', 'fb-drawer-list');
+    this.drawer.append(dh, this.drawerList);
+
     this.modal = el('div', 'fb-modal');
     this.modal.innerHTML = '<div class="fb-modal-box" role="dialog" aria-modal="true"><div class="fb-overlay-head"><h2></h2>' +
       '<a class="fb-btn" target="_blank" rel="noopener">' + svg('ext') + '</a>' +
@@ -305,8 +346,8 @@
     this.modal.addEventListener('click', function (e) { if (e.target === self.modal) self.closeModal(); });
 
     this.toastEl = el('div', 'fb-toast');
-    this.root.append(this.stage, bar, this.menu, this.grid.wrap, this.zoom.wrap, this.modal, this.toastEl);
-    this.setLinkColor(store('flippy-links') || this.opts.linkColor || 'grey');
+    this.root.append(this.drawer, this.stage, bar, this.menu, this.modal, this.toastEl);
+    this.setLinkColor(this.opts.linkColor || 'grey');
 
     this.bindGestures();
     this.bindKeys();
@@ -322,18 +363,6 @@
     var b = el('button', 'fb-btn', svg(icon));
     b.title = label; b.setAttribute('aria-label', label); b.onclick = fn;
     return b;
-  };
-
-  Flipbook.prototype.overlay = function (label) {
-    var self = this;
-    var wrap = el('div', 'fb-overlay');
-    var head = el('div', 'fb-overlay-head');
-    var h = el('h2'); h.textContent = label;
-    var close = this.button('close', this.t.close, function () { wrap.classList.remove('open'); });
-    head.append(h, close);
-    var body = el('div', 'fb-overlay-body');
-    wrap.append(head, body);
-    return { wrap: wrap, body: body, title: h, close: function () { wrap.classList.remove('open'); } };
   };
 
   /* one page: image + its link hotspots */
@@ -412,6 +441,7 @@
   Flipbook.prototype.go = function (target) {
     target = this.clamp(target);
     if (this.isVisible(target)) return;
+    if (this.zoomLevel > 1) this.setZoom(1);
     if (this.busy) { this.queued = target; return; }
     var forward = target > this.visible()[0];
     // one leaf for a normal turn; a quick riffle of up to 6 leaves for a jump
@@ -666,7 +696,11 @@
 
   Flipbook.prototype.updateUi = function () {
     var v = this.visible();
-    this.pageInput.value = v[0];
+    if (document.activeElement !== this.pageInput) {
+      this.pageInput.value = v.join('–');
+      this.pageInput.style.width = (String(v.join('–')).length + 1.2) + 'ch';
+    }
+    this.markThumbs(true);
     var atStart = v[0] <= 1, atEnd = v[v.length - 1] >= this.N;
     this.btnPrev.disabled = this.edgePrev.disabled = this.btnFirst.disabled = atStart;
     this.btnNext.disabled = this.edgeNext.disabled = this.btnLast.disabled = atEnd;
@@ -817,7 +851,6 @@
   Flipbook.prototype.setLinkColor = function (c, save) {
     if (['grey', 'red', 'blue', 'white'].indexOf(c) < 0) c = 'grey';
     this.root.dataset.links = c;
-    this.menu.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.c === c)); });
     if (save) {
       store('flippy-links', c);
       // show the new colour on the page for a moment
@@ -832,6 +865,8 @@
     this.sound.on = !this.sound.on;
     store('flippy-sound', this.sound.on ? '1' : '0');
     this.btnSound.innerHTML = svg(this.sound.on ? 'sound' : 'mute');
+    this.menuSound.querySelector('svg').outerHTML = svg(this.sound.on ? 'sound' : 'mute');
+    this.menuSound.setAttribute('aria-checked', String(this.sound.on));
     if (this.sound.on) { this.sound.unlock(); this.sound.flip(1); }
   };
 
@@ -877,6 +912,7 @@
     var peelPx = Math.round(Math.max(48, Math.min(104, pageW * 0.12)));
     this.book.style.setProperty('--fb-corner', peelPx + 'px');
     this.book.style.setProperty('--fb-corner-hit', peelPx + 'px');
+    if (this.zoomLevel > 1) this.pan(0, 0);
     if (single) this.book.classList.remove('is-cover', 'is-back');
     if (changed || force) {
       if (single) { this.fill(this.slotR, this.page); this.slotL.innerHTML = ''; }
@@ -920,7 +956,7 @@
 
   Flipbook.prototype.follow = function (link, fromPage, evt) {
     if (link.page) {
-      this.grid.close(); this.zoom.close();
+      if (this.root.clientWidth <= 640) this.toggleDrawer(false);
       this.go(link.page);
       return;
     }
@@ -957,41 +993,68 @@
 
   /* ---------- overlays ---------- */
 
-  Flipbook.prototype.openGrid = function () {
-    var self = this, g = this.grid;
-    if (!g.built) {
-      var wrap = el('div', 'fb-grid');
+  Flipbook.prototype.toggleDrawer = function (open) {
+    var self = this;
+    if (open == null) open = !this.root.classList.contains('drawer-open');
+    if (open && !this.drawerBuilt) {
       for (var n = 1; n <= this.N; n++) (function (n) {
         var b = el('button', 'fb-thumb');
         var img = new Image(); img.loading = 'lazy'; img.alt = ''; img.src = self.pageUrl(n, true);
-        b.append(img, document.createTextNode(String(n)));
+        b.append(img, el('span', null, String(n)));
         b.dataset.n = n;
-        b.onclick = function () { g.close(); self.go(n); };
-        wrap.append(b);
+        b.setAttribute('aria-label', self.t.page + ' ' + n);
+        b.onclick = function () {
+          self.go(n);
+          if (self.root.clientWidth <= 640) self.toggleDrawer(false);     // phones: the panel covers the page
+        };
+        self.drawerList.append(b);
       })(n);
-      g.body.append(wrap);
-      g.built = true;
+      this.drawerBuilt = true;
     }
-    var v = this.visible();
-    g.body.querySelectorAll('.fb-thumb').forEach(function (b) { b.classList.toggle('current', v.indexOf(+b.dataset.n) >= 0); });
-    g.wrap.classList.add('open');
-    var cur = g.body.querySelector('.fb-thumb.current');
-    if (cur) cur.scrollIntoView({ block: 'center' });
+    this.root.classList.toggle('drawer-open', open);
+    this.btnGrid.setAttribute('aria-pressed', String(open));
+    if (open) this.markThumbs(true);
+  };
+  // highlight the pages on show, and keep them in view in the panel
+  Flipbook.prototype.markThumbs = function (scroll) {
+    if (!this.drawerBuilt) return;
+    var v = this.visible(), list = this.drawerList, cur = null;
+    list.querySelectorAll('.fb-thumb').forEach(function (b) {
+      var on = v.indexOf(+b.dataset.n) >= 0;
+      b.classList.toggle('current', on);
+      if (on && !cur) cur = b;
+    });
+    if (scroll && cur && this.root.classList.contains('drawer-open')) {
+      // scroll the panel only, never the page around an embedded viewer
+      var top = cur.offsetTop - (list.clientHeight - cur.offsetHeight) / 2;
+      list.scrollTo ? list.scrollTo({ top: top, behavior: 'smooth' }) : (list.scrollTop = top);
+    }
   };
 
-  Flipbook.prototype.openZoom = function () {
-    var self = this, z = this.zoom;
-    z.body.innerHTML = '';
-    var list = el('div', 'fb-zoom-pages');
-    this.visible().forEach(function (n) {
-      var holder = el('div', 'fb-zoom-page');
-      holder.append(self.pageEl(n));
-      list.append(holder);
-    });
-    z.body.append(list);
-    z.title.textContent = this.t.page + ' ' + this.visible().join('–');
-    z.wrap.classList.add('open');
-    z.body.scrollTop = 0;
+  Flipbook.prototype.showLinks = function (on) {
+    this.root.classList.toggle('show-links', on);
+    this.btnLinks.setAttribute('aria-pressed', String(on));
+    this.menuLinks.setAttribute('aria-checked', String(on));
+  };
+
+  // zoom in place: 1 to 3 times, panned by dragging, the wheel, or the arrow keys
+  Flipbook.prototype.setZoom = function (z) {
+    z = Math.max(1, Math.min(3, Math.round((z || 1) * 100) / 100));
+    if (z === 1) { this.panX = 0; this.panY = 0; }
+    this.zoomLevel = z;
+    this.pan(0, 0);
+    this.root.classList.toggle('is-zoomed', z > 1);
+    this.zoomRange.value = Math.round(z * 100);
+    this.zoomVal.textContent = Math.round(z * 100) + '%';
+    this.btnZoom.setAttribute('aria-pressed', String(z > 1));
+  };
+  Flipbook.prototype.pan = function (dx, dy) {
+    var z = this.zoomLevel;
+    var mx = Math.max(0, (this.book.offsetWidth * z - this.stage.clientWidth) / 2 + 24);
+    var my = Math.max(0, (this.book.offsetHeight * z - this.stage.clientHeight) / 2 + 24);
+    this.panX = Math.max(-mx, Math.min(mx, this.panX + dx));
+    this.panY = Math.max(-my, Math.min(my, this.panY + dy));
+    this.zoomer.style.transform = z > 1 ? 'translate(' + this.panX + 'px,' + this.panY + 'px) scale(' + z + ')' : '';
   };
 
   Flipbook.prototype.toggleFullscreen = function () {
@@ -1011,25 +1074,37 @@
 
   Flipbook.prototype.bindGestures = function () {
     var self = this, sx = 0, sy = 0, down = false, moved = false;
+    var lx = 0, ly = 0;
     this.stage.addEventListener('pointerdown', function (e) {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
-      down = true; moved = false; sx = e.clientX; sy = e.clientY;
+      down = true; moved = false; sx = lx = e.clientX; sy = ly = e.clientY;
+      if (self.zoomLevel > 1) self.root.classList.add('panning');
     });
     this.stage.addEventListener('pointermove', function (e) {
-      if (down && Math.hypot(e.clientX - sx, e.clientY - sy) > 10) moved = true;
+      if (!down) return;
+      if (Math.hypot(e.clientX - sx, e.clientY - sy) > 10) moved = true;
+      if (self.zoomLevel > 1) { self.pan(e.clientX - lx, e.clientY - ly); lx = e.clientX; ly = e.clientY; }
     });
+    // a drag isn't a click: don't follow a link that was under the pointer
+    this.stage.addEventListener('click', function (e) { if (self.dragged) { e.preventDefault(); e.stopPropagation(); } }, true);
+    this.stage.addEventListener('wheel', function (e) {
+      if (e.ctrlKey || e.metaKey) { e.preventDefault(); self.setZoom(self.zoomLevel * Math.exp(-e.deltaY * 0.004)); }
+      else if (self.zoomLevel > 1) { e.preventDefault(); self.pan(-e.deltaX, -e.deltaY); }
+    }, { passive: false });
     function up(e) {
       if (!down) return;
       down = false;
+      self.root.classList.remove('panning');
       var dx = e.clientX - sx, dy = e.clientY - sy;
       self.dragged = moved;
       setTimeout(function () { self.dragged = false; }, 0);
+      if (self.zoomLevel > 1) return;
       if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2) {
         if (dx < 0) self.next(); else self.prev();
       }
     }
     this.stage.addEventListener('pointerup', up);
-    this.stage.addEventListener('pointercancel', function () { down = false; });
+    this.stage.addEventListener('pointercancel', function () { down = false; self.root.classList.remove('panning'); });
   };
 
   Flipbook.prototype.bindKeys = function () {
@@ -1038,8 +1113,15 @@
       if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
       // with several viewers on a page, the keys go to the one last clicked (or the only one)
       if (instances.length > 1 && lastUsed !== self && !self.root.contains(document.activeElement)) return;
-      if (e.key === 'Escape') { self.closeModal(); self.grid.close(); self.zoom.close(); return; }
+      if (e.key === 'Escape') { self.closeModal(); self.setZoom(1); self.menu.classList.remove('open'); return; }
       if (self.modal.classList.contains('open')) return;
+      if (self.zoomLevel > 1 && /^Arrow/.test(e.key)) {           // zoomed in: the arrows move around the page
+        var d = 60;
+        self.pan(e.key === 'ArrowLeft' ? d : e.key === 'ArrowRight' ? -d : 0, e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0);
+        e.preventDefault(); return;
+      }
+      if (e.key === '+' || e.key === '=') { self.setZoom(self.zoomLevel + 0.5); return; }
+      if (e.key === '-') { self.setZoom(self.zoomLevel - 0.5); return; }
       if (e.key === 'ArrowRight' || e.key === 'PageDown') { self.next(); e.preventDefault(); }
       else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { self.prev(); e.preventDefault(); }
       else if (e.key === 'Home') self.go(1);

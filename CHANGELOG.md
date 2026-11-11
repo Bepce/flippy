@@ -11,8 +11,17 @@
 - Viewer: `bg` and `accent` options, and `?theme=`, `?bg=`, `?accent=` in the address
 - Viewer: the default colours now have zero specificity, so `flip-book { --fb-bg: … }` in a
   site's CSS really overrides them (it didn't before)
-- Viewer: first-page and last-page buttons (hidden on the narrowest phones, where the page grid
-  does the same)
+- Viewer: new toolbar. A page pill ("6–7 / 108", type a page and press Enter) without number
+  spinners; first-page and last-page buttons; the link colour picker is gone (set it with
+  `link-color` or in the server's Appearance)
+- Viewer: zoom in place. Hovering the zoom button shows a slider (100–300%); drag, scroll or use
+  the arrow keys to move around; Ctrl + scroll zooms; Escape or turning a page zooms back out
+- Viewer: all pages open in a side panel of thumbnails instead of a full-screen grid. On wide
+  screens the book moves over and the panel stays open while you read; on phones it slides over
+  the page and closes when you pick one
+- Viewer on phones: the toolbar is back, page, next, pages and a "more" menu (show links, sound,
+  download PDF)
+- Admin: the Appearance preview changes colours instantly instead of reloading
 - Builder: zoom slider and buttons, Ctrl + scroll (or pinch on a trackpad) zooms around the
   pointer, Ctrl +/−/0; Fit works again after zooming in
 - Server: works without PHP's mbstring extension, which is off by default on Windows (creating

@@ -155,7 +155,7 @@ As attributes on `<flip-book>` (or `data-` attributes on `<div class="flippy">`)
 | `theme` | `dark`, `light` | `dark` | colour scheme of the viewer |
 | `bg` | colour, e.g. `fdf6e3` | | background around the book (`none`: the theme's) |
 | `accent` | colour | | switched-on buttons and focus rings (`none`: the theme's) |
-| `link-color` | `grey`, `red`, `blue`, `white` | `grey` | link highlight; visitors can change it in the toolbar |
+| `link-color` | `grey`, `red`, `blue`, `white` | `grey` | colour of the link highlight |
 | `popup` | `true` | `false` | open products in a popup over the catalogue (see below) |
 | `hash` | `false` | `true` | keep the page number in the address (`#p=12`) for sharing |
 | `page` | number | `1` | page to open on |

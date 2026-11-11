@@ -311,11 +311,28 @@ function appearancePanel(c, onSaved) {
     q.set('links', cur.linkColor);
     return c.url + '?' + q;
   };
-  let t = 0;
+  let t = 0, frameLang = cur.lang;
+  // colours change in the running preview straight away; only a new language reloads it
+  const darker = (hex, f) => '#' + hex.slice(1).match(/../g).map(h => Math.round(parseInt(h, 16) * (1 - f)).toString(16).padStart(2, '0')).join('');
+  function paintFrame() {
+    try {
+      const root = frame.contentDocument && frame.contentDocument.querySelector('.fb');
+      if (!root || !root.flippy) return false;
+      const light = cur.theme === 'light';
+      root.dataset.theme = cur.theme;
+      root.dataset.links = cur.linkColor;
+      root.style.setProperty('--fb-bg', cur.bg || (light ? '#f3f4f6' : '#2b2f36'));
+      root.style.setProperty('--fb-bg-2', cur.bg ? darker(cur.bg, 0.1) : (light ? '#e3e6eb' : '#1f2228'));
+      root.style.setProperty('--fb-accent', cur.accent || '#2f6fe4');
+      frame.contentDocument.body.style.background = cur.bg || (light ? '#e3e6eb' : '#1f2228');
+      return true;
+    } catch (e) { return false; }
+  }
   function changed() {
     const dirty = JSON.stringify(cur) !== JSON.stringify(saved);
     save.disabled = undo.disabled = !dirty;
-    clearTimeout(t); t = setTimeout(() => { frame.src = previewUrl(); }, 250);
+    if (cur.lang === frameLang && paintFrame()) return;
+    clearTimeout(t); t = setTimeout(() => { frameLang = cur.lang; frame.src = previewUrl(); }, 250);
   }
   save.addEventListener('click', async () => {
     try {

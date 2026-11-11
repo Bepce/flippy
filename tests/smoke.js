@@ -24,6 +24,30 @@ function check(ok, msg) { if (!ok) throw new Error(msg); console.log('  ok  ' + 
     check(/^https:\/\/example\.com\/hollowbrook\//.test(href), 'colour swatch links to the product');
     check(await p.$$eval('.fb-curl', c => c.length) === 0, 'no turning sheets left behind');
 
+    // page number pill: shows the spread, takes a typed page
+    check(await p.$eval('.fb-pageno input', i => i.value) === '6–7', 'page pill shows the spread (6–7)');
+    await p.click('.fb-pageno input'); await p.keyboard.type('10'); await p.keyboard.press('Enter'); await p.waitForTimeout(1800);
+    check(/p=10/.test(await p.evaluate(() => location.hash)), 'typing a page number and Enter goes there');
+
+    // page panel: thumbnails at the side, the book makes room
+    const before = await p.$eval('.fb-stage', b => b.getBoundingClientRect().left);
+    await p.click('.fb-btn[aria-label="All pages"]'); await p.waitForTimeout(500);
+    const after = await p.$eval('.fb-stage', b => b.getBoundingClientRect().left);
+    check(await p.$$eval('.fb-thumb.current', t => t.map(x => x.dataset.n).join()) === '10,11' && after > before + 200, 'page panel opens beside the book, current pages marked');
+    await p.click('.fb-thumb[data-n="4"]'); await p.waitForTimeout(1800);
+    check(/p=4/.test(await p.evaluate(() => location.hash)) && await p.$eval('.fb', r => r.classList.contains('drawer-open')), 'thumbnail turns to its page, panel stays open on desktop');
+    await p.click('.fb-btn[aria-label="All pages"]');
+
+    // zoom: slider on hover, drag to pan, turning a page zooms back out
+    await p.hover('.fb-zoomctl'); await p.waitForTimeout(250);
+    check(await p.$eval('.fb-zoompop', e => getComputedStyle(e).opacity) === '1', 'zoom slider appears on hover');
+    await p.$eval('.fb-zoombox input', i => { i.value = 250; i.dispatchEvent(new Event('input')); });
+    await p.mouse.move(720, 400); await p.mouse.down(); await p.mouse.move(820, 450, { steps: 4 }); await p.mouse.up();
+    const z = await p.evaluate(() => { const f = document.querySelector('.fb').flippy; return [f.zoomLevel, f.panX > 0, location.hash]; });
+    check(z[0] === 2.5 && z[1] && /p=4/.test(z[2]), 'zoomed to 250%, dragging pans instead of turning');
+    await p.keyboard.press('Escape');
+    check(await p.evaluate(() => document.querySelector('.fb').flippy.zoomLevel) === 1, 'Escape zooms back out');
+
     // phone: one page, swipe
     const ctx = await browser.newContext({ ...devices['iPhone 13'] });
     const m = await ctx.newPage();
@@ -31,6 +55,11 @@ function check(ok, msg) { if (!ok) throw new Error(msg); console.log('  ok  ' + 
     await m.goto(URL + '#p=3');
     await m.waitForSelector('.fb-slot.right img');
     check(await m.$eval('.fb-book', b => b.classList.contains('single')), 'phone shows one page');
+    const shown = await m.$$eval('.fb-bar > *', els => els.filter(e => getComputedStyle(e).display !== 'none' && !e.hidden).length);
+    check(shown === 5 && await m.$eval('.fb-bar', b => b.scrollWidth <= b.clientWidth), 'phone toolbar: back, page, next, pages, more');
+    await m.click('.fb-btn[aria-label="More"]');
+    await m.click('.fb-menu button:has-text("Show links")');
+    check(await m.$eval('.fb', r => r.classList.contains('show-links')), 'links switched on from the More menu');
     const box = await m.$eval('.fb-stage', e => { const r = e.getBoundingClientRect(); return [r.x, r.y, r.width, r.height]; });
     await m.evaluate(([x, y, w, h]) => {
       const st = document.querySelector('.fb-stage'), o = { pointerId: 1, pointerType: 'touch', bubbles: true };
