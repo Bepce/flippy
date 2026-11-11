@@ -30,7 +30,7 @@ let urls = [];          // object URLs of the page images (revoked when the proj
 let thumbUrls = [];
 let codeFilter = 'missing';
 
-const DEFAULTS = { pattern: '\\d{6}', source: 'table', table: '', tableName: '', template: '', utm: '', products: true, productUrl: 'first' };
+const DEFAULTS = { pattern: '\\d{6}', source: 'table', table: '', tableName: '', template: '', utm: '', products: false, productUrl: 'first' };
 
 /* ---------------- start screen ---------------- */
 
@@ -78,7 +78,7 @@ async function importPdf(bytes, name, extra = {}) {
   const p = {
     id: crypto.randomUUID ? crypto.randomUUID() : uid() + uid(),
     title, folder: slugify(title), pdf: bytes, images: r.images,
-    pages: r.pages.map(pg => ({ w: pg.w, h: pg.h, words: pg.words, images: pg.images || [], links: pg.links.map(l => ({ ...l, id: uid() })) })),
+    pages: r.pages.map(pg => ({ w: pg.w, h: pg.h, words: pg.words, images: pg.images || [], shapes: pg.shapes || [], links: pg.links.map(l => ({ ...l, id: uid() })) })),
     settings: { ...DEFAULTS }, codeUrls: {}
   };
   busy(false);
@@ -119,7 +119,7 @@ async function importZip(file) {
     pdf: bytes, images: { type, pages, thumbs },
     settings: { ...DEFAULTS, ...((proj && proj.settings) || {}) }, codeUrls: (proj && proj.codeUrls) || {},
     pages: r.pages.map((pg, i) => ({
-      w: pg.w, h: pg.h, words: pg.words, images: pg.images || [],
+      w: pg.w, h: pg.h, words: pg.words, images: pg.images || [], shapes: pg.shapes || [],
       links: proj && proj.pages[i] ? proj.pages[i].links.map(l => ({ ...l, id: l.id || uid() }))
         : ((data.pages[i] && data.pages[i].links) || []).map(l => ({ ...l, id: uid(), from: l.kind === 'link' ? 'pdf' : undefined }))
     }))
@@ -430,14 +430,14 @@ function showSettings() {
   $('#pattern').value = s.pattern; $('#table').value = s.table; $('#template').value = s.template; $('#utm').value = s.utm;
   $('#table-name').textContent = s.tableName || 'CSV, or a Google Merchant / shop product feed';
   $$('[name=source]').forEach(r => { r.checked = r.value === s.source; });
-  $('#products').checked = s.products !== false;
+  $('#products').checked = s.products === true;
   $('#product-url').value = s.productUrl || 'first';
   showSource();
 }
 function showSource() {
   $('.src-table').hidden = P.settings.source !== 'table';
   $('.src-template').hidden = P.settings.source !== 'template';
-  $('.src-products').hidden = P.settings.products === false;
+  $('.src-products').hidden = P.settings.products !== true;
 }
 $('#pattern').addEventListener('input', e => { P.settings.pattern = e.target.value; e.target.setCustomValidity(codeRegex(e.target.value) ? '' : 'Not a valid pattern'); changed(); });
 $('#table').addEventListener('input', e => { P.settings.table = e.target.value; P.settings.tableName = ''; $('#table-name').textContent = 'Pasted list'; changed(); });
@@ -474,12 +474,12 @@ async function runAuto() {
   if (P.settings.source === 'template' && !P.settings.template.includes('{code}')) { toast('Put {code} in the address pattern.', true); $('#template').focus(); return; }
   const table = P.settings.source === 'table' ? parseLinkTable(P.settings.table) : new Map();
   if (P.settings.source === 'table' && !table.size) toast('The list has no codes with addresses yet; codes are boxed so you can fill them in.', true);
-  // projects from before picture detection: read the page layout once more
-  if (P.settings.products !== false && P.pages.some(pg => !pg.images)) {
+  // projects from before shape and picture detection: read the page layout once more
+  if (P.pages.some(pg => !pg.shapes)) {
     try {
       busy('Reading the page layout');
       const r = await readPdf(P.pdf, { render: false, onProgress: (i, n) => busy(`Reading page ${Math.min(i + 1, n)} of ${n}`, i / n) });
-      r.pages.forEach((rp, i) => { if (P.pages[i]) { P.pages[i].words = rp.words; P.pages[i].images = rp.images || []; } });
+      r.pages.forEach((rp, i) => { if (P.pages[i]) { P.pages[i].words = rp.words; P.pages[i].images = rp.images || []; P.pages[i].shapes = rp.shapes || []; } });
     } catch (e) { console.error(e); }
     busy(false);
   }
@@ -498,7 +498,7 @@ async function runAuto() {
   for (const pg of P.pages) {
     // hand-edited auto boxes stay; the rest are placed again
     pg.links = pg.links.filter(l => !l.auto || l.manual);
-    const laid = layoutCodes(pg.words, re);
+    const laid = layoutCodes(pg.words, re, pg.shapes, pg.images);
     for (const c of laid) {
       const box = toBox(pg, c.box);
       if (box.w <= 0 || box.h <= 0) continue;
@@ -509,7 +509,7 @@ async function runAuto() {
       pg.links.push({ id: uid(), ...box, kind: c.how === 'swatch' ? 'swatch' : c.how, code: c.code, url, auto: true });
     }
     // the product's name and photo, found next to its colour codes
-    if (P.settings.products !== false) {
+    if (P.settings.products === true) {
       for (const b of productBlocks(pg.words, laid, pg.images, pg, re)) {
         for (const [kind, r] of [['title', b.title], ['photo', b.photo]]) {
           if (!r) continue;

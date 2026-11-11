@@ -27,7 +27,7 @@ export function wordsFromText(items, viewport, Util) {
 }
 
 // Place a box around each code. Returns [{code, how, box:{x0,top,x1,bottom}}]
-export function layoutCodes(words, codeRe) {
+export function layoutCodes(words, codeRe, shapes, images) {
   const isCode = w => codeRe.test(w.text);
   const codes = words.filter(isCode);
   const laid = [];
@@ -50,15 +50,10 @@ export function layoutCodes(words, codeRe) {
     } else if (inText) {                                    // mentioned in a sentence
       laid.push({ w, how: 'text', box: { x0: w.x0 - 2, top: w.top - 2, x1: w.x1 + 2, bottom: w.bottom + 2 } });
     } else {                                                // swatch: colour above, name below
-      const cx = (w.x0 + w.x1) / 2;
-      const gaps = codes.filter(u => u !== w && Math.abs(u.top - w.top) < 4).map(u => Math.abs((u.x0 + u.x1) / 2 - cx));
-      const half = Math.min(19, ...gaps.map(g => g / 2 - 3.5));
-      const above = codes.filter(u => u !== w && u.top < w.top - 4 && Math.abs((u.x0 + u.x1) / 2 - cx) < 2 * half)
-        .map(u => u.bottom + 20).filter(b => b < w.top);
-      const top = Math.max(w.top - 33, ...above.map(b => b + 1));
-      laid.push({ w, how: 'swatch', box: { x0: cx - half, top, x1: cx + half, bottom: w.bottom + 20 } });
+      laid.push({ w, how: 'swatch', sw: swatchParts(w, words, codes, shapes, isCode, images) });
     }
   }
+  fitSwatches(laid.filter(l => l.how === 'swatch'));
   // rows of one list share the widest row's width
   const cols = new Map();
   laid.forEach((l, k) => { if (l.how === 'row') { const key = Math.round(l.w.x0); (cols.get(key) || cols.set(key, []).get(key)).push(k); } });
@@ -69,6 +64,74 @@ export function layoutCodes(words, codeRe) {
   // a code inside a sentence is skipped when the same code also has its own box
   const boxed = new Set(laid.filter(l => l.how !== 'text').map(l => l.w.text));
   return laid.filter(l => !(l.how === 'text' && boxed.has(l.w.text))).map(l => ({ code: l.w.text, how: l.how, box: l.box }));
+}
+
+// The pieces of one swatch: the colour (a filled shape or small picture right above the code),
+// the code, and the colour name under it (up to two short lines).
+function swatchParts(w, words, codes, shapes, isCode, images) {
+  const cx = (w.x0 + w.x1) / 2, lineH = w.bottom - w.top;
+  let shape = null;
+  // a product photo the code sits under (or on the bottom edge of): the whole photo is the link
+  let photo = null;
+  for (const p of images || []) {
+    const pw = p.x1 - p.x0, pcx = (p.x0 + p.x1) / 2;
+    if (pw < 30 || pw > 300 || Math.abs(pcx - cx) > pw * 0.3) continue;
+    if (p.top > w.top - lineH * 2 || p.bottom < w.top - lineH * 3 || p.bottom > w.bottom + lineH * 3) continue;
+    if (!photo || p.bottom > photo.bottom) photo = p;
+  }
+  for (const s of shapes || []) {
+    const sw = s.x1 - s.x0, scx = (s.x0 + s.x1) / 2;
+    if (s.bottom > w.top + 2 || w.top - s.bottom > Math.max(30, lineH * 3) || Math.abs(scx - cx) > Math.max(sw * 0.3, 4) || sw > 140) continue;
+    // the nearest one above; of shapes stacked on the same spot (a ring around a dot), the biggest
+    if (!shape || s.bottom > shape.bottom + 3 || (Math.abs(s.bottom - shape.bottom) <= 3 && sw > shape.x1 - shape.x0)) shape = s;
+  }
+  const name = [];
+  let ref = w;
+  for (let k = 0; k < 2; k++) {
+    const line = words.filter(u => !isCode(u) && u.top >= ref.bottom - 2 && u.top - ref.bottom < lineH * 0.9 &&
+      Math.abs((u.x0 + u.x1) / 2 - cx) < Math.max(30, (u.x1 - u.x0) / 2 + 6));
+    if (!line.length) break;
+    const l = { x0: Math.min(...line.map(u => u.x0)), x1: Math.max(...line.map(u => u.x1)), top: Math.min(...line.map(u => u.top)), bottom: Math.max(...line.map(u => u.bottom)) };
+    name.push(l); ref = l;
+  }
+  // a dot or square right above the code wins; otherwise the photo above it
+  if (!shape && photo) shape = photo;
+  const parts = [w, ...(shape ? [shape] : []), ...name];
+  return {
+    cx, shape,
+    top: shape ? Math.min(shape.top, w.top) : w.top - Math.max(26, lineH * 3),
+    bottom: name.length ? name[name.length - 1].bottom : w.bottom,
+    half: Math.max(...parts.map(p => Math.max(cx - p.x0, p.x1 - cx)))
+  };
+}
+
+// Boxes for a page's swatches: just around the colour and its name, the same width along a row,
+// and an even gap between neighbours, so nothing overlaps.
+function fitSwatches(list) {
+  const PAD = 3, GAP = 4;
+  // rows: swatches whose codes share a line
+  const rows = [];
+  for (const l of list.slice().sort((a, b) => a.w.top - b.w.top || a.sw.cx - b.sw.cx)) {
+    const r = rows.find(r => Math.abs(r[0].w.top - l.w.top) < 4);
+    r ? r.push(l) : rows.push([l]);
+  }
+  for (const row of rows) {
+    row.sort((a, b) => a.sw.cx - b.sw.cx);
+    const want = Math.max(...row.map(l => l.sw.half)) + PAD;
+    let room = Infinity;
+    for (let i = 1; i < row.length; i++) {
+      const d = row[i].sw.cx - row[i - 1].sw.cx;
+      if (d < 200) room = Math.min(room, (d - GAP) / 2);
+    }
+    const half = Math.max(8, Math.min(want, room));
+    for (const l of row) l.box = { x0: l.sw.cx - half, top: l.sw.top - PAD, x1: l.sw.cx + half, bottom: l.sw.bottom + PAD };
+  }
+  // rows stacked above each other: the upper box ends a gap above the lower one
+  for (const a of list) for (const b of list) {
+    if (a === b || a.box.top >= b.box.top) continue;
+    const xo = Math.min(a.box.x1, b.box.x1) - Math.max(a.box.x0, b.box.x0);
+    if (xo > 0 && a.box.bottom > b.box.top - GAP) a.box.bottom = Math.max(a.box.top + 8, b.box.top - GAP);
+  }
 }
 
 // Up to three short lines directly above a code, starting at the same left edge

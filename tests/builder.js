@@ -35,6 +35,7 @@ const ok = (cond, name, extra) => { console.log((cond ? '  ok  ' : '  FAIL ') + 
   const pdfLinks = await page.evaluate(() => window.flippyBuilder.project.pages.reduce((s, p) => s + p.links.length, 0));
   ok(pdfLinks === 3 * 9 || pdfLinks > 0, 'links already in the PDF kept', pdfLinks + ' links');
 
+  await page.check('#products');
   await page.click('#run');
   const result = await page.textContent('#result');
   ok(/49 codes found, 49 linked/.test(result), 'auto-link finds and links all 49 codes', result.trim());

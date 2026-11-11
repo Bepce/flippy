@@ -5,6 +5,11 @@
 - Builder: photos stored as JPEG 2000 (common in PDFs from InDesign and print workflows) were
   missing from the pages. The builder now loads pdf.js's image decoders, colour profiles and
   font data.
+- Builder: swatch boxes start just above the colour dot (found in the PDF's drawing), end under
+  the colour name, share one width along a row and keep an even gap; a code under a product
+  photo gets the whole photo in its box. Name and photo linking is off by default
+- Viewer: the search button opens a search view (focused box, results); buttons meant to be
+  hidden (search without page text, PDF without a PDF) really are
 - Builder: a short name printed right above a code (one product per label, like a range of
   shoes) is linked together with its code as one box
 - Builder: links each **product's name and photo** too, found next to its colour codes (the bold

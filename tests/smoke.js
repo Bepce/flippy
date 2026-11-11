@@ -38,13 +38,25 @@ function check(ok, msg) { if (!ok) throw new Error(msg); console.log('  ok  ' + 
     check(/p=4/.test(await p.evaluate(() => location.hash)) && await p.$eval('.fb', r => r.classList.contains('drawer-open')), 'thumbnail turns to its page, panel stays open on desktop');
     await p.click('.fb-btn[aria-label="All pages"]');
 
+    // search: its own view with a focused box, results instead of thumbnails
+    await p.click('.fb-btn[aria-label="Search"]'); await p.waitForTimeout(300);
+    const sv = await p.evaluate(() => ({ focus: document.activeElement.type, thumbs: document.querySelector('.fb-drawer-list').hidden, title: document.querySelector('.fb-drawer-head h2').textContent }));
+    check(sv.focus === 'search' && sv.thumbs && sv.title === 'Search', 'search button opens a search view, box focused');
+    await p.keyboard.type('canvas'); await p.waitForTimeout(500);
+    check(await p.$$eval('.fb-result b', r => r.map(x => x.textContent).join()) === 'Page 2,Page 5,Page 10', 'search finds the pages with the word');
+    await p.keyboard.press('Enter'); await p.waitForTimeout(1800);
+    check(/p=2/.test(await p.evaluate(() => location.hash)), 'Enter opens the first result');
+    await p.fill('.fb-search input', '');
+    await p.click('.fb-btn[aria-label="Search"]');
+
     // zoom: slider on hover, drag to pan, turning a page zooms back out
     await p.hover('.fb-zoomctl'); await p.waitForTimeout(250);
     check(await p.$eval('.fb-zoompop', e => getComputedStyle(e).opacity) === '1', 'zoom slider appears on hover');
+    const hashBefore = await p.evaluate(() => location.hash);
     await p.$eval('.fb-zoombox input', i => { i.value = 250; i.dispatchEvent(new Event('input')); });
     await p.mouse.move(720, 400); await p.mouse.down(); await p.mouse.move(820, 450, { steps: 4 }); await p.mouse.up();
     const z = await p.evaluate(() => { const f = document.querySelector('.fb').flippy; return [f.zoomLevel, f.panX > 0, location.hash]; });
-    check(z[0] === 2.5 && z[1] && /p=4/.test(z[2]), 'zoomed to 250%, dragging pans instead of turning');
+    check(z[0] === 2.5 && z[1] && z[2] === hashBefore, 'zoomed to 250%, dragging pans instead of turning');
     await p.keyboard.press('Escape');
     check(await p.evaluate(() => document.querySelector('.fb').flippy.zoomLevel) === 1, 'Escape zooms back out');
 

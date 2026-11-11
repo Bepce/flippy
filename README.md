@@ -121,7 +121,8 @@ How the link boxes are placed:
 
 | Layout around a code | Clickable area |
 |---|---|
-| Colour swatch (circle or square above the code) | swatch + code + colour name, never overlapping its neighbours |
+| Colour swatch (circle or square above the code) | swatch + code + colour name; boxes in a row share a width, with even gaps |
+| Product photo with the code under it | the whole photo + code + name |
 | List or table (codes stacked in a column) | the whole row |
 | Name printed right above the code | name and code together |
 | Code mentioned in a sentence | skipped if the same code has a swatch on the page, otherwise the code itself |

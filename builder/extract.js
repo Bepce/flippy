@@ -91,7 +91,8 @@ export async function readPdf(bytes, { render = true, onProgress = () => {} } = 
     // where the pictures are, and which words are bold (fonts are loaded by now)
     try {
       const ops = await page.getOperatorList();
-      pg.images = pageImages(ops, pdf, vp);
+      const found = pageImages(ops, pdf, vp);
+      pg.images = found.images; pg.shapes = found.shapes;
       const bold = {};
       for (const w of words) {
         if (!(w.font in bold)) {
@@ -102,7 +103,7 @@ export async function readPdf(bytes, { render = true, onProgress = () => {} } = 
         if (bold[w.font]) w.bold = true;
         delete w.font;
       }
-    } catch (e) { console.warn("[flippy] layout", e); pg.images = []; }
+    } catch (e) { console.warn('[flippy] layout', e); pg.images = []; pg.shapes = []; }
     page.cleanup();
   }
   onProgress(n, n, 'done');
@@ -115,8 +116,10 @@ export async function readPdf(bytes, { render = true, onProgress = () => {} } = 
 // clipping frames (InDesign places photos in frames, often larger than what shows).
 function pageImages(ops, pdf, vp) {
   const { OPS, Util } = pdf;
-  const out = [], stack = [];
+  const out = [], shapes = [], stack = [];
   let ctm = [1, 0, 0, 1, 0, 0], clip = null, pendingClip = false;
+  const pageArea = vp.width * vp.height;
+  const fills = new Set([OPS.fill, OPS.eoFill, OPS.fillStroke, OPS.eoFillStroke, OPS.closeFillStroke, OPS.closeEOFillStroke].filter(Boolean));
   const rect = (m, x0, y0, x1, y1) => {
     const t = Util.transform(vp.transform, m);
     const pts = [[x0, y0], [x1, y0], [x0, y1], [x1, y1]].map(([x, y]) => [t[0] * x + t[2] * y + t[4], t[1] * x + t[3] * y + t[5]]);
@@ -140,13 +143,26 @@ function pageImages(ops, pdf, vp) {
     else if (fn === OPS.constructPath) {
       const mm = a && a[2];
       if (pendingClip && mm && isFinite(mm[0])) clip = cut(rect(ctm, mm[0], mm[1], mm[2], mm[3]), clip) || { x0: 0, top: 0, x1: 0, bottom: 0 };
+      // filled shapes the size of a colour dot or square (what a swatch box should start at)
+      else if (fills.has(a && a[0]) && mm && isFinite(mm[0]) && shapes.length < 4000) {
+        const r = cut(rect(ctm, mm[0], mm[1], mm[2], mm[3]), clip);
+        if (r) {
+          const w = r.x1 - r.x0, h = r.bottom - r.top;
+          if (w >= 6 && h >= 6 && w * h < pageArea * 0.05 && w / h > 0.4 && w / h < 2.5) shapes.push(r);
+        }
+      }
       pendingClip = false;
     } else if (paints.has(fn)) {
       const r = cut(rect(ctm, 0, 0, 1, 1), clip);
-      if (r) out.push(r);
+      if (r) {
+        out.push(r);
+        // small pictures can be swatches too (fabric photos)
+        const w = r.x1 - r.x0, h = r.bottom - r.top;
+        if (w >= 6 && h >= 6 && w * h < pageArea * 0.05 && w / h > 0.4 && w / h < 2.5 && shapes.length < 4000) shapes.push(r);
+      }
     }
   }
-  return out;
+  return { images: out, shapes };
 }
 
 async function destPage(doc, dest) {
