@@ -14,8 +14,8 @@ return [
     // allow it too.
     'max_upload_mb' => 300,
 
-    // Which sites may embed your catalogues with <flip-book>: '*' for any, or one origin such as
-    // 'https://shop.example'.
+    // Which sites may embed your catalogues with <flip-book>: '*' for any, or a comma-separated
+    // list of origins, e.g. 'https://palltex.bg, https://www.palltex.bg, https://beta.palltex.bg'.
     'cors' => '*',
 
     // Count views, pages and product clicks (anonymous daily totals, no cookies).

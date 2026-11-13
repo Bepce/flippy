@@ -13,7 +13,7 @@ function check(ok, msg) { if (!ok) throw new Error(msg); console.log('  ok  ' + 
     // desktop: two-page spreads
     const p = await browser.newPage({ viewport: { width: 1440, height: 900 } });
     p.on('pageerror', e => errors.push(e.message));
-    await p.goto(URL);
+    await p.goto(URL + 'demo.html');
     await p.waitForSelector('.fb-slot.right img');
     check(await p.$eval('.fb-pageno input', i => i.value) === '1', 'opens on the cover');
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(1600);
@@ -64,7 +64,7 @@ function check(ok, msg) { if (!ok) throw new Error(msg); console.log('  ok  ' + 
     const ctx = await browser.newContext({ ...devices['iPhone 13'] });
     const m = await ctx.newPage();
     m.on('pageerror', e => errors.push('phone: ' + e.message));
-    await m.goto(URL + '#p=3');
+    await m.goto(URL + 'demo.html#p=3');
     await m.waitForSelector('.fb-slot.right img');
     check(await m.$eval('.fb-book', b => b.classList.contains('single')), 'phone shows one page');
     const shown = await m.$$eval('.fb-bar > *', els => els.filter(e => getComputedStyle(e).display !== 'none' && !e.hidden).length);

@@ -1376,7 +1376,7 @@
   }
 
   var Flippy = {
-    version: '0.3.1',
+    version: '0.4.0',
     mount: mount,
     // Flippy.addLanguage('sv', { prev: 'Föregående', ... }) - missing texts fall back to English
     addLanguage: function (code, strings) { TEXT[code] = strings; },

@@ -1,6 +1,6 @@
 {
   "name": "@bepce/flippy",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Self-hosted page-turning catalogue viewer. Turn a PDF into a flipbook on your own site, with product links that keep your shop's cart working.",
   "license": "MIT",
   "author": "flippy contributors",

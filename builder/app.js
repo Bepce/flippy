@@ -615,7 +615,7 @@ function snippet() {
   const f = slugify($('#ex-folder').value);
   $('#ex-snippet').textContent = server
     ? `<script src="${server.siteUrl}/dist/flippy.min.js"></script>\n<flip-book src="${server.siteUrl}/c/${f}/"></flip-book>`
-    : `<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.3.1/dist/flippy.min.js"></script>\n<flip-book src="/catalogues/${f}/"></flip-book>`;
+    : `<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.4.0/dist/flippy.min.js"></script>\n<flip-book src="/catalogues/${f}/"></flip-book>`;
 }
 $('#ex-folder').addEventListener('input', snippet);
 $('#ex-folder').addEventListener('change', e => { P.folder = slugify(e.target.value); e.target.value = P.folder; snippet(); changed(); });

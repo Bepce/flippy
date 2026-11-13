@@ -21,12 +21,12 @@ flipbook on your own website, with every product code linked to your shop.
 - **One script, no framework.** About 16 kB gzipped. A `<flip-book>` element,
   a small JavaScript API, light and dark themes, 8 interface languages.
 
-**[Live demo →](https://bepce.github.io/flippy/)** · [Embedded in a page](https://bepce.github.io/flippy/examples/embed.html) · **[Builder →](https://bepce.github.io/flippy/builder/)**
+**[Website](https://bepce.github.io/flippy/)** · **[Live demo →](https://bepce.github.io/flippy/demo.html)** · [Embedded in a page](https://bepce.github.io/flippy/examples/embed.html) · **[Builder →](https://bepce.github.io/flippy/builder/)**
 
 ## Quick start
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.3.1/dist/flippy.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.4.0/dist/flippy.min.js"></script>
 
 <flip-book src="/catalogues/spring-2026/"></flip-book>
 ```
@@ -147,7 +147,9 @@ it and create the first account. You get:
 - views, pages seen and product clicks per day, page and link (anonymous: no cookies)
 - named users: admins and editors
 
-Setup, settings, nginx and the API are in [docs/server.md](docs/server.md).
+Setup, settings, nginx and the API are in [docs/server.md](docs/server.md). To run flippy for
+several customers on one server (one subdomain each, automatic HTTPS, backups), see
+[deploy/README.md](deploy/README.md).
 
 ## Options
 
@@ -238,7 +240,7 @@ look (set under *Appearance* in the admin), which applies to iframes too; your C
 
 ## Updating
 
-Pin a version in the CDN URL (`@v0.3.1`). When you update your own copy, also raise the
+Pin a version in the CDN URL (`@v0.4.0`). When you update your own copy, also raise the
 `?v=` on the files: the viewer passes it on to the catalogue data, so returning visitors
 get the new files. See [CHANGELOG.md](CHANGELOG.md).
 
@@ -247,13 +249,15 @@ get the new files. See [CHANGELOG.md](CHANGELOG.md).
 ```
 src/                    viewer source: flippy.js, flippy.css, sounds/
 dist/                   built files (npm run dist): readable and .min versions
-index.html              full-page demo
+index.html, site/       the website (GitHub Pages)
+demo.html               full-page demo
 examples/embed.html     the viewer inside an ordinary page, with the API and events
 examples/hollowbrook/   how the demo catalogue was made (source PDF, links.csv, make.js)
 catalogues/hollowbrook/ the built demo catalogue
 builder/                the builder (plain ES modules, no build step)
 server/                 the optional server (PHP, SQLite): index.php, lib/, admin/
 Dockerfile              the server image (server + builder + dist)
+deploy/                 Docker Compose + Caddy for hosting flippy for customers
 tools/                  add_links.py, build.py (Python), build-dist.js (release build)
 docs/                   catalogue format
 tests/                  browser tests: smoke.js (viewer), builder.js, server.js (end to end)

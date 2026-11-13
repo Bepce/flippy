@@ -1,0 +1,36 @@
+# flippy on your own server: one flippy per customer, each on its own subdomain, behind Caddy
+# (which gets and renews HTTPS certificates by itself). See README.md in this folder.
+#
+#   cp .env.example .env      # then fill it in
+#   docker compose up -d
+
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    environment:
+      PALLTEX_HOST: ${PALLTEX_HOST}
+
+  # one block like this per customer; copy it and change the name, settings and volume
+  palltex:
+    image: ghcr.io/bepce/flippy-server:${FLIPPY_VERSION:-latest}
+    restart: unless-stopped
+    environment:
+      FLIPPY_SITE_NAME: ${PALLTEX_SITE_NAME:-Palltex catalogues}
+      FLIPPY_CORS: ${PALLTEX_CORS:-*}
+      FLIPPY_TRUST_PROXY: "1"
+    volumes:
+      - palltex-data:/data      # catalogues, users, statistics: this is what the backups copy
+
+volumes:
+  caddy-data:
+  caddy-config:
+  palltex-data:

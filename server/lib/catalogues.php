@@ -262,7 +262,7 @@ function serve_catalogue(string $slug, string $file): void
 {
     $c = find_catalogue($slug);
     if (!$c || (!$c['published'] && !current_user())) fail(404, 'This catalogue doesn’t exist or isn’t published.');
-    $cors = ['Access-Control-Allow-Origin' => (string) cfg('cors'), 'Vary' => 'Origin'];
+    $cors = cors_headers();
     if ($file === '' ) {
         send_viewer_page($c);
     }
@@ -284,6 +284,17 @@ function serve_catalogue(string $slug, string $file): void
         send_file("$dir/{$m[1]}/{$m[2]}.{$m[3]}", null, 300, $cors);
     }
     fail(404, 'Not found');
+}
+
+// Which sites may load the catalogue's files: "*" for any, or a comma-separated list of
+// origins (https://palltex.bg, https://www.palltex.bg). A listed origin is echoed back.
+function cors_headers(): array
+{
+    $allowed = trim((string) cfg('cors'));
+    if ($allowed === '' || $allowed === '*') return ['Access-Control-Allow-Origin' => '*'];
+    $origin = rtrim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''), '/');
+    $list = array_filter(array_map(fn($o) => rtrim(trim($o), '/'), explode(',', $allowed)));
+    return in_array($origin, $list, true) ? ['Access-Control-Allow-Origin' => $origin, 'Vary' => 'Origin'] : ['Vary' => 'Origin'];
 }
 
 function send_viewer_page(array $c): void

@@ -2,15 +2,133 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>flippy demo</title>
-  <link rel="stylesheet" href="dist/flippy.min.css?v=0.3.1">
-  <style>html, body { height: 100%; margin: 0; background: #1f2228; }</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>flippy · your PDF catalogue as a book on your own site</title>
+  <meta name="description" content="flippy turns a PDF catalogue into a page-turning flipbook where every product code opens the product in your shop. Self-hosted, open source, or hosted for you.">
+  <meta property="og:title" content="flippy: your PDF catalogue as a book on your own site">
+  <meta property="og:description" content="A page-turning catalogue viewer with product links, search and statistics. It runs on your domain, so the cart keeps working.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Literata:ital,opsz,wght@0,7..72,400..600;1,7..72,400&display=swap">
+  <link rel="stylesheet" href="dist/flippy.min.css?v=0.4.0">
+  <link rel="stylesheet" href="site/site.css?v=1">
 </head>
 <body>
-  <!-- A full-page catalogue. ?c=NAME opens catalogues/NAME/ instead of the demo.
-       For a catalogue inside a normal page, see examples/embed.html. -->
-  <div class="flippy" data-src="catalogues/hollowbrook/" style="height: 100%"></div>
-  <script src="dist/flippy.min.js?v=0.3.1"></script>
+  <header class="top">
+    <a class="word" href="./" aria-label="flippy home">flippy</a>
+    <nav aria-label="Site">
+      <a href="#how">How it works</a>
+      <a href="#run">Self-host or hosted</a>
+      <a href="builder/">Builder</a>
+      <a href="https://github.com/Bepce/flippy">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Your PDF catalogue, as a book on your own site</h1>
+        <p class="lede">flippy turns a printed catalogue into pages that turn like paper. Every product code in it
+          opens that product in your shop, and because it runs on your domain, the visitor’s cart keeps working.</p>
+        <div class="actions">
+          <a class="btn ink" href="builder/">Make a flipbook from a PDF</a>
+          <a class="btn line" href="#run">Run it yourself</a>
+        </div>
+        <p class="small">Free and open source (MIT). Or let us host it for you.</p>
+      </div>
+
+      <figure class="sheet">
+        <div class="trim">
+          <span class="crop tl" aria-hidden="true"></span><span class="crop tr" aria-hidden="true"></span>
+          <span class="crop bl" aria-hidden="true"></span><span class="crop br" aria-hidden="true"></span>
+          <flip-book src="catalogues/hollowbrook/" theme="light" hash="false" sound="false" accent="2b3a8c"></flip-book>
+        </div>
+        <figcaption>This is the real viewer with a sample catalogue. Turn a page, tap a colour, search for “canvas”.</figcaption>
+        <div class="bar" aria-hidden="true"><i class="c"></i><i class="m"></i><i class="y"></i><i class="k"></i></div>
+      </figure>
+    </section>
+
+    <section class="features" aria-labelledby="f-h">
+      <h2 id="f-h">What visitors get</h2>
+      <dl>
+        <div><dt>Pages that turn like paper</dt>
+          <dd>A soft curl and the sound of a page, a quick riffle when they jump ahead, a folded corner to lift.</dd></div>
+        <div><dt>Every product one tap away</dt>
+          <dd>Colour swatches, product rows and names are links to your shop, written into the PDF as well.</dd></div>
+        <div><dt>A cart that keeps working</dt>
+          <dd>Products open over the catalogue on your own site, with the visitor still signed in.</dd></div>
+        <div><dt>Search by name or code</dt>
+          <dd>Type “navy” or 405931 and see every page it’s on, with a picture of each.</dd></div>
+        <div><dt>Made for phones</dt>
+          <dd>Swipe to turn, pinch to zoom, and a toolbar sized for thumbs.</dd></div>
+        <div><dt>Eight languages</dt>
+          <dd>English, Bulgarian, German, French, Spanish, Italian, Dutch and Polish, and easy to add more.</dd></div>
+      </dl>
+    </section>
+
+    <section class="how" id="how" aria-labelledby="h-h">
+      <h2 id="h-h">From PDF to flipbook</h2>
+      <div class="how-grid">
+        <ol>
+          <li><h3>Open your PDF in the builder</h3>
+            <p>It runs in your browser. The PDF isn’t uploaded anywhere while you work.</p></li>
+          <li><h3>Link the product codes</h3>
+            <p>Give it a list of codes and addresses, your shop’s product feed, or one address pattern.
+              It finds the codes on every page and draws a box around each colour. Move or resize any box by hand.</p></li>
+          <li><h3>Publish</h3>
+            <p>Send it to your flippy server in one click, or download the folder and upload it to any website.</p></li>
+        </ol>
+        <figure class="shot">
+          <img src="site/builder.jpg" width="1280" height="780" loading="lazy"
+               alt="The flippy builder: page thumbnails on the left, a catalogue page with a box around each colour in the middle, and the link settings on the right.">
+        </figure>
+      </div>
+    </section>
+
+    <section class="why" aria-labelledby="w-h">
+      <h2 id="w-h">Why it has to be your domain</h2>
+      <div class="cols">
+        <p>Hosted flipbook services show your catalogue in a frame that belongs to their website.
+          Browsers treat your shop inside that frame as a stranger and drop its cookies, so the cart empties
+          and the visitor is signed out the moment they open a product.</p>
+        <p>flippy runs on your site. Products open over the catalogue with your shop’s own cookies,
+          so whatever a visitor adds to the cart is still there when they check out.
+          Your statistics stay yours too: views, pages and clicks, counted without cookies.</p>
+      </div>
+    </section>
+
+    <section class="run" id="run" aria-labelledby="r-h">
+      <h2 id="r-h">Self-host or hosted</h2>
+      <div class="ways">
+        <article>
+          <h3>Run it yourself</h3>
+          <p>Free under the MIT licence. Put the viewer on any page with two lines:</p>
+          <pre><code>&lt;script src="https://cdn.jsdelivr.net/gh/Bepce/flippy@v0.4.0/dist/flippy.min.js"&gt;&lt;/script&gt;
+&lt;flip-book src="/catalogues/spring/"&gt;&lt;/flip-book&gt;</code></pre>
+          <p>For a library of catalogues with sign-in and statistics, run the flippy server on PHP hosting or with Docker:</p>
+          <pre><code>docker run -d -p 8080:80 -v flippy-data:/data ghcr.io/bepce/flippy-server</code></pre>
+          <p><a href="https://github.com/Bepce/flippy#readme">Read the setup guide on GitHub</a></p>
+        </article>
+        <article class="hosted">
+          <h3>Hosted for you</h3>
+          <p>We run flippy for you at <strong>yourshop.flippy.io</strong>: your catalogue library, the builder,
+            statistics, backups and updates. You paste one line into your shop, and your catalogues appear there.</p>
+          <p>The cart keeps working, because the viewer still runs inside your shop’s pages.</p>
+          <p><a class="btn ink" href="mailto:hello@flippy.io?subject=Hosted%20flippy">Ask about hosting</a></p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p><span class="word small-word">flippy</span> is open source under the MIT licence.
+</p>
+    <p class="links"><a href="https://github.com/Bepce/flippy">Source on GitHub</a>
+      <a href="demo.html">Full-screen demo</a> <a href="examples/embed.html">Embedded in a page</a>
+      <a href="builder/">Builder</a></p>
+    <p class="muted">The sample catalogue, Hollowbrook Goods, is invented. Page-flip sounds by StarNinjas (CC0).</p>
+  </footer>
+
+  <script src="dist/flippy.min.js?v=0.4.0"></script>
 </body>
 </html>

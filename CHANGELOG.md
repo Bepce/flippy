@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.3.1 (2026-11-11)
+## 0.4.0 (2026-11-13)
+
+- **Website**: a landing page with the live viewer (`index.html`, styles in `site/`); the
+  full-screen demo moved to `demo.html`
+- **deploy/**: Docker Compose with Caddy (automatic HTTPS) for running a flippy per customer on
+  subdomains, a backup script, and a step-by-step guide
+- Server: `cors` takes a comma-separated list of sites (e.g. a shop's address with and without www)
 
 - Builder: photos stored as JPEG 2000 (common in PDFs from InDesign and print workflows) were
   missing from the pages. The builder now loads pdf.js's image decoders, colour profiles and

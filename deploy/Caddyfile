@@ -1,0 +1,13 @@
+# One site per customer. Caddy gets an HTTPS certificate for each name by itself, as soon as
+# the name's DNS points at this server.
+
+{$PALLTEX_HOST} {
+	encode zstd gzip
+	reverse_proxy palltex:80
+}
+
+# another customer:
+# {$ACME_HOST} {
+# 	encode zstd gzip
+# 	reverse_proxy acme:80
+# }

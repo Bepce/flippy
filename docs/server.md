@@ -81,7 +81,7 @@ Copy `config.sample.php` to `config.php`. Each setting can also be an environmen
 | `data_dir` | `FLIPPY_DATA_DIR` | `data/` next to index.php | database and catalogue files |
 | `site_name` | `FLIPPY_SITE_NAME` | `Catalogues` | shown in the admin |
 | `max_upload_mb` | `FLIPPY_MAX_UPLOAD_MB` | `300` | largest catalogue, unpacked |
-| `cors` | `FLIPPY_CORS` | `*` | which sites may embed catalogues: `*` or `https://shop.example` |
+| `cors` | `FLIPPY_CORS` | `*` | which sites may embed catalogues: `*`, or a comma-separated list such as `https://shop.example, https://www.shop.example` |
 | `stats` | | `true` | count views and clicks |
 | `ignore_bots` | | `true` | don't count crawlers and headless browsers |
 | `trust_proxy` | `FLIPPY_TRUST_PROXY` | `false` | behind a reverse proxy that sets `X-Forwarded-*` |
